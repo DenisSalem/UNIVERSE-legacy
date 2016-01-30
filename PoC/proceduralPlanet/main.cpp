@@ -160,158 +160,181 @@ void Planet::initVertex(int iteration) {
 	int size = pow(2,iteration-1);
 	float step = 1.0 / size;	
 
-	int offset= 108;
+	int offset= 18;
 
 	for(int x = 0; x < size; x++) {
 		for( int y = 0; y < size; y++) {
 			
 			//First Face
-			this->vertex_array[ offset * (x * size + y)     ]	= -0.5 + x * step;
-			this->vertex_array[ offset * (x * size + y) + 1 ] 	= -0.5 + y * step;
-			this->vertex_array[ offset * (x * size + y) + 2 ] 	= 0.5;
+			this->vertex_array[ 18 * (x * size + y)     ]	= -0.5 + x * step;
+			this->vertex_array[ 18 * (x * size + y) + 1 ] 	= -0.5 + y * step;
+			this->vertex_array[ 18 * (x * size + y) + 2 ] 	= 0.5;
 
-			this->vertex_array[ offset * (x * size + y) + 3 ]	= -0.5 + x * step;
-			this->vertex_array[ offset * (x * size + y) + 4 ] 	= -0.5 + y * step + step;
-			this->vertex_array[ offset * (x * size + y) + 5 ] 	= 0.5;
+			this->vertex_array[ 18 * (x * size + y) + 3 ]	= -0.5 + x * step;
+			this->vertex_array[ 18 * (x * size + y) + 4 ] 	= -0.5 + y * step + step;
+			this->vertex_array[ 18 * (x * size + y) + 5 ] 	= 0.5;
 
-			this->vertex_array[ offset * (x * size + y) + 6 ]	= -0.5 + x * step + step;
-			this->vertex_array[ offset * (x * size + y) + 7 ] 	= -0.5 + y * step + step;
-			this->vertex_array[ offset * (x * size + y) + 8 ] 	= 0.5;
+			this->vertex_array[ 18 * (x * size + y) + 6 ]	= -0.5 + x * step + step;
+			this->vertex_array[ 18 * (x * size + y) + 7 ] 	= -0.5 + y * step + step;
+			this->vertex_array[ 18 * (x * size + y) + 8 ] 	= 0.5;
 
-			this->vertex_array[ offset * (x * size + y) + 9 ]	= -0.5 + x * step;
-			this->vertex_array[ offset * (x * size + y) + 10] 	= -0.5 + y * step;
-			this->vertex_array[ offset * (x * size + y) + 11] 	= 0.5;
+			this->vertex_array[ 18 * (x * size + y) + 9 ]	= -0.5 + x * step;
+			this->vertex_array[ 18 * (x * size + y) + 10] 	= -0.5 + y * step;
+			this->vertex_array[ 18 * (x * size + y) + 11] 	= 0.5;
 
-			this->vertex_array[ offset * (x * size + y) + 12 ]	= -0.5 + x * step + step;
-			this->vertex_array[ offset * (x * size + y) + 13 ] 	= -0.5 + y * step;
-			this->vertex_array[ offset * (x * size + y) + 14 ] 	= 0.5;
+			this->vertex_array[ 18 * (x * size + y) + 12 ]	= -0.5 + x * step + step;
+			this->vertex_array[ 18 * (x * size + y) + 13 ] 	= -0.5 + y * step;
+			this->vertex_array[ 18 * (x * size + y) + 14 ] 	= 0.5;
 
-			this->vertex_array[ offset * (x * size + y) + 15 ]	= -0.5 + x * step + step;
-			this->vertex_array[ offset * (x * size + y) + 16 ] 	= -0.5 + y * step + step;
-			this->vertex_array[ offset * (x * size + y) + 17 ] 	= 0.5;
-			//Second Face
-			this->vertex_array[ offset * (x * size + y) + 18 ]	= -0.5 + x * step;
-			this->vertex_array[ offset * (x * size + y) + 19 ] 	= -0.5 + y * step;
-			this->vertex_array[ offset * (x * size + y) + 20 ] 	= -0.5;
+			this->vertex_array[ 18 * (x * size + y) + 15 ]	= -0.5 + x * step + step;
+			this->vertex_array[ 18 * (x * size + y) + 16 ] 	= -0.5 + y * step + step;
+			this->vertex_array[ 18 * (x * size + y) + 17 ] 	= 0.5;
+		}
+	}
+	offset = 18 * size * size;
+	for(int x = 0; x < size; x++) {
+		for( int y = 0; y < size; y++) {
+			// Second Face
+			this->vertex_array[ offset + 18 * (x * size + y) ]	= -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 1 ] = -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 2 ] = -0.5 + x * step;
 
-			this->vertex_array[ offset * (x * size + y) + 21 ]	= -0.5 + x * step;
-			this->vertex_array[ offset * (x * size + y) + 22 ] 	= -0.5 + y * step + step;
-			this->vertex_array[ offset * (x * size + y) + 23 ] 	= -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 3 ]	= -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 4 ] = -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 5 ] = -0.5 + x * step;
 
-			this->vertex_array[ offset * (x * size + y) + 24 ]	= -0.5 + x * step + step;
-			this->vertex_array[ offset * (x * size + y) + 25 ] 	= -0.5 + y * step + step;
-			this->vertex_array[ offset * (x * size + y) + 26 ] 	= -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 6 ]	= -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 7 ] = -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 8 ] = -0.5 + x * step + step;
 
-			this->vertex_array[ offset * (x * size + y) + 27 ]	= -0.5 + x * step;
-			this->vertex_array[ offset * (x * size + y) + 28] 	= -0.5 + y * step;
-			this->vertex_array[ offset * (x * size + y) + 29] 	= -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 9]	= -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 10] 	= -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 11] 	= -0.5 + x * step + step;
 
-			this->vertex_array[ offset * (x * size + y) + 30 ]	= -0.5 + x * step + step;
-			this->vertex_array[ offset * (x * size + y) + 31 ] 	= -0.5 + y * step;
-			this->vertex_array[ offset * (x * size + y) + 32 ] 	= -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 12 ]	= -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 13 ] = -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 14 ] = -0.5 + x * step + step;
 
-			this->vertex_array[ offset * (x * size + y) + 33 ]	= -0.5 + x * step + step;
-			this->vertex_array[ offset * (x * size + y) + 34 ] 	= -0.5 + y * step + step;
-			this->vertex_array[ offset * (x * size + y) + 35 ] 	= -0.5;
-			//Third Face
-			this->vertex_array[ offset * (x * size + y) + 36 ]	= -0.5;
-			this->vertex_array[ offset * (x * size + y) + 37 ] 	= -0.5 + y * step;
-			this->vertex_array[ offset * (x * size + y) + 38 ] 	= -0.5 + x * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 15 ]	= -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 16 ] = -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 17 ] = -0.5 + x * step;
+		}
+	}
+	
+	offset = 18 * size * size * 2;
+	for(int x = 0; x < size; x++) {
+		for( int y = 0; y < size; y++) {
+			// Third Face
+			this->vertex_array[ offset + 18 * (x * size + y) ]	= -0.5 + x * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 1 ]	= -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 2 ]	= -0.5;
 
-			this->vertex_array[ offset * (x * size + y) + 39 ]	= -0.5;
-			this->vertex_array[ offset * (x * size + y) + 40 ] 	= -0.5 + y * step + step;
-			this->vertex_array[ offset * (x * size + y) + 41 ] 	= -0.5 + x * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 3 ]	= -0.5 + x * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 4 ]	= -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 5 ]	= -0.5;
 
-			this->vertex_array[ offset * (x * size + y) + 42 ]	= -0.5;
-			this->vertex_array[ offset * (x * size + y) + 43 ] 	= -0.5 + y * step;
-			this->vertex_array[ offset * (x * size + y) + 44 ] 	= -0.5 + x * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 6 ]	= -0.5 + x * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 7 ]	= -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 8 ]	= -0.5;
 
-			this->vertex_array[ offset * (x * size + y) + 45 ]	= -0.5;
-			this->vertex_array[ offset * (x * size + y) + 46] 	= -0.5 + y * step;
-			this->vertex_array[ offset * (x * size + y) + 47] 	= -0.5 + x * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 9 ]	= -0.5 + x * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 10] 	= -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 11] 	= -0.5;
 
-			this->vertex_array[ offset * (x * size + y) + 48 ]	= -0.5;
-			this->vertex_array[ offset * (x * size + y) + 49 ] 	= -0.5 + y * step + step;
-			this->vertex_array[ offset * (x * size + y) + 50 ] 	= -0.5 + x * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 12 ]	= -0.5 + x * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 13 ]	= -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 14 ]	= -0.5;
 
-			this->vertex_array[ offset * (x * size + y) + 51 ]	= -0.5;
-			this->vertex_array[ offset * (x * size + y) + 52 ] 	= -0.5 + y * step + step;
-			this->vertex_array[ offset * (x * size + y) + 53 ] 	= -0.5 + x * step;
-
+			this->vertex_array[ offset + 18 * (x * size + y) + 15 ]	= -0.5 + x * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 16 ]	= -0.5 + y * step + step;
+			this->vertex_array[ offset + 18* (x * size + y) + 17 ] 	= -0.5;
+		}
+	}
+	offset = 18 * size * size * 3;
+	for(int x = 0; x < size; x++) {
+		for( int y = 0; y < size; y++) {
 			//Fourth Face
-			this->vertex_array[ offset * (x * size + y) + 54 ]	= 0.5;
-			this->vertex_array[ offset * (x * size + y) + 55 ] 	= -0.5 + y * step;
-			this->vertex_array[ offset * (x * size + y) + 56 ] 	= -0.5 + x * step;
+			this->vertex_array[ offset + 18 * (x * size + y) ]	= 0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 1 ] 	= -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 2 ] 	= -0.5 + x * step;
 
-			this->vertex_array[ offset * (x * size + y) + 57 ]	= 0.5;
-			this->vertex_array[ offset * (x * size + y) + 58 ] 	= -0.5 + y * step + step;
-			this->vertex_array[ offset * (x * size + y) + 59 ] 	= -0.5 + x * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 3 ]	= 0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 4 ] 	= -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 5 ] 	= -0.5 + x * step;
 
-			this->vertex_array[ offset * (x * size + y) + 60 ]	= 0.5;
-			this->vertex_array[ offset * (x * size + y) + 61 ] 	= -0.5 + y * step;
-			this->vertex_array[ offset * (x * size + y) + 62 ] 	= -0.5 + x * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 6 ]	= 0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 7 ] 	= -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 8 ] 	= -0.5 + x * step + step;
 
-			this->vertex_array[ offset * (x * size + y) + 63 ]	= 0.5;
-			this->vertex_array[ offset * (x * size + y) + 64] 	= -0.5 + y * step;
-			this->vertex_array[ offset * (x * size + y) + 65] 	= -0.5 + x * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 9 ]	= 0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 10] 	= -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 11] 	= -0.5 + x * step + step;
 
-			this->vertex_array[ offset * (x * size + y) + 66 ]	= 0.5;
-			this->vertex_array[ offset * (x * size + y) + 67 ] 	= -0.5 + y * step + step;
-			this->vertex_array[ offset * (x * size + y) + 68 ] 	= -0.5 + x * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 12 ]	= 0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 13 ]	= -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 14 ]	= -0.5 + x * step + step;
 
-			this->vertex_array[ offset * (x * size + y) + 69 ]	= 0.5;
-			this->vertex_array[ offset * (x * size + y) + 70 ] 	= -0.5 + y * step + step;
-			this->vertex_array[ offset * (x * size + y) + 71 ] 	= -0.5 + x * step;
-
+			this->vertex_array[ offset + 18 * (x * size + y) + 15 ]	= 0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 16 ]	= -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 17 ]	= -0.5 + x * step;
+		}
+	}
+	offset = 18 * size * size * 4;
+	for(int x = 0; x < size; x++) {
+		for( int y = 0; y < size; y++) {
 			//Fifth Face
-			this->vertex_array[ offset * (x * size + y) + 72 ]	= -0.5 + y * step;
-			this->vertex_array[ offset * (x * size + y) + 73 ] 	= 0.5;
-			this->vertex_array[ offset * (x * size + y) + 74 ] 	= -0.5 + x * step;
+			this->vertex_array[ offset + 18 * (x * size + y) ]	= -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 1 ]	= 0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 2 ]	= -0.5 + x * step;
 
-			this->vertex_array[ offset * (x * size + y) + 75 ]	= -0.5 + y * step + step;
-			this->vertex_array[ offset * (x * size + y) + 76 ] 	= 0.5;
-			this->vertex_array[ offset * (x * size + y) + 77 ] 	= -0.5 + x * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 3 ]	= -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 4 ]	= 0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 5 ]	= -0.5 + x * step;
 
-			this->vertex_array[ offset * (x * size + y) + 78 ]	= -0.5 + y * step;
-			this->vertex_array[ offset * (x * size + y) + 79 ] 	= 0.5;
-			this->vertex_array[ offset * (x * size + y) + 80 ] 	= -0.5 + x * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 6 ]	= -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 7 ]	= 0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 8 ]	= -0.5 + x * step + step;
 
-			this->vertex_array[ offset * (x * size + y) + 81 ]	= -0.5 + y * step;
-			this->vertex_array[ offset * (x * size + y) + 82] 	= 0.5;
-			this->vertex_array[ offset * (x * size + y) + 83] 	= -0.5 + x * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 9 ]	= -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 10] 	= 0.5;
+			this->vertex_array[ offset + 18* (x * size + y) + 11] 	= -0.5 + x * step + step;
 
-			this->vertex_array[ offset * (x * size + y) + 84 ]	= -0.5 + y * step + step;
-			this->vertex_array[ offset * (x * size + y) + 85 ] 	= 0.5;
-			this->vertex_array[ offset * (x * size + y) + 86 ] 	= -0.5 + x * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 12 ]	= -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 13 ]	= 0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 14 ]	= -0.5 + x * step + step;
 
-			this->vertex_array[ offset * (x * size + y) + 87 ]	= -0.5 + y * step + step;
-			this->vertex_array[ offset * (x * size + y) + 88 ] 	= 0.5;
-			this->vertex_array[ offset * (x * size + y) + 89 ] 	= -0.5 + x * step;
-
+			this->vertex_array[ offset + 18 * (x * size + y) + 15 ]	= -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 16 ]	= 0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 17 ]	= -0.5 + x * step;
+		}
+	}
+	offset = 18 * size * size * 5;
+	for(int x = 0; x < size; x++) {
+		for( int y = 0; y < size; y++) {
 			//Sixth Face
-			this->vertex_array[ offset * (x * size + y) + 90 ]	= -0.5 + y * step;
-			this->vertex_array[ offset * (x * size + y) + 91 ] 	= -0.5;
-			this->vertex_array[ offset * (x * size + y) + 92 ] 	= -0.5 + x * step;
+			this->vertex_array[ offset + 18 * (x * size + y) ]	= -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 1 ] = -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 2 ] = -0.5 + x * step;
 
-			this->vertex_array[ offset * (x * size + y) + 93 ]	= -0.5 + y * step + step;
-			this->vertex_array[ offset * (x * size + y) + 94 ] 	= -0.5;
-			this->vertex_array[ offset * (x * size + y) + 95 ] 	= -0.5 + x * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 3 ]	= -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 4 ] = -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 5 ] = -0.5 + x * step;
 
-			this->vertex_array[ offset * (x * size + y) + 96 ]	= -0.5 + y * step;
-			this->vertex_array[ offset * (x * size + y) + 97 ] 	= -0.5;
-			this->vertex_array[ offset * (x * size + y) + 98 ] 	= -0.5 + x * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 6 ]	= -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 7 ] = -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 8 ] = -0.5 + x * step + step;
 
-			this->vertex_array[ offset * (x * size + y) + 99 ]	= -0.5 + y * step;
-			this->vertex_array[ offset * (x * size + y) + 100] 	= -0.5;
-			this->vertex_array[ offset * (x * size + y) + 101] 	= -0.5 + x * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 9 ]	= -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 10] = -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 11] = -0.5 + x * step + step;
 
-			this->vertex_array[ offset * (x * size + y) + 102 ]	= -0.5 + y * step + step;
-			this->vertex_array[ offset * (x * size + y) + 103 ] 	= -0.5;
-			this->vertex_array[ offset * (x * size + y) + 104 ] 	= -0.5 + x * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 12 ]= -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 13 ]= -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 14 ]= -0.5 + x * step + step;
 
-			this->vertex_array[ offset * (x * size + y) + 105 ]	= -0.5 + y * step + step;
-			this->vertex_array[ offset * (x * size + y) + 106 ] 	= -0.5;
-			this->vertex_array[ offset * (x * size + y) + 107 ] 	= -0.5 + x * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 15 ]= -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 16 ]= -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 17 ]= -0.5 + x * step;
 		}
 	}
 } 

@@ -5,5 +5,5 @@ gl3w.o: gl3w.c
 	gcc -o gl3w.o -c gl3w.c -lGL
 clean:
 	rm gl3w.o
-	rm universe
+	rm proceduralPlanet
 
