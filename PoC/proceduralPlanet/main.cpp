@@ -9,8 +9,8 @@
 #include <cmath>
 #include <cstring>
 #include <unistd.h>
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
+#define WINDOW_WIDTH 320
+#define WINDOW_HEIGHT 320
 
 Planet::Planet(int width, int height) {
 	this->width = width;
@@ -21,7 +21,7 @@ Planet::Planet(int width, int height) {
 
 	vertex_size = 3;
 
-	initVertex(4);
+	initVertex(5);
 
 	vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	vertexShader =	"#version 130\n"
@@ -31,7 +31,9 @@ Planet::Planet(int width, int height) {
 			"uniform mat4 view;"
 			"uniform mat4 projection;"
 			"void main() {\n"
-			"	gl_Position = projection * view * model * vec4(vertex.xyz ,1.0);\n"
+			"	float radius = 0.7071068;\n"
+			"	float currentRadius = sqrt( pow(vertex.x, 2) +  pow(vertex.y, 2) +  pow(vertex.z, 2));\n"
+			"	gl_Position = projection * view * model * vec4(vertex.xyz * (radius/currentRadius),1.0);\n"
 			"	gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;\n"
 			"	gl_FrontColor = vec4(vertexColor.x+0.5, vertexColor.y+0.5, vertexColor.z+0.5, 1.0);\n"
 			"}";
@@ -128,9 +130,7 @@ void Planet::loadShader() {
 void Planet::render() {
 	glUseProgram(this->programID);
 
-	this->model = glm::rotate(this->model, (glm::mediump_float) 0.09, glm::vec3(0.0,0.0,1.0));
-	this->model = glm::rotate(this->model, (glm::mediump_float) 0.03, glm::vec3(0.0,1.0,0.0));
-	this->model = glm::rotate(this->model, (glm::mediump_float) 0.01, glm::vec3(1.0,0.0,0.0));
+	this->model = glm::rotate(this->model, (glm::mediump_float) 0.1, glm::vec3(1.0,1.0,1.0));
 	this->view = glm::translate(glm::mat4(1.0), glm::vec3(0.f, 0.0f, -2.00f));
 	this->projection = glm::perspective(45.0, (double) this->width/this->height, 0.1, 10000.0);
 
