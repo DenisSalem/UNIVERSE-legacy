@@ -9,8 +9,8 @@
 #include <cmath>
 #include <cstring>
 #include <unistd.h>
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 800
+#define WINDOW_WIDTH 480
+#define WINDOW_HEIGHT 480
 
 Planet::Planet(int width, int height, int resolution) {
 	this->width = width;
@@ -130,7 +130,7 @@ void Planet::loadShader() {
 void Planet::render() {
 	glUseProgram(this->programID);
 
-	this->model = glm::rotate(this->model, (glm::mediump_float) 0.1, glm::vec3(1.0,1.0,1.0));
+	this->model = glm::rotate(this->model, (glm::mediump_float) -0.05, glm::vec3(1.0,1.0,1.0));
 	this->view = glm::translate(glm::mat4(1.0), glm::vec3(0.f, 0.0f, -2.00f));
 	this->projection = glm::perspective(45.0, (double) this->width/this->height, 0.1, 10000.0);
 
@@ -152,6 +152,7 @@ void Planet::initVertex(int iteration) {
 	std::cout << "Initiate Cube with " << this->vertex_number << " vertex.\n";
 
 	this->vertex_array = new float[this->vertex_number * this->vertex_size];
+
 	for (int i=0;i<this->vertex_number * this->vertex_size; i++) {
 		this->vertex_array[i] = 0.0f;
 	}
@@ -194,29 +195,29 @@ void Planet::initVertex(int iteration) {
 	for(int x = 0; x < size; x++) {
 		for( int y = 0; y < size; y++) {
 			// Second Face
-			this->vertex_array[ offset + 18 * (x * size + y) ]	= -0.5;
-			this->vertex_array[ offset + 18 * (x * size + y) + 1 ] = -0.5 + y * step;
-			this->vertex_array[ offset + 18 * (x * size + y) + 2 ] = -0.5 + x * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 9]	= 0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 10 ] = -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 11 ] = -0.5 + x * step;
 
-			this->vertex_array[ offset + 18 * (x * size + y) + 3 ]	= -0.5;
-			this->vertex_array[ offset + 18 * (x * size + y) + 4 ] = -0.5 + y * step + step;
-			this->vertex_array[ offset + 18 * (x * size + y) + 5 ] = -0.5 + x * step;
-
-			this->vertex_array[ offset + 18 * (x * size + y) + 6 ]	= -0.5;
-			this->vertex_array[ offset + 18 * (x * size + y) + 7 ] = -0.5 + y * step;
-			this->vertex_array[ offset + 18 * (x * size + y) + 8 ] = -0.5 + x * step + step;
-
-			this->vertex_array[ offset + 18 * (x * size + y) + 9]	= -0.5;
-			this->vertex_array[ offset + 18 * (x * size + y) + 10] 	= -0.5 + y * step;
-			this->vertex_array[ offset + 18 * (x * size + y) + 11] 	= -0.5 + x * step + step;
-
-			this->vertex_array[ offset + 18 * (x * size + y) + 12 ]	= -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 12 ]	= 0.5;
 			this->vertex_array[ offset + 18 * (x * size + y) + 13 ] = -0.5 + y * step + step;
-			this->vertex_array[ offset + 18 * (x * size + y) + 14 ] = -0.5 + x * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 14 ] = -0.5 + x * step;
 
-			this->vertex_array[ offset + 18 * (x * size + y) + 15 ]	= -0.5;
-			this->vertex_array[ offset + 18 * (x * size + y) + 16 ] = -0.5 + y * step + step;
-			this->vertex_array[ offset + 18 * (x * size + y) + 17 ] = -0.5 + x * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 15 ]	= 0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 16 ] = -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 17 ] = -0.5 + x * step + step;
+
+			this->vertex_array[ offset + 18 * (x * size + y) + 0 ]	= 0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 1] 	= -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 2] 	= -0.5 + x * step + step;
+
+			this->vertex_array[ offset + 18 * (x * size + y) + 3 ]	= 0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 4 ]	= -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 5 ]	= -0.5 + x * step + step;
+
+			this->vertex_array[ offset + 18 * (x * size + y) + 6 ]	= 0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 7 ]	= -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 8 ]	= -0.5 + x * step;
 		}
 	}
 	
@@ -253,29 +254,29 @@ void Planet::initVertex(int iteration) {
 	for(int x = 0; x < size; x++) {
 		for( int y = 0; y < size; y++) {
 			//Fourth Face
-			this->vertex_array[ offset + 18 * (x * size + y) ]	= 0.5;
-			this->vertex_array[ offset + 18 * (x * size + y) + 1 ] 	= -0.5 + y * step;
-			this->vertex_array[ offset + 18 * (x * size + y) + 2 ] 	= -0.5 + x * step;
+			this->vertex_array[ offset + 18 * (x * size + y) ]	= -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 1 ] = -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 2 ] = -0.5 + x * step;
 
-			this->vertex_array[ offset + 18 * (x * size + y) + 3 ]	= 0.5;
-			this->vertex_array[ offset + 18 * (x * size + y) + 4 ] 	= -0.5 + y * step + step;
-			this->vertex_array[ offset + 18 * (x * size + y) + 5 ] 	= -0.5 + x * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 3 ]	= -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 4 ] = -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 5 ] = -0.5 + x * step;
 
-			this->vertex_array[ offset + 18 * (x * size + y) + 6 ]	= 0.5;
-			this->vertex_array[ offset + 18 * (x * size + y) + 7 ] 	= -0.5 + y * step;
-			this->vertex_array[ offset + 18 * (x * size + y) + 8 ] 	= -0.5 + x * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 6 ]	= -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 7 ] = -0.5 + y * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 8 ] = -0.5 + x * step + step;
 
-			this->vertex_array[ offset + 18 * (x * size + y) + 9 ]	= 0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 9]	= -0.5;
 			this->vertex_array[ offset + 18 * (x * size + y) + 10] 	= -0.5 + y * step;
 			this->vertex_array[ offset + 18 * (x * size + y) + 11] 	= -0.5 + x * step + step;
 
-			this->vertex_array[ offset + 18 * (x * size + y) + 12 ]	= 0.5;
-			this->vertex_array[ offset + 18 * (x * size + y) + 13 ]	= -0.5 + y * step + step;
-			this->vertex_array[ offset + 18 * (x * size + y) + 14 ]	= -0.5 + x * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 12 ]	= -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 13 ] = -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 14 ] = -0.5 + x * step + step;
 
-			this->vertex_array[ offset + 18 * (x * size + y) + 15 ]	= 0.5;
-			this->vertex_array[ offset + 18 * (x * size + y) + 16 ]	= -0.5 + y * step + step;
-			this->vertex_array[ offset + 18 * (x * size + y) + 17 ]	= -0.5 + x * step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 15 ]	= -0.5;
+			this->vertex_array[ offset + 18 * (x * size + y) + 16 ] = -0.5 + y * step + step;
+			this->vertex_array[ offset + 18 * (x * size + y) + 17 ] = -0.5 + x * step;
 		}
 	}
 	offset = 18 * size * size * 4;
