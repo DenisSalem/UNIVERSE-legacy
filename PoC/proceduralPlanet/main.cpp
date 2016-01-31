@@ -9,10 +9,10 @@
 #include <cmath>
 #include <cstring>
 #include <unistd.h>
-#define WINDOW_WIDTH 320
-#define WINDOW_HEIGHT 320
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 800
 
-Planet::Planet(int width, int height) {
+Planet::Planet(int width, int height, int resolution) {
 	this->width = width;
 	this->height = height;
 	model= glm::mat4(1.0);
@@ -21,7 +21,7 @@ Planet::Planet(int width, int height) {
 
 	vertex_size = 3;
 
-	initVertex(5);
+	initVertex(resolution);
 
 	vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	vertexShader =	"#version 130\n"
@@ -148,7 +148,6 @@ void Planet::render() {
 }
 
 void Planet::initVertex(int iteration) {
-
 	this->vertex_number = 6 * (int) pow(4, iteration-1) * 2 * 3;
 	std::cout << "Initiate Cube with " << this->vertex_number << " vertex.\n";
 
@@ -339,7 +338,7 @@ void Planet::initVertex(int iteration) {
 	}
 } 
 
-int main(void) {
+int main(int argc, char ** argv) {
 	GLFWwindow* window;
 
 	if (!glfwInit())
@@ -362,7 +361,7 @@ int main(void) {
 	};
 	std::cout << glGetString(GL_VERSION) << "\n";
 	
-	Planet planet = Planet(WINDOW_WIDTH, WINDOW_HEIGHT);
+	Planet planet = Planet(WINDOW_WIDTH, WINDOW_HEIGHT, atoi(argv[1]));
 
 	glEnable(GL_DEPTH_TEST);
 

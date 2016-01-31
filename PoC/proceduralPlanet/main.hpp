@@ -9,7 +9,7 @@
 
 class Planet {
 	public:
-		Planet(int width, int height);
+		Planet(int width, int height, int resolution);
 		~Planet();
 		void render();
 	private:
