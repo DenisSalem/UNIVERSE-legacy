@@ -60,6 +60,10 @@ void UNIVERSE_NOISE_1(long double ** matrix, long double ** mask, unsigned long 
 }
 
 int main(int argc, char ** argv) {
+	if (argc == 1) {
+		std::cout << "Usage: ./heightMap <power of two>\n";
+		return 0;
+	}
 
 	// INIATE SHIT N STUFF
 	unsigned long int scale = atoi(argv[1]);

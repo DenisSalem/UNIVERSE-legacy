@@ -11,49 +11,101 @@
 #include <unistd.h>
 #define WINDOW_WIDTH 480
 #define WINDOW_HEIGHT 480
+#define HEIGHT_MAP_SCALE 256
 
 Planet::Planet(int width, int height, int resolution) {
+	this->heightMap = (float *) malloc( sizeof( float ) * HEIGHT_MAP_SCALE * HEIGHT_MAP_SCALE); 
+	this->mask =(float **) malloc( sizeof( float *) * HEIGHT_MAP_SCALE);
+
+	for(int x = 0; x < HEIGHT_MAP_SCALE; x++) {
+		this->mask[x] = (float *) malloc( sizeof(float) *  HEIGHT_MAP_SCALE );
+		
+		for(int y = 0; y < HEIGHT_MAP_SCALE; y++) {
+			this->heightMap[x * HEIGHT_MAP_SCALE + y] = 0;
+		}
+	}
+
+	UNIVERSE_MASK_1(this->mask, HEIGHT_MAP_SCALE);
+	UNIVERSE_NOISE_1(this->heightMap, this->mask, HEIGHT_MAP_SCALE, 0, 0, HEIGHT_MAP_SCALE);
+
+	float max=0,min = 65536;
+	for (int x = 0; x <  HEIGHT_MAP_SCALE; x++) {
+		for (int y = 0; y <  HEIGHT_MAP_SCALE; y++) {
+			if ( this->heightMap[x * HEIGHT_MAP_SCALE + y ] > max) {
+				max = this->heightMap[x * HEIGHT_MAP_SCALE + y];
+			}
+			if ( this->heightMap[x * HEIGHT_MAP_SCALE + y ] < min) {
+				min = this->heightMap[x * HEIGHT_MAP_SCALE + y];
+			}
+		}
+	}
+	std::cout << "Height map maximum: " << max << "\n";
+
+	for (int x = 0; x <  HEIGHT_MAP_SCALE; x++) {
+		for (int y = 0; y <  HEIGHT_MAP_SCALE; y++) {
+			this->heightMap[x * HEIGHT_MAP_SCALE + y] = (this->heightMap[x * HEIGHT_MAP_SCALE + y]) / max;
+		}
+
+	}
+	
 	this->width = width;
 	this->height = height;
-	model= glm::mat4(1.0);
-	view = glm::mat4(1.0);
-	projection = glm::mat4(1.0);
+	this->model= glm::mat4(1.0);
+	this->view = glm::mat4(1.0);
+	this->projection = glm::mat4(1.0);
 
-	vertex_size = 3;
+	this->vertex_size = 3;
 
-	initVertex(resolution);
+	this->initVertex(resolution);
 
-	vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	vertexShader =	"#version 130\n"
+	this->vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+	this->vertexShader =
+			"#version 130\n"
 			"in vec3 vertex;\n"
-			"in vec3 vertexColor;\n"
-			"uniform mat4 model;"
-			"uniform mat4 view;"
-			"uniform mat4 projection;"
+			"uniform mat4 model;\n"
+			"uniform mat4 view;\n"
+			"uniform mat4 projection;\n"
+			"uniform sampler2D heightMap;\n"
 			"void main() {\n"
 			"	float radius = 0.7071068;\n"
+			"	float x = acos(vertex.z / sqrt( pow(vertex.x,2) +  pow(vertex.y,2) +  pow(vertex.z,2))) / 3.141592;\n"
+			"	float sign = 1.0;\n"
+			"	float y = atan(vertex.y/vertex.x) / ( 2 * 3.141592) ;\n"
 			"	float currentRadius = sqrt( pow(vertex.x, 2) +  pow(vertex.y, 2) +  pow(vertex.z, 2));\n"
-			"	gl_Position = projection * view * model * vec4(vertex.xyz * (radius/currentRadius),1.0);\n"
-			"	gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;\n"
-			"	gl_FrontColor = vec4(vertexColor.x+0.5, vertexColor.y+0.5, vertexColor.z+0.5, 1.0);\n"
+			"	float depth = texture(heightMap, vec2(x,y)).x;\n"
+			"	gl_Position = projection * view * model * vec4(vertex.xyz * ((radius -0.5 * depth) / currentRadius ), 1.0);\n"
+			"	gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;\n" 
+			"	gl_FrontColor = vec4(vec3(vertex.x+0.5, vertex.y+0.5, vertex.z+0.5) - 0.75 * depth, 1.0);\n"
 			"}";
 
 
-	fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-	fragmentShader =	"#version 130\n"
+	this->fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+	this->fragmentShader =	"#version 130\n"
 				"out vec4 color;\n" 
 				"void main() {\n"
 				"	color = gl_Color;\n"
 				"}\n";
 
-	initVBO();
-	initVAO();
+	this->initTexture();
+	this->initVBO();
+	this->initVAO();
 	this->loadVertex();
 	this->loadShader();
 }
 
 Planet::~Planet() {
 	glDeleteBuffers(1, &this->VBO);
+	glDeleteBuffers(1, &this->VAO);
+	glDeleteBuffers(1, &this->textureID);
+}
+
+void Planet::initTexture() {
+	glGenTextures(1, &this->textureID);
+	glBindTexture(GL_TEXTURE_2D, this->textureID);
+		glTexImage2D(GL_TEXTURE_2D, 0,  GL_R32F, HEIGHT_MAP_SCALE, HEIGHT_MAP_SCALE, 0, GL_RED, GL_FLOAT, &this->heightMap[0]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D,0);
 }
 
 void Planet::initVBO() {
@@ -77,15 +129,12 @@ void Planet::loadVertex() {
 	glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->vertex_number * this->vertex_size * 2, 0, GL_STATIC_DRAW);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * this->vertex_number * this->vertex_size, this->vertex_array);
-		glBufferSubData(GL_ARRAY_BUFFER, sizeof(float) * this->vertex_number * this->vertex_size, sizeof(float) * this->vertex_number * this->vertex_size, this->vertex_array);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glBindVertexArray(this->VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(float) * this->vertex_number * this->vertex_size));
-			glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
@@ -130,7 +179,7 @@ void Planet::loadShader() {
 void Planet::render() {
 	glUseProgram(this->programID);
 
-	this->model = glm::rotate(this->model, (glm::mediump_float) -0.05, glm::vec3(1.0,1.0,1.0));
+	this->model = glm::rotate(this->model, (glm::mediump_float) 0.05, glm::vec3(1.0,1.0,1.0));
 	this->view = glm::translate(glm::mat4(1.0), glm::vec3(0.f, 0.0f, -2.00f));
 	this->projection = glm::perspective(45.0, (double) this->width/this->height, 0.1, 10000.0);
 
@@ -140,7 +189,7 @@ void Planet::render() {
 		glUniformMatrix4fv(glGetUniformLocation(this->programID, "model"), 1, GL_FALSE, glm::value_ptr(this->model));
 		glUniformMatrix4fv(glGetUniformLocation(this->programID, "view"), 1, GL_FALSE, glm::value_ptr(this->view));
 		glUniformMatrix4fv(glGetUniformLocation(this->programID, "projection"), 1, GL_FALSE, glm::value_ptr(this->projection));
-
+		glBindTexture(GL_TEXTURE_2D, this->textureID);
 		glDrawArrays(GL_TRIANGLES,0,this->vertex_number * this->vertex_size);
 	glBindVertexArray(0);
 	glUseProgram(0);
