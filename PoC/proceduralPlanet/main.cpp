@@ -59,29 +59,6 @@ Planet::Planet(int width, int height, int resolution) {
 
 	this->initVertex(resolution);
 	
-	min = 6.283184;
-	max = 0.0;
-	float altitude,theta,phi;
-	for(int i = 0; i < this->vertex_number*3; i+=3) {
-		altitude =  sqrt( pow(this->vertex_array[i+0],2) + pow(this->vertex_array[i+1],2) + pow(this->vertex_array[i+2],2) );
-		theta = acos(this->vertex_array[i+2]/altitude);
-
-		phi = atan(this->vertex_array[i+1]/this->vertex_array[i+0]) + 1.5708;
-		if ( this->vertex_array[i+0] < 0) {
-			phi = 1.5708 + phi;
-		}
-		else if (this->vertex_array[i+0] > 0 && this->vertex_array[i+1] < 0) {
-			phi = 4.712388 + phi;
-		}
-
-		if (phi > max)
-			max = phi;
-		if (phi < min)
-			min = phi;
-	}
-
-	std::cout << "min: " << min << " " << "max: " << max << "\n";
-
 	this->vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	this->fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
