@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <cstdio>
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -11,7 +12,7 @@
 #include <unistd.h>
 #define WINDOW_WIDTH 480
 #define WINDOW_HEIGHT 480
-#define HEIGHT_MAP_SCALE 256
+#define HEIGHT_MAP_SCALE 512
 
 Planet::Planet(int width, int height, int resolution) {
 	this->heightMap = (float *) malloc( sizeof( float ) * HEIGHT_MAP_SCALE * HEIGHT_MAP_SCALE); 
@@ -59,32 +60,32 @@ Planet::Planet(int width, int height, int resolution) {
 	this->initVertex(resolution);
 
 	this->vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	this->vertexShader =
-			"#version 130\n"
-			"in vec3 vertex;\n"
-			"uniform mat4 model;\n"
-			"uniform mat4 view;\n"
-			"uniform mat4 projection;\n"
-			"uniform sampler2D heightMap;\n"
-			"void main() {\n"
-			"	float radius = 0.7071068;\n"
-			"	float x = acos(vertex.z / sqrt( pow(vertex.x,2) +  pow(vertex.y,2) +  pow(vertex.z,2))) / 3.141592;\n"
-			"	float sign = 1.0;\n"
-			"	float y = atan(vertex.y/vertex.x) / ( 2 * 3.141592) ;\n"
-			"	float currentRadius = sqrt( pow(vertex.x, 2) +  pow(vertex.y, 2) +  pow(vertex.z, 2));\n"
-			"	float depth = texture(heightMap, vec2(x,y)).x;\n"
-			"	gl_Position = projection * view * model * vec4(vertex.xyz * ((radius -0.5 * depth) / currentRadius ), 1.0);\n"
-			"	gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;\n" 
-			"	gl_FrontColor = vec4(vec3(vertex.x+0.5, vertex.y+0.5, vertex.z+0.5) - 0.75 * depth, 1.0);\n"
-			"}";
-
-
 	this->fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-	this->fragmentShader =	"#version 130\n"
-				"out vec4 color;\n" 
-				"void main() {\n"
-				"	color = gl_Color;\n"
-				"}\n";
+
+	// Loading vertex shader
+	FILE * shader = fopen ("vertex.shader", "rb");
+	this->vertexShader = new char[1280];
+	for (int i=0;i<1280;i++) {
+		this->vertexShader[i] = fgetc(shader);
+		if (this->vertexShader[i] == EOF) {
+			this->vertexShader[i] = '\0';
+			break;
+		}
+	}
+	fclose(shader);
+
+	// Loading fragment shader
+	shader = fopen ("fragment.shader", "rb");
+	this->fragmentShader = new char[128];
+	for (int i=0;i<1024;i++) {
+		this->fragmentShader[i] = fgetc(shader);
+		if (this->fragmentShader[i] == EOF) {
+			this->fragmentShader[i] = '\0';
+			break;
+		}
+	}
+	fclose(shader);
+
 
 	this->initTexture();
 	this->initVBO();
@@ -179,7 +180,7 @@ void Planet::loadShader() {
 void Planet::render() {
 	glUseProgram(this->programID);
 
-	this->model = glm::rotate(this->model, (glm::mediump_float) 0.05, glm::vec3(1.0,1.0,1.0));
+	this->model = glm::rotate(this->model, (glm::mediump_float) 0.025, glm::vec3(1.0,1.0,1.0));
 	this->view = glm::translate(glm::mat4(1.0), glm::vec3(0.f, 0.0f, -2.00f));
 	this->projection = glm::perspective(45.0, (double) this->width/this->height, 0.1, 10000.0);
 
