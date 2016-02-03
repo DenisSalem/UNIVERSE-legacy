@@ -14,7 +14,7 @@ int writePng( float * matrix, int size);
 
 unsigned long int getRandom();
 void UNIVERSE_MASK_1(float ** matrix, unsigned long int scale);
-void UNIVERSE_NOISE_1(float * matrix, float ** mask, unsigned long int scale, unsigned long int offsetX, unsigned long int offsetY, unsigned long int realScale);
+void UNIVERSE_NOISE_1(float * matrix, float ** mask, unsigned long int scale, long int offsetX, long int offsetY, unsigned long int realScale);
 
 class Planet {
 	public:
