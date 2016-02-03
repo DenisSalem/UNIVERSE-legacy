@@ -55,7 +55,6 @@ int writePng( PIXEL ** matrix, int size) {
         row_pointers = (png_bytep*) malloc(sizeof(png_bytep) * size);
         for (y=0; y<size; y++)
                 row_pointers[y] = (png_byte*) malloc(png_get_rowbytes(png_ptr,info_ptr));
-
         /* COPY BUFFER */
         if (png_get_color_type(png_ptr, info_ptr) == PNG_COLOR_TYPE_RGB)
                 //abort_("[process_file] input file is PNG_COLOR_TYPE_RGB but must be PNG_COLOR_TYPE_RGBA "
@@ -72,13 +71,10 @@ int writePng( PIXEL ** matrix, int size) {
                 for (x=0; x<size; x++) {
                         png_byte* ptr = &(row[x*4]);
 
-                        /* set red value to 0 and green value to the blue one */
                         ptr[0] = matrix[x][y].Red;
                         ptr[1] = matrix[x][y].Green;
                         ptr[2] = matrix[x][y].Blue;
-                        ptr[3] = matrix[x][y].Alpha;
-                        //printf("Pixel at position [ %d - %d ] has RGBA values: %d - %d - %d - %d\n",
-                        //       x, y, ptr[0], ptr[1], ptr[2], ptr[3]);
+                        ptr[3] = 255;
                 }
         }
 
@@ -103,4 +99,5 @@ int writePng( PIXEL ** matrix, int size) {
         free(row_pointers);
 
         fclose(fp);
+
 }

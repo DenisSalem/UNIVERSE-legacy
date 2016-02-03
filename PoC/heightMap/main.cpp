@@ -4,8 +4,6 @@
 #include <math.h>
 #include "png.cpp"
 
-// g++ demo0x02.cpp -lpng -lm; ./a.out 512
-
 unsigned long int getRandom() {
         timespec tStruct;
         clock_gettime(CLOCK_REALTIME, &tStruct);
@@ -30,7 +28,7 @@ void UNIVERSE_MASK_1(long double ** matrix, unsigned long int scale) {
 	}
 }
 
-void UNIVERSE_NOISE_1(long double ** matrix, long double ** mask, unsigned long int scale, unsigned long int offsetX, unsigned long int offsetY, unsigned long int realScale) {
+void UNIVERSE_NOISE_1(long double * matrix, long double ** mask, unsigned long int scale, unsigned long int offsetX, unsigned long int offsetY, unsigned long int realScale) {
 	if (scale == 1) {
 		return;
 	}
@@ -46,7 +44,7 @@ void UNIVERSE_NOISE_1(long double ** matrix, long double ** mask, unsigned long 
 		maskY = 0;
 			for(y=0;y<scale;y++) {
 				if ( randX + offsetX + x < realScale && randX + offsetX +x >= 0 && randY + offsetY + y < realScale && randY + offsetY + y >= 0) {
-					matrix[x+randX+offsetX][y+randY+offsetY] += mask[maskX][maskY] / (inc);
+					matrix[ ((x+randX+offsetX) * realScale) + y+randY+offsetY] += mask[maskX][maskY] / (inc);
 				}
 				maskY+=inc;
 			}
@@ -68,18 +66,19 @@ int main(int argc, char ** argv) {
 	// INIATE SHIT N STUFF
 	unsigned long int scale = atoi(argv[1]);
 	unsigned long int x,y,i,j;
-	long  double ** matrix;
+	long double * matrix;
 	long double ** mask;
-	matrix	= (long double **) malloc( sizeof( long double *) * scale );
+	matrix	= (long double *) malloc( sizeof( long double ) * scale * scale);
 	mask 	= (long double **) malloc( sizeof( long double *) * scale );
         PIXEL ** png = (PIXEL **) malloc(sizeof(PIXEL *) * scale);
 
 	for (x=0; x<scale;x++) {
-		matrix[x] = (long double *) malloc( sizeof(long double) * scale );
-		for(y=0;y<scale;y++){
-			matrix[x][y] = 0;
-		}
 		mask[x] = (long double *) malloc( sizeof(long  double) * scale );
+	}
+	for (x=0; x<scale;x++) {
+		for(y=0;y<scale;y++){
+			matrix[x*scale+y] = 0;
+		}
 		png[x] = (PIXEL *) malloc(sizeof(PIXEL) * scale);
 	}
 
@@ -87,25 +86,25 @@ int main(int argc, char ** argv) {
 	UNIVERSE_NOISE_1(matrix, mask, scale, 0, 0, scale);
         // Adjust color Levels
         long double max=0,min = 65536;
-        for (i=0; i<scale;i++) {
-                for(j=0;j<scale;j++) {
-                        if (matrix[i][j] > max) {
-                                max = matrix[i][j];
+        for (x=0; x<scale;x++) {
+                for(y=0;y<scale;y++) {
+                        if (matrix[x*scale+y] > max) {
+                                max = matrix[x*scale+y];
                         }
-                        if (matrix[i][j] < min) {
-                                min = matrix[i][j];
+                        if (matrix[x*scale+y] < min) {
+                                min = matrix[x*scale+y];
                         }
                 }
         }
 
         char color;
-        for (i=0; i<scale;i++) {
-                for(j=0;j<scale;j++) {
-                        color = ((matrix[i][j]) * 255) / (max);
-                        png[i][j].Alpha = 0xFF;
-                        png[i][j].Red = color;
-                        png[i][j].Green = color;
-                        png[i][j].Blue = color;
+        for (x=0; x<scale;x++) {
+                for(y=0;y<scale;y++) {
+                        color = ((matrix[x*scale+y]) * 255) / (max);
+                        png[x][y].Alpha = 0xFF;
+                        png[x][y].Red = color;
+                        png[x][y].Green = color;
+                        png[x][y].Blue = color;
                 }
         }
         writePng(png,scale);
