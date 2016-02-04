@@ -7,8 +7,10 @@
 #ifndef BUFFER_OFFSET
     #define BUFFER_OFFSET(offset) ((char*)NULL + (offset))
 #endif
-
-#define PI 3.141592
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 800
+#define HEIGHT_MAP_SCALE 256
+#define PI 	3.141592
 
 int writePng( float * matrix, int size);
 
@@ -24,6 +26,9 @@ class Planet {
 	private:
 		float * heightMap;
 		float ** mask;
+
+		float heightMapMin;
+		float heightMapMax;
 
 		int width;
 		int height;

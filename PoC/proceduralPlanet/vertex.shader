@@ -26,7 +26,7 @@ void main() {
 
 	float depth = texture(heightMap, vec2(phi,theta)).x;
  
-	gl_Position = projection * view * model * vec4(vertex.xyz * ((radius) / (currentRadius) - 0.5 * depth) , 1.0);
+	gl_Position = projection * view * model * vec4(vertex.xyz * ((radius - 0.1 * depth) / (currentRadius)) , 1.0);
 	gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
-	gl_FrontColor = vec4(vec3(vertex.x,vertex.y,vertex.z) + 0.5 - 0.5 * depth, 1.0);
+	gl_FrontColor = vec4(vec3(0.45,0.30,0.14) - depth, 1.0);
 } 
