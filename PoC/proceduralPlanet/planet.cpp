@@ -112,7 +112,7 @@ Planet::~Planet() {
 void Planet::initTexture() {
 	glGenTextures(1, &this->textureID);
 	glBindTexture(GL_TEXTURE_2D, this->textureID);
-		glTexImage2D(GL_TEXTURE_2D, 0,  GL_R32F, HEIGHT_MAP_SCALE, HEIGHT_MAP_SCALE, 0, GL_RED, GL_FLOAT, &this->heightMap[0]);
+		glTexImage2D(GL_TEXTURE_2D, 0,  GL_R32F, HEIGHT_MAP_SCALE, HEIGHT_MAP_SCALE, 0, GL_RED, GL_FLOAT, this->heightMap);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D,0);
@@ -189,7 +189,7 @@ void Planet::loadShader() {
 void Planet::render() {
 	glUseProgram(this->programID);
 
-	this->model = glm::rotate(this->model, (glm::mediump_float) 0.025, glm::vec3(1.0,1.0,1.0));
+	this->model = glm::rotate(this->model, (glm::mediump_float) 0.01, glm::vec3(1.0,1.0,1.0));
 	this->view = glm::translate(glm::mat4(1.0), glm::vec3(0.f, 0.0f, -2.00f));
 	this->projection = glm::perspective(45.0, (double) this->width/this->height, 0.1, 10000.0);
 
@@ -200,8 +200,8 @@ void Planet::render() {
 		glUniformMatrix4fv(glGetUniformLocation(this->programID, "view"), 1, GL_FALSE, glm::value_ptr(this->view));
 		glUniformMatrix4fv(glGetUniformLocation(this->programID, "projection"), 1, GL_FALSE, glm::value_ptr(this->projection));
 		glBindTexture(GL_TEXTURE_2D, this->textureID);
-		//glPolygonMode(GL_FRONT, GL_LINE);
-		//glPolygonMode(GL_BACK, GL_LINE);
+		glPolygonMode(GL_FRONT, GL_LINE);
+		glPolygonMode(GL_BACK, GL_LINE);
 		glDrawArrays(GL_TRIANGLES,0,this->vertex_number * this->vertex_size);
 	glBindVertexArray(0);
 	glUseProgram(0);
