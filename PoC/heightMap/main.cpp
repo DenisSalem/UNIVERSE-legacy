@@ -133,6 +133,5 @@ int main(int argc, char ** argv) {
                 }
         }
         writePng(png,scale);
-	
 	return 0;
 }
