@@ -39,14 +39,16 @@ void UNIVERSE_NOISE_1(long double * matrix, long double ** mask, unsigned long i
 	int inc = realScale / scale;
 	unsigned long int maskX=0, maskY=0;
 	long int wrapX,wrapY;
-	char doIt = getRandom() & 1;
+	char seed = getRandom() & 3;
+	char doIt = seed & 1;
+	float sign = seed & 2 ? -1.0 : 1.0;
 	if (doIt) {
 	for(x=0;x<scale;x++) {
 		maskY = 0;
 			for(y=0;y<scale;y++) {
 				// Easy Case
 				if ( randX + offsetX + x < realScale && randX + offsetX +x >= 0 && randY + offsetY + y < realScale && randY + offsetY + y >= 0) {
-					matrix[ ((x+randX+offsetX) * realScale) + y+randY+offsetY] += mask[maskX][maskY] / (inc);
+					matrix[ ((x+randX+offsetX) * realScale) + y+randY+offsetY] += sign * mask[maskX][maskY] / (inc);
 				}
 				// Wrap shit n stuff
 				else {
@@ -67,7 +69,7 @@ void UNIVERSE_NOISE_1(long double * matrix, long double ** mask, unsigned long i
 						wrapY = -realScale;
 					}
 
-					matrix[ (  wrapX + x + offsetX  + randX) * realScale + (y+randY+offsetY) + wrapY] += mask[maskX][maskY] / (inc);
+					matrix[ (  wrapX + x + offsetX  + randX) * realScale + (y+randY+offsetY) + wrapY] += sign * mask[maskX][maskY] / (inc);
 				}
 				maskY+=inc;
 			}
@@ -125,7 +127,7 @@ int main(int argc, char ** argv) {
         char color;
         for (x=0; x<scale;x++) {
                 for(y=0;y<scale;y++) {
-                        color = ((matrix[x*scale+y]) * 255) / (max);
+                        color = (((matrix[x*scale+y]) - min ) * 255) / (max - min);
                         png[x][y].Alpha = 0xFF;
                         png[x][y].Red = color;
                         png[x][y].Green = color;
