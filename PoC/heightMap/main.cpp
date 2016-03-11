@@ -122,8 +122,6 @@ int main(int argc, char ** argv) {
                 }
         }
 
-	std::cout << max << "\n";
-
         char color;
         for (x=0; x<scale;x++) {
                 for(y=0;y<scale;y++) {

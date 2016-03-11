@@ -250,6 +250,10 @@ void UNIVERSE_NOISE_1( HEIGHTMAP * heightmap, int scale, int offsetX, int offset
 }
 
 int main(int argc, char ** argv) {
+        if (argc == 1) {
+          std::cout << "Usage: ./heighMap <power of two>\n";
+          return 0;
+        }
 	HEIGHTMAP heightmap;
 	heightmap.max = 0;
 	heightmap.min = 0;
