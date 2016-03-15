@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "png.c"
+
 // On définit une macro d'interpolation, appriori plus rapide qu'un appel de fonction.
 // la formule est la suivante:  6t^5 - 15t^4 + 10t^3
 #define interpolation(t) (6 * t * t * t * t * t - 15 * t * t * t * t + 10 * t * t * t)
@@ -13,7 +14,6 @@
 // Ici G comporte 8 pair de coordonnée. Dans l'implémentation amélioré G comporte
 // 12 triplet de coordonnée pour pouvoir travailler dans un cube, et comme ce n'est pas
 // le cas ici... :)
-
 int G[8][2] = {
     {1,1},    {-1,1},   {1,-1},   {-1,-1},
     {1,0},    {-1,0},   {0,1},    {0,-1},
@@ -23,20 +23,24 @@ int G[8][2] = {
 int G1,G2,G3,G4;
 
 // Contient le résultat du produit scalaire de Gn avec P-Q dans une base orthonormal.
-float s,t,u,v;
+double s,t,u,v;
 
 //Contient les coordonnées X et Y des vecteurs (P-Q) et du point P.
 int Q1[2] ,Q2[2],Q3[2],Q4[2];
-float p[2];
+double p[2];
 
-// Résultat de la macro interpolation en X et Y
-float iX,iY;
+// Résultat de la macro d'interpolation en X et Y, tmp permet de stocker P-Q avant d'être
+// injecté dans la macro.
+double iX,iY,tmp;
 
-// Résultat de l'interpolation en s/t et u/v
-float iST;
-float iUV;
+// Résultat de l'interpolation horizontal en st et uv
+double iST;
+double iUV;
 
-// La table de permutation
+// La table de permutation. En l'état, l'algorithme produira toujours le même terrain 
+// pseudo-aléatoire. Pour obtenir un vrai terrain pseudo-aléatoire différent à chaque
+// il faudrait changer ou désordonner cette table de permutation avant d'entrer dans
+// la boucle principal ou est appelé notre fonction de bruit.
 int P[256] = {
  235,249,14,239,107,49,192,214, 31,181,199,106,157,184, 84,204,176,115,121,50,45,
  127, 4,150,254,138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,
@@ -57,7 +61,7 @@ int P[256] = {
 // dehors de notre grille. Pour cela on envoie à notre fonction les coordonnées d'un
 // point de la matrix, que l'on remet ensuite à l'échelle de la façon suivante
 // C = c / scale
-// avec C la coordonnée mise à l'échelle et c la coordonné entiére.
+// avec C la coordonnée mise à l'échelle et c la coordonné entiére d'origine.
 
 int X,Y;
 
@@ -83,8 +87,8 @@ double PerlinNoise2D(int x, int y, unsigned int scale) {
   // L'initialisation peut sembler alambiqué, mais c'est 
   // pour épargner au processeur des calculs inutiles.
 
-  p[0] = (float) (x % scale) / scale;
-  p[1] = (float) (y % scale) / scale;
+  p[0] = (double) x / scale;
+  p[1] = (double) y / scale;
 
   // Coin supérieur gauche
   Q1[0] = (int) p[0];
@@ -102,11 +106,12 @@ double PerlinNoise2D(int x, int y, unsigned int scale) {
   Q4[0] = Q1[0];
   Q4[1] = Q3[1];
 
+
   // On récupére pseudo aléatoirement les gradients.
-  G1 = P[ (x +     P[ y       & 255]) & 255 ] & 7;  // Gradient supérieur gauche
-  G2 = P[ (x + 1 + P[ y       & 255]) & 255 ] & 7;  // Gradient supérieur droit
-  G3 = P[ (x + 1 + P[ (y + 1) & 255]) & 255 ] & 7;  // Gradient inférieur droit
-  G4 = P[ (x +     P[ (y+1)   & 255]) & 255 ] & 7;  // Gradient inférieur gauche
+  G1 = P[ (Q1[0] + P[ Q1[1] & 255]) & 255 ] & 7;  // Gradient supérieur gauche
+  G2 = P[ (Q2[0] + P[ Q2[1] & 255]) & 255 ] & 7;  // Gradient supérieur droit
+  G3 = P[ (Q3[0] + P[ Q3[1] & 255]) & 255 ] & 7;  // Gradient inférieur droit
+  G4 = P[ (Q4[0] + P[ Q4[1] & 255]) & 255 ] & 7;  // Gradient inférieur gauche
 
   // On calcul le produit scalaire Gn . (P-Qn)
   // Avec P faisant référence aux coordonnées du poin stocké dans p.
@@ -117,12 +122,17 @@ double PerlinNoise2D(int x, int y, unsigned int scale) {
   v = G[G4][0] * (p[0]-Q4[0]) + G[G4][1] * (p[1]-Q4[1]);
 
   
-
-  iX = interpolation(p[0]-Q1[0]);
-  iY = interpolation(p[1]-Q1[1]);
+  // On interpole en x sur le segment st et uv
+  tmp = p[0]-Q1[0];
+  iX = interpolation(tmp);
 
   iST = s + iX * (t-s);
   iUV = v + iX * (u-v);
+
+  // On interpole y sur le segment iST et iUV
+  tmp = p[1]-Q1[1];
+
+  iY = interpolation(tmp);
 
   return (1 + iST + iY * (iUV - iST)) * 0.5;
 }
@@ -135,25 +145,51 @@ int main(int argc, char ** argv) {
   int scale = atoi(argv[1]);
 
 
-// Matrix de 256² pixel simulé avec un tableau de longueur 256²
+  // Matrix de 256² pixel simulé avec un tableau de longueur 256²
   // C'est dans ce tableau que nous allons stocker notre heightmap
   double * grid = (double *) malloc(sizeof(double) * scale * scale);
   
-  int i,j;
+  // i et j correspondent respectivement aux axes x et y.
+  // k correspond à la fréquence du bruit dans l'octave courrante.
+  int i,j,k;
+
+  float min=2,max=0;
+
+  // Selon le type de texture on peut ne pas utiliser de coef ou
+  // l'utiliser différamment. Mais l'idée ici est de diminué
+  // l'influence du bruit à mesure que la fréquence augmente.
+  double coef = 1.0; 
+
   for(j=0; j<scale;j++) {
     for(i=0; i<scale;i++) {
-      grid[ i + j*scale ] = PerlinNoise2D(i,j, scale/4);
+      coef = 1.0;
+      grid[ i + j*scale] = 0;
+      for(k=scale;k>=1; k/=2) {
+        grid[ i + j*scale ] += PerlinNoise2D(i,j, k) * coef;
+        coef /= 2.0;
+      }
+      if (min > grid[ i + j*scale]) {
+        min = grid[ i + j*scale];
+      }
+      if (max < grid[ i + j*scale]) {
+        max = grid[ i + j*scale];
+      }
     }
   }
 
+  // Ici la texture est terminé. Il ne reste plus que la normaliser en
+  // vue de l'utiliser.
+
+  double normalizedIntensity;
   PIXEL ** matrix = (PIXEL **) malloc( scale * sizeof(PIXEL * ));
   for(j=0;j<scale;j++) {
     matrix[j] = (PIXEL *) malloc( scale * sizeof(PIXEL));
     for (i=0; i< scale;i++) {
+      normalizedIntensity = (grid[ i + j * scale ] - min) * ( 1.0 / (max-min) );
       matrix[j][i].Alpha  = 255;
-      matrix[j][i].Red    = (char) (grid[ i + j * scale ] * 255);
-      matrix[j][i].Blue   = (char) (grid[ i + j * scale ] * 255);
-      matrix[j][i].Green  = (char) (grid[ i + j * scale ] * 255);
+      matrix[j][i].Red    = (char) (normalizedIntensity * 255);
+      matrix[j][i].Blue   = (char) (normalizedIntensity * 255);
+      matrix[j][i].Green  = (char) (normalizedIntensity * 255);
     }
   }
 
