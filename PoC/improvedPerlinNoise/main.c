@@ -108,10 +108,12 @@ double PerlinNoise2D(int x, int y, unsigned int scale) {
 
 
   // On récupére pseudo aléatoirement les gradients.
-  G1 = P[ (Q1[0] + P[ Q1[1] & 255]) & 255 ] & 7;  // Gradient supérieur gauche
-  G2 = P[ (Q2[0] + P[ Q2[1] & 255]) & 255 ] & 7;  // Gradient supérieur droit
-  G3 = P[ (Q3[0] + P[ Q3[1] & 255]) & 255 ] & 7;  // Gradient inférieur droit
-  G4 = P[ (Q4[0] + P[ Q4[1] & 255]) & 255 ] & 7;  // Gradient inférieur gauche
+  // Pour éviter la répétition de motifs fractal à chaque octave 
+  // l'indice final dépend de l'octave courant
+  G1 = P[ (Q1[0] + P[ Q1[1] & 255] + scale) & 255 ] & 7;  // Gradient supérieur gauche
+  G2 = P[ (Q2[0] + P[ Q2[1] & 255] + scale) & 255 ] & 7;  // Gradient supérieur droit
+  G3 = P[ (Q3[0] + P[ Q3[1] & 255] + scale) & 255 ] & 7;  // Gradient inférieur droit
+  G4 = P[ (Q4[0] + P[ Q4[1] & 255] + scale) & 255 ] & 7;  // Gradient inférieur gauche
 
   // On calcul le produit scalaire Gn . (P-Qn)
   // Avec P faisant référence aux coordonnées du poin stocké dans p.
