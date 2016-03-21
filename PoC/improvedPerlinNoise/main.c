@@ -22,10 +22,10 @@ int G[8][2] = {
 // Chaque vecteur gradient est référé par un indice Gn du tableau G
 int G1,G2,G3,G4;
 
-// Contient le résultat du produit scalaire de Gn avec P-Q dans une base orthonormal.
+// Contient le résultat du produit scalaire de Gn avec P-Q dans une base orthonormale.
 double s,t,u,v;
 
-//Contient les coordonnées X et Y des vecteurs (P-Q) et du point P.
+//Contient les coordonnées X et Y des points Qn et du point P.
 int Q1[2] ,Q2[2],Q3[2],Q4[2];
 double p[2];
 
@@ -39,8 +39,8 @@ double iUV;
 
 // La table de permutation. En l'état, l'algorithme produira toujours le même terrain 
 // pseudo-aléatoire. Pour obtenir un vrai terrain pseudo-aléatoire différent à chaque
-// il faudrait changer ou désordonner cette table de permutation avant d'entrer dans
-// la boucle principal ou est appelé notre fonction de bruit.
+// lancement du programme il faudrait changer ou désordonner cette table de permutation
+// avant d'entrer dans la boucle principal ou est appelé notre fonction de bruit.
 int P[256] = {
  235,249,14,239,107,49,192,214, 31,181,199,106,157,184, 84,204,176,115,121,50,45,
  127, 4,150,254,138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,
@@ -57,18 +57,16 @@ int P[256] = {
  156,180};
 
 
-// Les coordonnées X et Y doivent être des réelles positifs, sinon nous serions en 
+// Les coordonnées x et y doivent être des réelles positifs, sinon nous serions en 
 // dehors de notre grille. Pour cela on envoie à notre fonction les coordonnées d'un
 // point de la matrix, que l'on remet ensuite à l'échelle de la façon suivante
 // C = c / scale
 // avec C la coordonnée mise à l'échelle et c la coordonné entiére d'origine.
 
-int X,Y;
-
-// La fonction prend également en paramétre un entier
+// La fonction prend également en paramétre un entier -l'octave-
 // positif qui détermine la taille de notre grille. Par exemple si la matrix
 // de destination à une résolution de 256² éléments et que notre entier vaut
-// 128 alors alors la taille de la grille sera en fait de 2² élément, soit 3³
+// 128 alors alors la taille de la grille sera en fait de 2² élément, soit 3²
 // noeud:
 //
 //
@@ -116,7 +114,7 @@ double PerlinNoise2D(int x, int y, unsigned int scale) {
   G4 = P[ (Q4[0] + P[ Q4[1] & 255] + scale) & 255 ] & 7;  // Gradient inférieur gauche
 
   // On calcul le produit scalaire Gn . (P-Qn)
-  // Avec P faisant référence aux coordonnées du poin stocké dans p.
+  // Avec P faisant référence aux coordonnées du point stocké dans p.
   // (P étant la table de permutation)
   s = G[G1][0] * (p[0]-Q1[0]) + G[G1][1] * (p[1]-Q1[1]);
   t = G[G2][0] * (p[0]-Q2[0]) + G[G2][1] * (p[1]-Q2[1]);
@@ -136,6 +134,7 @@ double PerlinNoise2D(int x, int y, unsigned int scale) {
 
   iY = interpolation(tmp);
 
+  // On retourne le résultat normalisé.
   return (1 + iST + iY * (iUV - iST)) * 0.5;
 }
 
@@ -147,18 +146,18 @@ int main(int argc, char ** argv) {
   int scale = atoi(argv[1]);
 
 
-  // Matrix de 256² pixel simulé avec un tableau de longueur 256²
+  // Matrix de 256 pixels² simulé avec un tableau de longueur 256²
   // C'est dans ce tableau que nous allons stocker notre heightmap
   double * grid = (double *) malloc(sizeof(double) * scale * scale);
   
   // i et j correspondent respectivement aux axes x et y.
-  // k correspond à la fréquence du bruit dans l'octave courrante.
+  // k correspond à l'octave courrante.
   int i,j,k;
 
   float min=2,max=0;
 
   // Selon le type de texture on peut ne pas utiliser de coef ou
-  // l'utiliser différamment. Mais l'idée ici est de diminué
+  // l'utiliser différamment. Mais l'idée ici est de diminuer
   // l'influence du bruit à mesure que la fréquence augmente.
   double coef = 1.0; 
 
@@ -166,7 +165,7 @@ int main(int argc, char ** argv) {
     for(i=0; i<scale;i++) {
       coef = 1.0;
       grid[ i + j*scale] = 0;
-      for(k=scale;k>=1; k/=2) {
+      for(k=scale/2;k>=1; k/=2) {
         grid[ i + j*scale ] += PerlinNoise2D(i,j, k) * coef;
         coef /= 2.0;
       }
@@ -180,7 +179,7 @@ int main(int argc, char ** argv) {
   }
 
   // Ici la texture est terminé. Il ne reste plus que la normaliser en
-  // vue de l'utiliser.
+  // vue de l'exploiter.
 
   double normalizedIntensity;
   PIXEL ** matrix = (PIXEL **) malloc( scale * sizeof(PIXEL * ));

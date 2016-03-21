@@ -193,7 +193,7 @@ void Planet::CREATE_VAO() {
 void Planet::LOAD_VERTEX() {
 	glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * this->vertex_number, 0, GL_STATIC_DRAW);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * this->vertex_number, this->vertex_array);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * this->vertex_number, this->vertex_array[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glBindVertexArray(this->VAO);
@@ -294,15 +294,20 @@ void Planet::CREATE_VERTICES(int LOD) {
 	std::cout << "Initiate Cube with " << this->vertex_number << " vertices.\n";
 	std::cout << "Initiate Cube with " << this->indice_number << " indices.\n";
 
-	this->vertex_array = new glm::vec3[this->vertex_number];
+	this->vertex_array[0] = new glm::vec3[this->vertex_number];
+	this->vertex_array[1] = new glm::vec3[this->vertex_number];
 	this->indice_array = new short int[this->indice_number];
 
 	// create vertices
 	for (int y=0; y<this->cube_scale; y++) {
 		for (int x=0; x<this->cube_scale; x++) {
-			this->vertex_array[this->cube_scale*y + x].x = -0.5 + x * step;
-			this->vertex_array[this->cube_scale*y + x].y = 0.5 - y * step;
-			this->vertex_array[this->cube_scale*y + x].z = 0.5;
+			this->vertex_array[0][this->cube_scale*y + x].x = -0.5 + x * step;
+			this->vertex_array[0][this->cube_scale*y + x].y = 0.5 - y * step;
+			this->vertex_array[0][this->cube_scale*y + x].z = 0.5;
+
+                        this->vertex_array[1][this->cube_scale*y + x].x = -0.5 + x * step;
+			this->vertex_array[1][this->cube_scale*y + x].y = 0.5 - y * step;
+			this->vertex_array[1][this->cube_scale*y + x].z = -0.5;
 		}	
 	}
 
@@ -315,7 +320,7 @@ void Planet::CREATE_VERTICES(int LOD) {
 	int i = 0;
 
 	while (true) {
-		this->indice_array[ i ]		= this->cube_scale * y + x; 
+		this->indice_array[ i ]	= this->cube_scale * y + x; 
 		this->indice_array[ i + 1]	= this->cube_scale*(y+1)+x;
 		i+=2;
 		if (x == this->cube_scale -1 || (x == 0 && i > 2)) {

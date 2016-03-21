@@ -49,7 +49,7 @@ class Planet {
 		float heightMapMin;
 		float heightMapMax;
 
-		glm::vec3 * vertex_array;
+		glm::vec3 * vertex_array[6];
 		short int * indice_array;
 
 		float * heightMap;
