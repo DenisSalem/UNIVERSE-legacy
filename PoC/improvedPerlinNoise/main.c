@@ -6,7 +6,7 @@
 // la formule est la suivante:  6t^5 - 15t^4 + 10t^3
 #define interpolation(t) (6 * t * t * t * t * t - 15 * t * t * t * t + 10 * t * t * t)
 
-//  Certaines variables et tableaux sont globa-ux-les afin de ne pas être empilé-e-s lors de
+//  Certaines variables et tableaux sont globaaux afin de ne pas être empilés lors de
 //  l'appel de la fonction PerlinNoise2D, ce qui nous fera économiser des instructions
 //  et du temps CPU.
 
