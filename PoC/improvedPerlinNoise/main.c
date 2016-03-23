@@ -37,9 +37,9 @@ double iX,iY,tmp;
 double iST;
 double iUV;
 
-// La table de permutation. En l'état, l'algorithme produira toujours le même terrain 
+// La table de permutations. En l'état, l'algorithme produira toujours le même terrain 
 // pseudo-aléatoire. Pour obtenir un vrai terrain pseudo-aléatoire différent à chaque
-// lancement du programme il faudrait changer ou désordonner cette table de permutation
+// lancement du programme il faudrait changer ou désordonner cette table de permutations
 // avant d'entrer dans la boucle principale ou est appelée notre fonction de bruit.
 int P[256] = {
  235,249,14,239,107,49,192,214, 31,181,199,106,157,184, 84,204,176,115,121,50,45,
@@ -115,7 +115,7 @@ double PerlinNoise2D(int x, int y, unsigned int scale) {
 
   // On calcule le produit scalaire Gn . (P-Qn)
   // Avec P faisant référence aux coordonnées du point stocké dans p.
-  // (P étant la table de permutation)
+  // (P étant la table de permutations)
   s = G[G1][0] * (p[0]-Q1[0]) + G[G1][1] * (p[1]-Q1[1]);
   t = G[G2][0] * (p[0]-Q2[0]) + G[G2][1] * (p[1]-Q2[1]);
   u = G[G3][0] * (p[0]-Q3[0]) + G[G3][1] * (p[1]-Q3[1]);
