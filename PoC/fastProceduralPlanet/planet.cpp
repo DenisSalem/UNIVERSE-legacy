@@ -141,9 +141,12 @@ void Planet::CREATE_HEIGHTMAP_1(float * matrix, float * mask, unsigned long int 
 
 
 Planet::~Planet() {
-	glDeleteBuffers(1, &this->VBO);
-	glDeleteBuffers(1, &this->VAO);
-	glDeleteBuffers(1, &this->elementBuffer);
+        for (int i=0; i < 6; i++) {
+	  glDeleteBuffers(1, &this->VBO[i]);
+	  glDeleteBuffers(1, &this->VAO[i]);
+        }
+	glDeleteBuffers(1, &this->elementBuffer[0]);
+	glDeleteBuffers(1, &this->elementBuffer[1]);
 	glDeleteBuffers(1, &this->textureID);
 	glDetachShader(this->programID, this->vertexShaderID);
 	glDetachShader(this->programID, this->fragmentShaderID);
@@ -164,44 +167,52 @@ void Planet::LOAD_HEIGHTMAP() {
 }
 
 void Planet::CREATE_ELEMENT_BUFFER() {
-	if(glIsBuffer(this->elementBuffer) == GL_TRUE) {
-        	glDeleteBuffers(1, &this->elementBuffer);
+    for(int i=0; i < 2; i++) {
+	if(glIsBuffer(this->elementBuffer[i]) == GL_TRUE) {
+        	glDeleteBuffers(1, &this->elementBuffer[i]);
 	}
-	glGenBuffers(1, &this->elementBuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->elementBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indice_number * sizeof(unsigned short), this->indice_array, GL_STATIC_DRAW);
+	glGenBuffers(1, &this->elementBuffer[i]);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->elementBuffer[i]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indice_number * sizeof(unsigned short), this->indice_array[i], GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
 }
 
 void Planet::CREATE_VBO() {
-	if(glIsBuffer(this->VBO) == GL_TRUE) {
-        	glDeleteBuffers(1, &this->VBO);
+    for(int i=0; i<6; i++) {
+	if(glIsBuffer(this->VBO[i]) == GL_TRUE) {
+        	glDeleteBuffers(1, &this->VBO[i]);
 	}
 
-	glGenBuffers(1, &this->VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, this->elementBuffer);
+	glGenBuffers(1, &this->VBO[i]);
+	glBindBuffer(GL_ARRAY_BUFFER, this->elementBuffer[i%2]);
+    }
 }
 
 void Planet::CREATE_VAO() {
-	if(glIsVertexArray(this->VAO) == GL_TRUE) {
-        	glDeleteVertexArrays(1, &this->VAO);
+    for(int i=0; i<6; i++) {
+	if(glIsVertexArray(this->VAO[i]) == GL_TRUE) {
+        	glDeleteVertexArrays(1, &this->VAO[i]);
 	}
-	glGenVertexArrays(1, &this->VAO);
+	glGenVertexArrays(1, &this->VAO[i]);
 	glBindVertexArray(0);
+    }
 }
 
 void Planet::LOAD_VERTEX() {
-	glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+  for(int i=0; i<6; i++) {
+	glBindBuffer(GL_ARRAY_BUFFER, this->VBO[i]);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * this->vertex_number, 0, GL_STATIC_DRAW);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * this->vertex_number, this->vertex_array[0]);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * this->vertex_number, this->vertex_array[i]);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	glBindVertexArray(this->VAO);
-		glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+        glBindVertexArray(this->VAO[i]);
+		glBindBuffer(GL_ARRAY_BUFFER, this->VBO[i]);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 			glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+  }
 }
 
 void Planet::LOAD_SHADER(char ** shaderBuffer, const char * fileName) {
@@ -267,12 +278,14 @@ void Planet::RENDER(int window_width, int window_height) {
         this->model = glm::rotate(this->model, (glm::mediump_float) 0.01, glm::vec3(1.0,1.0,1.0));
         this->view = glm::translate(glm::mat4(1.0), glm::vec3(0.f, 0.0f, -2.00f));
         this->projection = glm::perspective(45.0, (double) window_width/window_height, 0.1, 10000.0);
-
+glEnable(GL_CULL_FACE);  
         glPolygonMode(GL_FRONT, GL_LINE);
-        glPolygonMode(GL_BACK, GL_LINE);
+        //glPolygonMode(GL_BACK, GL_LINE);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glBindVertexArray(this->VAO);
+        
+        for(int i=0; i<6;i++) {
+          glBindVertexArray(this->VAO[i]);
 
                 glUniformMatrix4fv(glGetUniformLocation(this->programID, "model"), 1, GL_FALSE, glm::value_ptr(this->model));
                 glUniformMatrix4fv(glGetUniformLocation(this->programID, "view"), 1, GL_FALSE, glm::value_ptr(this->view));
@@ -280,9 +293,10 @@ void Planet::RENDER(int window_width, int window_height) {
 
                 glBindTexture(GL_TEXTURE_2D, this->textureID);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->elementBuffer);
-		glDrawElements(GL_TRIANGLE_STRIP, this->indice_number, GL_UNSIGNED_SHORT, (GLvoid*)0);
-        glBindVertexArray(0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->elementBuffer[i%2]);
+  	  	glDrawElements(GL_TRIANGLE_STRIP, this->indice_number, GL_UNSIGNED_SHORT, (GLvoid*)0);
+          glBindVertexArray(0);
+        }
         glUseProgram(0);
 }
 
@@ -290,13 +304,20 @@ void Planet::CREATE_VERTICES(int LOD) {
 	this->cube_scale = (2 << (LOD - 1)) + 1;
 	float step = 1.0 / (this->cube_scale-1);
 	this->vertex_number = pow(this->cube_scale,2);
-	this->indice_number = this->vertex_number*2 - 2 * this->cube_scale;
-	std::cout << "Initiate Cube with " << this->vertex_number << " vertices.\n";
+
+        this->indice_number = this->vertex_number*2 - (this->cube_scale + 2);
+
+        std::cout << "Initiate Cube with " << this->vertex_number << " vertices.\n";
 	std::cout << "Initiate Cube with " << this->indice_number << " indices.\n";
 
 	this->vertex_array[0] = new glm::vec3[this->vertex_number];
 	this->vertex_array[1] = new glm::vec3[this->vertex_number];
-	this->indice_array = new short int[this->indice_number];
+	this->vertex_array[2] = new glm::vec3[this->vertex_number];
+	this->vertex_array[3] = new glm::vec3[this->vertex_number];
+	this->vertex_array[4] = new glm::vec3[this->vertex_number];
+	this->vertex_array[5] = new glm::vec3[this->vertex_number];
+	this->indice_array[0] = new short int[this->indice_number];
+	this->indice_array[1] = new short int[this->indice_number];
 
 	// create vertices
 	for (int y=0; y<this->cube_scale; y++) {
@@ -308,11 +329,26 @@ void Planet::CREATE_VERTICES(int LOD) {
                         this->vertex_array[1][this->cube_scale*y + x].x = -0.5 + x * step;
 			this->vertex_array[1][this->cube_scale*y + x].y = 0.5 - y * step;
 			this->vertex_array[1][this->cube_scale*y + x].z = -0.5;
+
+                        this->vertex_array[2][this->cube_scale*y + x].x = -0.5 + x * step;
+			this->vertex_array[2][this->cube_scale*y + x].y = -0.5;
+			this->vertex_array[2][this->cube_scale*y + x].z = 0.5 - y * step;
+
+                        this->vertex_array[3][this->cube_scale*y + x].x = -0.5 + x * step;
+			this->vertex_array[3][this->cube_scale*y + x].y = 0.5;
+			this->vertex_array[3][this->cube_scale*y + x].z = 0.5 - y * step;
+
+			this->vertex_array[4][this->cube_scale*y + x].x = 0.5;
+                        this->vertex_array[4][this->cube_scale*y + x].y = -0.5 + x * step;
+			this->vertex_array[4][this->cube_scale*y + x].z = 0.5 - y * step;
+
+			this->vertex_array[5][this->cube_scale*y + x].x = -0.5;
+                        this->vertex_array[5][this->cube_scale*y + x].y = -0.5 + x * step;
+			this->vertex_array[5][this->cube_scale*y + x].z = 0.5 - y * step;
 		}	
 	}
 
 	// create indices
-	int offset= 18;
 	bool reverse = false;
 
 	int x = 0;
@@ -320,8 +356,8 @@ void Planet::CREATE_VERTICES(int LOD) {
 	int i = 0;
 
 	while (true) {
-		this->indice_array[ i ]	= this->cube_scale * y + x; 
-		this->indice_array[ i + 1]	= this->cube_scale*(y+1)+x;
+		this->indice_array[0][ i ]	= this->cube_scale * y     + x; 
+		this->indice_array[0][ i + 1]   = this->cube_scale * (y+1) + x;
 		i+=2;
 		if (x == this->cube_scale -1 || (x == 0 && i > 2)) {
 			if(y == this->cube_scale -2) {
@@ -329,9 +365,10 @@ void Planet::CREATE_VERTICES(int LOD) {
 			}
 			reverse = !reverse;
 			y++;
-			this->indice_array[ i ]		= this->cube_scale * y + x; 
-			this->indice_array[ i + 1]	= this->cube_scale *(y+1)+x;
-			i+=2;
+			this->indice_array[0][ i ]		= this->cube_scale * y + x; 
+			this->indice_array[0][ i + 1]	= this->cube_scale * y + x;
+			this->indice_array[0][ i + 2]	= this->cube_scale *(y+1)+x;
+			i+=3;
 			
 		}
 		if (reverse) {
@@ -341,4 +378,7 @@ void Planet::CREATE_VERTICES(int LOD) {
 			x++;
 		}
 	}
+        for(int i=0; i < this->indice_number;i++) {
+          this->indice_array[1][i] = this->indice_array[0][this->indice_number-1-i];
+        }
 }

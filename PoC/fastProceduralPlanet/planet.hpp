@@ -36,13 +36,13 @@ class Planet {
 		glm::mat4 view;
 		glm::mat4 model;
 
-		GLuint VAO;
-		GLuint VBO;
+		GLuint VAO[6];
+		GLuint VBO[6];
 		GLuint textureID;
 		GLuint vertexShaderID;
 		GLuint fragmentShaderID;
 		GLuint programID;
-		GLuint elementBuffer;
+		GLuint elementBuffer[2];
 		int vertex_number;
 		int indice_number;
 		int cube_scale;
@@ -50,7 +50,7 @@ class Planet {
 		float heightMapMax;
 
 		glm::vec3 * vertex_array[6];
-		short int * indice_array;
+		short int * indice_array[2];
 
 		float * heightMap;
 

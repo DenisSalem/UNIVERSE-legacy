@@ -1,5 +1,5 @@
 main:
-	g++ -o heightMap main.cpp -lpng -lm -O02
+	g++ -o stampNoise main.cpp -lpng -lm -O02
 
 clean:
-	rm heightMap
+	rm stampNoise

@@ -11,7 +11,7 @@ unsigned long int getRandom() {
 }
 
 
-void UNIVERSE_MASK_1(long double ** matrix, long double scale) {
+void UNIVERSE_STAMP_1(long double ** matrix, long double scale) {
 	unsigned long int x,y;
 	long double halfScale = scale / 2 ;
 	long double radius;
@@ -28,7 +28,7 @@ void UNIVERSE_MASK_1(long double ** matrix, long double scale) {
 	}
 }
 
-void UNIVERSE_NOISE_1(long double * matrix, long double ** mask, unsigned long int scale, long int offsetX, long int offsetY, unsigned long int realScale) {
+void UNIVERSE_NOISE_1(long double * matrix, long double ** stamp, unsigned long int scale, long int offsetX, long int offsetY, unsigned long int realScale) {
 	if (scale == 1) {
 		return;
 	}
@@ -37,18 +37,18 @@ void UNIVERSE_NOISE_1(long double * matrix, long double ** mask, unsigned long i
 	long int randX = - halfScale + getRandom() % scale;
 	long int randY = - halfScale + getRandom() % scale;
 	int inc = realScale / scale;
-	unsigned long int maskX=0, maskY=0;
+	unsigned long int stampX=0, stampY=0;
 	long int wrapX,wrapY;
 	char seed = getRandom() & 3;
 	char doIt = seed & 1;
 	float sign = seed & 2 ? -1.0 : 1.0;
 	if (doIt) {
 	for(x=0;x<scale;x++) {
-		maskY = 0;
+		stampY = 0;
 			for(y=0;y<scale;y++) {
 				// Easy Case
 				if ( randX + offsetX + x < realScale && randX + offsetX +x >= 0 && randY + offsetY + y < realScale && randY + offsetY + y >= 0) {
-					matrix[ ((x+randX+offsetX) * realScale) + y+randY+offsetY] += sign * mask[maskX][maskY] / (inc);
+					matrix[ ((x+randX+offsetX) * realScale) + y+randY+offsetY] += sign * stamp[stampX][stampY] / (inc);
 				}
 				// Wrap shit n stuff
 				else {
@@ -69,17 +69,17 @@ void UNIVERSE_NOISE_1(long double * matrix, long double ** mask, unsigned long i
 						wrapY = -realScale;
 					}
 
-					matrix[ (  wrapX + x + offsetX  + randX) * realScale + (y+randY+offsetY) + wrapY] += sign * mask[maskX][maskY] / (inc);
+					matrix[ (  wrapX + x + offsetX  + randX) * realScale + (y+randY+offsetY) + wrapY] += sign * stamp[stampX][stampY] / (inc);
 				}
-				maskY+=inc;
+				stampY+=inc;
 			}
-			maskX+=inc;
+			stampX+=inc;
 		}
 	}
-	UNIVERSE_NOISE_1(matrix, mask, scale/2, offsetX+0, offsetY+0, realScale);
-	UNIVERSE_NOISE_1(matrix, mask, scale/2, offsetX+0, offsetY+scale/2, realScale);
-	UNIVERSE_NOISE_1(matrix, mask, scale/2, offsetX+scale/2, offsetY+scale/2, realScale);
-	UNIVERSE_NOISE_1(matrix, mask, scale/2, offsetX+scale/2, offsetY+0, realScale);
+	UNIVERSE_NOISE_1(matrix, stamp, scale/2, offsetX+0, offsetY+0, realScale);
+	UNIVERSE_NOISE_1(matrix, stamp, scale/2, offsetX+0, offsetY+scale/2, realScale);
+	UNIVERSE_NOISE_1(matrix, stamp, scale/2, offsetX+scale/2, offsetY+scale/2, realScale);
+	UNIVERSE_NOISE_1(matrix, stamp, scale/2, offsetX+scale/2, offsetY+0, realScale);
 }
 
 int main(int argc, char ** argv) {
@@ -92,13 +92,13 @@ int main(int argc, char ** argv) {
 	unsigned long int scale = atoi(argv[1]);
 	unsigned long int x,y,i,j;
 	long double * matrix;
-	long double ** mask;
+	long double ** stamp;
 	matrix	= (long double *) malloc( sizeof( long double ) * scale * scale * 12);
-	mask 	= (long double **) malloc( sizeof( long double *) * scale );
+	stamp 	= (long double **) malloc( sizeof( long double *) * scale );
         PIXEL ** png = (PIXEL **) malloc(sizeof(PIXEL *) * scale * 3);
 
 	for (x=0; x<scale;x++) {
-		mask[x] = (long double *) malloc( sizeof(long  double) * scale );
+		stamp[x] = (long double *) malloc( sizeof(long  double) * scale );
 	}
 	for (x=0; x<scale;x++) {
 		for(y=0;y<scale;y++){
@@ -107,8 +107,8 @@ int main(int argc, char ** argv) {
 		png[x] = (PIXEL *) malloc(sizeof(PIXEL) * scale);
 	}
 
-	UNIVERSE_MASK_1(mask, (long double ) scale);
-	UNIVERSE_NOISE_1(matrix, mask, scale, 0, 0, scale);
+	UNIVERSE_STAMP_1(stamp, (long double ) scale);
+	UNIVERSE_NOISE_1(matrix, stamp, scale, 0, 0, scale);
         // Adjust color Levels
         long double max=0,min = 65536;
         for (x=0; x<scale;x++) {
