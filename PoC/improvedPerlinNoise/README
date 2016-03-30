@@ -12,9 +12,9 @@ Pour Compiler|
 
   make
 
--------------.
-Pour nettoyer|
--------------'
+---------------------------------------------------------------------.
+Pour nettoyer (supprimer le binaire et les éventuelles fichiers .o)  |
+----------------'----------------------------------------------------'
 
   make clean
 
