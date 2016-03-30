@@ -60,22 +60,34 @@ unsigned long int getRandom() {
 }
 
 // Le générateur de tampon
-void UNIVERSE_STAMP_1( double * matrix, unsigned int scale) {
+void UNIVERSE_STAMP_1( double * matrix, int scale) {
 	unsigned int x,y;
 	double halfScale = (double) scale / 2 ;
 	double radius;
-	for(x=0;x<scale;x++) {
+        int limit = scale*scale;
+
+        // Optimisation sympa, plutôt que d'incrémenter d'une unité x et calculer la position du point courant 
+        // dans le tableau en multipliant par scale, on incrémente directement x par scale. La formule
+        // pour retrouver le point courant n'est plus 
+        // 
+        // x*scale +y 
+        //
+        // mais 
+        //
+        // x+y
+	for(x=0;x<scale;x+=scale) {
 		for(y=0;y<scale;y++) {
-                        // on calcule le rayon du cercle sur lequel se trouve le point courant.
+                        // On calcule le rayon du cercle sur lequel se trouve le point courant.
+                        // Opération très TRÈS gourmante en temps CPU
 			radius = sqrtl( ((y-halfScale) * (y-halfScale)) + ((x-halfScale) * (x-halfScale)));
 
 			if ( radius < halfScale ) {
                                 // y a plus qu'à dessiner le cône.
-				matrix[x*scale+y] = (halfScale - radius) / (halfScale);
+				matrix[x+y] = (halfScale - radius) / (halfScale);
 			}
                         // Si on est en dehors du cercle, on se casse pas la tête et on affecte un zero.
 			else {
-				matrix[x*scale+y] = 0;
+				matrix[x+y] = 0;
 			}
 		}
 	}
@@ -112,6 +124,8 @@ void UNIVERSE_STAMP_NOISE(NOISE_CONTEXT * context, int scale, int offsetX, int o
 
             // On économise des calculs fastidieux en stockant cette valeur qui sera solicitée au moins une fois.
             context->tmpStamp = context->stamp[context->stampX + context->scale*context->stampY];
+
+            // Avec ce test le gros bloc d'instructions est répété 1.27 fois moins que s'il n'y avait pas eu de test.
             if( context->tmpStamp != 0 ) {
               // On économise des calculs fastidieux en stockant ces valeurs qui seront solicitées plusieurs fois.
               context->tmpCoordX = context->randX + offsetX + context->x;
