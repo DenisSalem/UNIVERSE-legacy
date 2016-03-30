@@ -39,6 +39,6 @@ ou même encore, si vous avez du temps à perdre
 
   ./stampNoise 4096
 
-À l'issu de cette commande un fichier png nommé 'terrain.png' apparait.
+À l'issue de cette commande un fichier png nommé 'terrain.png' apparait.
 
 C'est votre heightmap :)
