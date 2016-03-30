@@ -30,7 +30,6 @@ typedef struct _NOISE_CONTEXT {
   int wrapX;
   int wrapY;
 
-  // Affin d'éviter la répition de calculs nous stockerons certaines coordonnées ici même
   int tmpCoordX;
   int tmpCoordY;
   double tmpStamp;
@@ -53,7 +52,7 @@ typedef struct _NOISE_CONTEXT {
 } NOISE_CONTEXT;
 
 
-// Le générateur de nombre pseudo aléatoire. On ne l'appellera qu'une seule fois, magique!
+// Le générateur de nombre pseudo aléatoire.
 unsigned long int getRandom() {
         timespec tStruct;
         clock_gettime(CLOCK_REALTIME, &tStruct);
@@ -129,20 +128,20 @@ void UNIVERSE_STAMP_NOISE(NOISE_CONTEXT * context, int scale, int offsetX, int o
 	        context->wrapX = 0;
 	        context->wrapY = 0;
 
-                // Le pixel dépasse en en bas
+                // Le pixel dépasse à droite
       	        if ( context->tmpCoordX >= context->scale && context->tmpCoordX < context->scale*2 ) {
 	          context->wrapX = - context->scale;
 	        }
-                // Le pixel dépasse en en bas
+                // Le pixel dépasse à gauche
 	        else if ( context->tmpCoordX > -context->scale && context->tmpCoordX < 0) {
 	          context->wrapX = context->scale;
 	        }
 
-                // Le pixel dépasse à gauche
+                // Le pixel dépasse en haut
                 if ( context->tmpCoordY > -context->scale && context->tmpCoordY < 0) {
 	          context->wrapY = context->scale;
 	        }
-                // Le pixel dépasse à droite
+                // Le pixel dépasse en bas
 	        else if ( context->tmpCoordY < context->scale * 2 && context->tmpCoordY >= context->scale) {
 	          context->wrapY = -context->scale;
 	        }
@@ -222,7 +221,7 @@ int main(int argc, char ** argv) {
 
         // A partir d'ici, la heightmap est terminé. Il n'y a plus qu'a déterminer les extremums
         // pour normaliser la hauteur.
- /*       double max= -2,min = 2;
+        double max= -2,min = 2;
         for (x=0; x<context.scale;x++) {
                 for(y=0;y<context.scale;y++) {
                         if (context.matrix[x*context.scale+y] > max) {
@@ -247,5 +246,5 @@ int main(int argc, char ** argv) {
 
         // On transfére notre heightmap dans un fichier png...
         writePng(png,context.scale);
-	*/return 0;
+	return 0;
 }
