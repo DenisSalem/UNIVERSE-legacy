@@ -6,7 +6,10 @@
 
 // Le context de notre bruit. Pour ne pas être empilé à chaque appel recursif on stock les informations
 // utilent à notre fonction de bruit dans une structure.
-// Habile, bill!
+// Sauf que c'est une mauvaise idée en fait...
+// Chaque accès au membre de la structure nécessite un déréférencement
+//
+//http://stackoverflow.com/questions/2926062/c-using-a-lot-of-structs-can-make-a-program-slow 
 
 typedef struct _NOISE_CONTEXT {
   int x;
@@ -219,7 +222,7 @@ int main(int argc, char ** argv) {
 
         // A partir d'ici, la heightmap est terminé. Il n'y a plus qu'a déterminer les extremums
         // pour normaliser la hauteur.
-        double max= -2,min = 2;
+ /*       double max= -2,min = 2;
         for (x=0; x<context.scale;x++) {
                 for(y=0;y<context.scale;y++) {
                         if (context.matrix[x*context.scale+y] > max) {
@@ -244,5 +247,5 @@ int main(int argc, char ** argv) {
 
         // On transfére notre heightmap dans un fichier png...
         writePng(png,context.scale);
-	return 0;
+	*/return 0;
 }
