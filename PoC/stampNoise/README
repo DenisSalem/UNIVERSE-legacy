@@ -1,0 +1,44 @@
+-----------------------------.
+PROOF OF CONCEPT: Stamp Noise|
+-----------------------------'
+
+Petit exécutable tout mignon sous licence GNU/GPLv3, qui implémente ce que j'appelle
+le Stamp Noise, une texture de synthèse. L'algorithme génère une heightmap et stock
+celle-ci dans un fichier png.
+Assurez vous d'avoir libpng installé sur votre system sinon ça va pas l'faire.
+
+-------------.
+Pour Compiler|
+-------------'
+
+  make
+
+-------------.
+Pour nettoyer|
+-------------'
+
+  make clean
+
+------------------.
+Comment ça marche?|
+------------------'
+
+Une fois compilé, dans un terminal, tapez
+
+  ./stampNoise <Puissance de deux>
+
+par exemple
+
+  ./stampNoise 256
+
+ou bien encore
+
+  ./stampNoise 512
+
+ou même encore, si vous avez du temps à perdre
+
+  ./stampNoise 4096
+
+À l'issu de cette commande un fichier png nommé 'terrain.png' apparait.
+
+C'est votre heightmap :)
