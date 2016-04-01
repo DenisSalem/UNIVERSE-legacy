@@ -213,7 +213,7 @@ int main(int argc, char ** argv) {
 	UNIVERSE_STAMP_NOISE(matrix, stamp, scale, 0, 0, scale);
         // A partir d'ici, la heightmap est terminé. Il n'y a plus qu'a déterminer les extremums
         // pour normaliser la hauteur.
-
+/*
         long double max=0,min = 65536;
         for (x=0; x<scale;x++) {
                 for(y=0;y<scale;y++) {
@@ -239,5 +239,5 @@ int main(int argc, char ** argv) {
 
         // On transfére notre heightmap dans un fichier png...
         writePng(png,scale);
-	return 0;
+*/	return 0;
 }
