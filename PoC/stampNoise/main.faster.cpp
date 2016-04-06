@@ -4,7 +4,7 @@
 #include <math.h>
 #include "png.cpp"
 
-// Le générateur de nombre pseudo aléatoire.
+// Le générateur de nombres pseudo aléatoires.
 unsigned long int getRandom() {
         timespec tStruct;
         clock_gettime(CLOCK_REALTIME, &tStruct);
@@ -17,14 +17,12 @@ void UNIVERSE_STAMP_1(double * matrix, int scale) {
 	double halfScale = scale / 2 ;
 	double radius;
 
-        int * xx = (int *) malloc( sizeof(int) * scale);
-        int * yy = (int *) malloc( sizeof(int) * scale);
+        int * powersOfTwo = (int *) malloc( sizeof(int) * scale);
 
         // On crée deux tables contenants les valeurs élevées à la puissance de deux.
         // On calcul ainsi n fois ces valeurs au lieu de n².
         for(x=0; x<scale;x++) {
-          xx[x] = (x-halfScale) * (x-halfScale);
-          yy[x] = (x-halfScale) * (x-halfScale);
+          powersOfTwo[x] = (x-halfScale) * (x-halfScale);
         }
 
         // Plutôt que d'incrémenter d'une unité x et calculer la position du point courant 
@@ -43,7 +41,7 @@ void UNIVERSE_STAMP_1(double * matrix, int scale) {
 		for(y=0;y<scale;y++) {
                         // On calcule le rayon du cercle sur lequel se trouve le point courant.
                         // Opération très TRÈS gourmante en temps CPU
-			radius = sqrtl( yy[y] + xx[X]);
+			radius = sqrtl( powersOfTwo[y] + powersOfTwo[X]);
 			if ( radius < halfScale ) {
                                 // y a plus qu'à dessiner le cône.
 				matrix[x+y] = (halfScale - radius) / (halfScale);
@@ -53,11 +51,10 @@ void UNIVERSE_STAMP_1(double * matrix, int scale) {
 				matrix[x+y] = 0;
 			}
 		}
-                //Comme x est incrémenté par scale, et qu'on doit quand même accéder à notre tableau xx...
+                //Comme x est incrémenté par scale, et qu'on doit quand même accéder à notre tableau powersOfTwo...
                 X++;
 	}
-        free(xx);
-        free(yy);
+        free(powersOfTwo);
 }
 
 void UNIVERSE_STAMP_NOISE(double * matrix, double * stamp, int scale, int offsetX, int offsetY, int realScale) {
@@ -79,19 +76,20 @@ void UNIVERSE_STAMP_NOISE(double * matrix, double * stamp, int scale, int offset
 	int randY = - halfScale + getRandom() % scale;
 
         // À chaque octave il faut diminuer l'influence du bruit.
-	int inc = realScale / scale;
+	// On se sert également de cette variable comme pas d'incrémentation des
+        // coordonnées du tampon.
+        int inc = realScale / scale;
 
-        // Deux variables incrémentales qui servent à récupérer le pixel locale au tampon, en fonction de l'ocatve.
+        // Deux variables incrémentales qui servent à récupérer le pixel locale au tampon, en fonction de l'octave.
         // Elles sont toute les deux incrémentés avec la valeur de inc.
 	int stampX=0, stampY=0;
 
-        // Nouvelles Coordonnées si dépassement du tampon en dehors de la heightmap
+        // Nouvelles coordonnées si dépassement du tampon en dehors de la heightmap
 	int wrapX,wrapY;
-	char seed = getRandom() & 3;
 
         // Détermine le signe du tampon.
         // S'il est positif, le terrain se surélève, à l'inverse, il se creuse
-	float sign = seed & 2 ? -1.0 : 1.0;
+	float sign = getRandom() & 2 ? -1.0 : 1.0;
 
         int tmpCoordX,tmpCoordY;
         double currentStampValue;
@@ -99,7 +97,7 @@ void UNIVERSE_STAMP_NOISE(double * matrix, double * stamp, int scale, int offset
 	for(x=0;x<scale;x++) {
 	  stampY = 0;
 	    for(y=0;y<scale;y++) {
-              // On économise des calculs fastidieux en stockant cette valeur qui sera solicitée au moins une fois.
+              // On économise des calcules fastidieux en stockant cette valeur qui sera solicitée au moins une fois.
               currentStampValue = stamp[stampX*realScale+stampY];
 
               // Avec ce test le gros bloc d'instructions est répété 1.27 fois moins que s'il n'y avait pas de test.
@@ -119,7 +117,7 @@ void UNIVERSE_STAMP_NOISE(double * matrix, double * stamp, int scale, int offset
                   // Comme il se peut que le pixel ne dépasse que sur un axe, par défaut, le décalage est fixé à zero.
 		  wrapX = 0;
 	    	  wrapY = 0;
-                  // Le pixel dépasse en en bas
+                  // Le pixel dépasse à droite
 		  if ( tmpCoordX >= realScale && tmpCoordX < realScale*2 ) {
       		    wrapX = - realScale;
 		  }
@@ -165,10 +163,10 @@ void UNIVERSE_STAMP_NOISE(double * matrix, double * stamp, int scale, int offset
 	}
 
         // En divisant par deux la dimension courante à chaque récursion, et en modifiant l'offset,
-        // on subdivise en permanence la heighmap jusqu'à ce que la dimension ainsi divisé soit égale à un.
+        // on subdivise en permanence la heighmap jusqu'à ce que la dimension ainsi divisée soit égale à un.
         // En procédant ainsi, on travaille récursivement sur différentes
-        // portions de la heighmap. Il y a donc quatre portions par secteur et à chaque récursion, chacune
-        // des portions devient lui même un secteur.
+        // portions de la heighmap. Il y a donc quatre portions par secteur et à chaque récursion, chacunes
+        // des portions devient elles même un secteur.
 
         // Portion en haut à gauche du secteur courant
 	UNIVERSE_STAMP_NOISE(matrix, stamp, scale/2, offsetX+0, offsetY+0, realScale);
@@ -211,7 +209,8 @@ int main(int argc, char ** argv) {
         // On lance notre bruit récursif.
         // On conmmence la récursion avec l'octave la plus grande.
 	UNIVERSE_STAMP_NOISE(matrix, stamp, scale, 0, 0, scale);
-        // A partir d'ici, la heightmap est terminé. Il n'y a plus qu'a déterminer les extremums
+
+        // À partir d'ici, la heightmap est terminé. Il n'y a plus qu'à déterminer les extremums
         // pour normaliser la hauteur.
 
         long double max=0,min = 65536;

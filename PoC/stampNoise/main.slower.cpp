@@ -187,7 +187,7 @@ void UNIVERSE_STAMP_NOISE(NOISE_CONTEXT * context, int scale, int offsetX, int o
 	
 
         // En divisant par deux la dimension courante à chaque récursion, et en modifiant l'offset,
-        // on subdivise en permanence la heighmap jusqu'à ce que la dimension ainsi divisé soit égale à un.
+        // on subdivise en permanence la heighmap jusqu'à ce que la dimension ainsi divisée soit égale à un.
         // En procédant ainsi, on travaille récursivement sur différentes
         // portions de la heighmap. Il y a donc quatre portions par secteur et à chaque récursion, chacune
         // des portions devient lui même un secteur.
@@ -233,7 +233,7 @@ int main(int argc, char ** argv) {
         // On conmmence la récursion avec l'octave la plus grande.
 	UNIVERSE_STAMP_NOISE(&context, context.scale, 0, 0);
 
-        // A partir d'ici, la heightmap est terminé. Il n'y a plus qu'a déterminer les extremums
+        // À partir d'ici, la heightmap est terminé. Il n'y a plus qu'a déterminer les extremums
         // pour normaliser la hauteur.
         double max= -2,min = 2;
         for (x=0; x<context.scale;x++) {
