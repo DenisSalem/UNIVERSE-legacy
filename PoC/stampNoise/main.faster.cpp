@@ -19,8 +19,8 @@ void UNIVERSE_STAMP_1(double * matrix, int scale) {
 
         int * powersOfTwo = (int *) malloc( sizeof(int) * scale);
 
-        // On crée deux tables contenants les valeurs élevées à la puissance de deux.
-        // On calcul ainsi n fois ces valeurs au lieu de n².
+        // On crée deux tables contenant les valeurs élevées à la puissance de deux.
+        // On calcule ainsi n fois ces valeurs au lieu de n².
         for(x=0; x<scale;x++) {
           powersOfTwo[x] = (x-halfScale) * (x-halfScale);
         }
@@ -70,7 +70,7 @@ void UNIVERSE_STAMP_NOISE(double * matrix, double * stamp, int scale, int offset
 	int halfScale = scale >> 1;
 	int x, y;
 
-        // Deux variables très importantes, ce sont elles qui déterminent ou sera appliqué le tampon.
+        // Deux variables très importantes, ce sont elles qui déterminent où sera appliqué le tampon.
         // C'est le positionnement aléatoire qui fait toute la "beauté" de la heightmap.
 	int randX = - halfScale + getRandom() % scale;
 	int randY = - halfScale + getRandom() % scale;
@@ -80,7 +80,7 @@ void UNIVERSE_STAMP_NOISE(double * matrix, double * stamp, int scale, int offset
         // coordonnées du tampon.
         int inc = realScale / scale;
 
-        // Deux variables incrémentales qui servent à récupérer le pixel locale au tampon, en fonction de l'octave.
+        // Deux variables incrémentales qui servent à récupérer le pixel local au tampon, en fonction de l'octave.
         // Elles sont toute les deux incrémentés avec la valeur de inc.
 	int stampX=0, stampY=0;
 
@@ -97,7 +97,7 @@ void UNIVERSE_STAMP_NOISE(double * matrix, double * stamp, int scale, int offset
 	for(x=0;x<scale;x++) {
 	  stampY = 0;
 	    for(y=0;y<scale;y++) {
-              // On économise des calcules fastidieux en stockant cette valeur qui sera solicitée au moins une fois.
+              // On économise des calculs fastidieux en stockant cette valeur qui sera solicitée au moins une fois.
               currentStampValue = stamp[stampX*realScale+stampY];
 
               // Avec ce test le gros bloc d'instructions est répété 1.27 fois moins que s'il n'y avait pas de test.
@@ -113,8 +113,8 @@ void UNIVERSE_STAMP_NOISE(double * matrix, double * stamp, int scale, int offset
 
 	        // Là c'est plus pénible, il faut calculer le décalage à appliquer selon le ou les côtés où le pixel à dépassé.
 	        else {
-                  // On restore les coordonnées du décalage
-                  // Comme il se peut que le pixel ne dépasse que sur un axe, par défaut, le décalage est fixé à zero.
+                  // On restaure les coordonnées du décalage
+                  // Comme il se peut que le pixel ne dépasse que sur un axe, par défaut, le décalage est fixé à zéro.
 		  wrapX = 0;
 	    	  wrapY = 0;
                   // Le pixel dépasse à droite
@@ -138,7 +138,7 @@ void UNIVERSE_STAMP_NOISE(double * matrix, double * stamp, int scale, int offset
 		  }
 
                   // On peut maintenant repositionner le pixel sur la heightmap.
-                  // la coordoonée final dans un tableau simulant une matrice est de la forme:
+                  // la coordoonée finale dans un tableau simulant une matrice est de la forme:
                   //
                   // (X * hauteur) + Y
                   // Avec X valant la somme du 
@@ -163,10 +163,10 @@ void UNIVERSE_STAMP_NOISE(double * matrix, double * stamp, int scale, int offset
 	}
 
         // En divisant par deux la dimension courante à chaque récursion, et en modifiant l'offset,
-        // on subdivise en permanence la heighmap jusqu'à ce que la dimension ainsi divisée soit égale à un.
+        // on subdivise en permanence la heightmap jusqu'à ce que la dimension ainsi divisée soit égale à un.
         // En procédant ainsi, on travaille récursivement sur différentes
-        // portions de la heighmap. Il y a donc quatre portions par secteur et à chaque récursion, chacunes
-        // des portions devient elles même un secteur.
+        // portions de la heighmap. Il y a donc quatre portions par secteur et à chaque récursion, chacune
+        // des portions devient elle-même un secteur.
 
         // Portion en haut à gauche du secteur courant
 	UNIVERSE_STAMP_NOISE(matrix, stamp, scale/2, offsetX+0, offsetY+0, realScale);
@@ -210,7 +210,7 @@ int main(int argc, char ** argv) {
         // On conmmence la récursion avec l'octave la plus grande.
 	UNIVERSE_STAMP_NOISE(matrix, stamp, scale, 0, 0, scale);
 
-        // À partir d'ici, la heightmap est terminé. Il n'y a plus qu'à déterminer les extremums
+        // À partir d'ici, la heightmap est terminée. Il n'y a plus qu'à déterminer les extremums
         // pour normaliser la hauteur.
 
         long double max=0,min = 65536;
@@ -236,7 +236,7 @@ int main(int argc, char ** argv) {
                 }
         }
 
-        // On transfére notre heightmap dans un fichier png...
+        // On transfère notre heightmap dans un fichier png...
         writePng(png,scale);
 	return 0;
 }
