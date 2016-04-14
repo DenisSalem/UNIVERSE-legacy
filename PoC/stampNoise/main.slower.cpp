@@ -4,8 +4,8 @@
 #include <math.h>
 #include "png.cpp"
 
-// Le context de notre bruit. Pour ne pas être empilé à chaque appel recursif on stock les informations
-// utilent à notre fonction de bruit dans une structure.
+// Le contexte de notre bruit. Pour ne pas être empilé à chaque appel recursif on stock les informations
+// utiles à notre fonction de bruit dans une structure.
 // Sauf que c'est une mauvaise idée en fait...
 // Chaque accès au membre de la structure nécessite un déréférencement
 //
@@ -19,7 +19,7 @@ typedef struct _NOISE_CONTEXT {
   int randX;
   int randY;
 
-  // Diviseur pour diminuer l'influence du bruit locale en fonction de l'octave courrante
+  // Diviseur pour diminuer l'influence du bruit local en fonction de l'octave courrante
   int inc;
 
   // Coordonnées locales au tampon courant
@@ -85,7 +85,7 @@ void UNIVERSE_STAMP_1( double * matrix, int scale) {
                                 // y a plus qu'à dessiner le cône.
 				matrix[x+y] = (halfScale - radius) / (halfScale);
 			}
-                        // Si on est en dehors du cercle, on se casse pas la tête et on affecte un zero.
+                        // Si on est en dehors du cercle, on se casse pas la tête et on affecte un zéro.
 			else {
 				matrix[x+y] = 0;
 			}
@@ -112,8 +112,8 @@ void UNIVERSE_STAMP_NOISE(NOISE_CONTEXT * context, int scale, int offsetX, int o
         // À chaque octave il faut diminuer l'influence du bruit.
 	context->inc = context->scale / scale;
 
-        // Deux variables incrémentales qui servent à récupérer le pixel locale au tampon, en fonction de l'ocatve.
-        // Elles sont toute les deux incrémentés avec la valeur de inc.
+        // Deux variables incrémentales qui servent à récupérer le pixel local au tampon, en fonction de l'ocatve.
+        // Elles sont toutes les deux incrémentées avec la valeur de inc.
 	context->stampX=0;
         context->stampY=0;
 
@@ -137,8 +137,8 @@ void UNIVERSE_STAMP_NOISE(NOISE_CONTEXT * context, int scale, int offsetX, int o
 	      }
 	      // Là c'est plus pénible, il faut calculer le décalage à appliquer selon le ou les côtés où le pixel à dépassé.
 	      else {
-                // On restore les coordonnées du décalage
-                // Comme il se peut que le pixel ne dépasse que sur un axe, par défaut, le décalage est fixé à zero.
+                // On restaure les coordonnées du décalage
+                // Comme il se peut que le pixel ne dépasse que sur un axe, par défaut, le décalage est fixé à zéro.
 	        context->wrapX = 0;
 	        context->wrapY = 0;
 
@@ -161,7 +161,7 @@ void UNIVERSE_STAMP_NOISE(NOISE_CONTEXT * context, int scale, int offsetX, int o
 	        }
 
                 // On peut maintenant repositionner le pixel sur la heightmap.
-                // la coordoonée final dans un tableau simulant une matrice est de la forme:
+                // la coordoonée finale dans un tableau simulant une matrice est de la forme:
                 //
                 // (X * hauteur) + Y
                 // Avec X valant la somme du 
@@ -189,8 +189,8 @@ void UNIVERSE_STAMP_NOISE(NOISE_CONTEXT * context, int scale, int offsetX, int o
         // En divisant par deux la dimension courante à chaque récursion, et en modifiant l'offset,
         // on subdivise en permanence la heighmap jusqu'à ce que la dimension ainsi divisée soit égale à un.
         // En procédant ainsi, on travaille récursivement sur différentes
-        // portions de la heighmap. Il y a donc quatre portions par secteur et à chaque récursion, chacune
-        // des portions devient lui même un secteur.
+        // portions de la heightmap. Il y a donc quatre portions par secteur et à chaque récursion, chacune
+        // des portions devient elle-même un secteur.
 
         // Portion en haut à gauche du secteur courant
 	UNIVERSE_STAMP_NOISE(context, scale/2, offsetX+0, offsetY+0);
@@ -233,7 +233,7 @@ int main(int argc, char ** argv) {
         // On conmmence la récursion avec l'octave la plus grande.
 	UNIVERSE_STAMP_NOISE(&context, context.scale, 0, 0);
 
-        // À partir d'ici, la heightmap est terminé. Il n'y a plus qu'a déterminer les extremums
+        // À partir d'ici, la heightmap est terminée. Il n'y a plus qu'a déterminer les extremums
         // pour normaliser la hauteur.
         double max= -2,min = 2;
         for (x=0; x<context.scale;x++) {
