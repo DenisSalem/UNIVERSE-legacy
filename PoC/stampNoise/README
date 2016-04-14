@@ -3,7 +3,7 @@ PROOF OF CONCEPT: Stamp Noise|
 -----------------------------'
 
 Petit exécutable tout mignon sous licence GNU/GPLv3, qui implémente ce que j'appelle
-le Stamp Noise, une texture de synthèse. L'algorithme génère une heightmap et stock
+le Stamp Noise, une texture de synthèse. L'algorithme génère une heightmap et stocke
 celle-ci dans un fichier png.
 Assurez vous d'avoir libpng installé sur votre system sinon ça va pas l'faire.
 
