@@ -263,7 +263,21 @@ void MERGE_EDGES(HEIGHTMAP * heightmap, int scale, int faceId) {
       average = (heightmap->faces[0][i + scale * (scale-1)] + heightmap->bottom[i]) / 2;
       heightmap->faces[0][i + scale * (scale-1)] = average;
       heightmap->bottom[i] = average;
+
+      // Segment gauche
+      average = (heightmap->faces[0][ scale * i ] + heightmap->left[i * scale + scale - 1]) / 2;
+      heightmap->faces[0][i * scale] = average;
+      heightmap->left[i * scale + scale - 1] = average;
+
+      // Segment droit
+      average = (heightmap->right[ scale * i ] + heightmap->faces[0][i * scale + scale - 1]) / 2;
+      heightmap->right[i * scale] = average;
+      heightmap->faces[0][i * scale + scale - 1] = average;
     }
+  }
+
+  if (faceId == 0) {
+    //Sommet supérieur gauche
   }
 }
 
