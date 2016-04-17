@@ -274,10 +274,108 @@ void MERGE_EDGES(HEIGHTMAP * heightmap, int scale, int faceId) {
       heightmap->right[i * scale] = average;
       heightmap->faces[0][i * scale + scale - 1] = average;
     }
+    else if (faceId == 1) {
+      // Segment supérieur
+      average = (heightmap->faces[1][i] + heightmap->top[i + scale * (scale-1)]) / 2;
+      heightmap->faces[1][i] = average;
+      heightmap->top[i + scale * (scale-1)] = average;
+      
+      // Segment inférieur
+      average = (heightmap->faces[1][i + scale * (scale-1)] + heightmap->bottom[i]) / 2;
+      heightmap->faces[1][i + scale * (scale-1)] = average;
+      heightmap->bottom[i] = average;
+
+      // Segment gauche
+      average = (heightmap->faces[1][ scale * i ] + heightmap->left[- i * scale + scale * (scale - 1)]) / 2;
+      heightmap->faces[1][ scale * i ] = average;
+      heightmap->left[- i * scale + scale * (scale - 1)] = average;
+
+      // Segment droit
+      average = (heightmap->faces[1][ scale - 1 + scale * i ] + heightmap->right[scale - 1 - i * scale + scale * (scale - 1)]) / 2;
+      heightmap->faces[1][scale - 1 + scale * i] = average;
+      heightmap->right[ scale - 1 - i * scale + scale * (scale-1)] = average;
+    }
+
+    else if (faceId == 2) {
+      // Segment gauche
+      average = (heightmap->faces[2][ scale * i ] + heightmap->left[i]) / 2;
+      heightmap->faces[2][i * scale] = average;
+      heightmap->left[i] = average;
+
+      // Segment droit
+      average = (heightmap->faces[2][ scale - 1 + scale * i ] + heightmap->right[scale - 1 - i]) / 2;
+      heightmap->faces[2][scale - 1 + i * scale] = average;
+      heightmap->right[ scale - 1 - i ] = average;
+    }
+
+    else if (faceId == 3) {
+      // Segment gauche
+      average = (heightmap->faces[3][ scale * i ] + heightmap->left[ scale * (scale-1) + scale - 1 - i]) / 2;
+      heightmap->faces[3][i * scale] = average;
+      heightmap->left[scale * (scale -1) + scale - 1 - i] = average;
+
+      // Segment droit
+      average = (heightmap->faces[3][ scale - 1 + scale * i ] + heightmap->right[i + scale * (scale-1)]) / 2;
+      heightmap->faces[3][scale - 1 + i * scale] = average;
+      heightmap->right[ i + scale * (scale-1) ] = average;
+      
+    }
   }
 
-  if (faceId == 0) {
-    //Sommet supérieur gauche
+  // On calcul maintenant la moyenne des sommets
+  // Le traitement de deux faces suffit pour faire huit fois la moyenne de trois sommets.
+  // En l'occurence il faut que ces faces soit opposé
+
+  if (faceId == 0) { // plusZ
+    // Sommet supérieur gauche
+    average = (heightmap->faces[0][0] + heightmap->top[ scale * (scale-1)] + heightmap->left[scale-1]) / 3;
+    heightmap->faces[0][0] = average;
+    heightmap->top[ scale * (scale-1)] = average;
+    heightmap->left[scale-1] = average;
+
+    // Sommet supérieur droit
+    average = (heightmap->faces[0][scale-1] + heightmap->top[ (scale-1) + scale * (scale-1)] + heightmap->right[0]) / 3;
+    heightmap->faces[0][scale-1] = average;
+    heightmap->top[ (scale-1) + scale * (scale-1)] = average;
+    heightmap->right[0] = average;
+
+    // Sommet inférieur droit
+    average = (heightmap->faces[0][scale-1 + scale * (scale-1)] + heightmap->bottom[ scale-1 ] + heightmap->right[ scale * (scale-1)]) / 3;
+    heightmap->faces[0][ (scale-1) * scale + scale - 1 ] = average;
+    heightmap->bottom[ scale-1 ] = average;
+    heightmap->right[ scale * (scale-1) ] = average;
+
+    // Sommet inférieur gauche
+    average = (heightmap->faces[0][scale * (scale-1)] + heightmap->bottom[ 0 ] + heightmap->left[ scale * (scale-1) + scale - 1]) / 3;
+    heightmap->faces[0][ (scale-1) * scale ] = average;
+    heightmap->bottom[0]  = average;
+    heightmap->left[ scale - 1 + scale * (scale-1) ] = average;
+  }
+
+  else if (faceId == 1) { // minusZ
+    // Sommet supérieur gauche
+    average = (heightmap->faces[1][0] + heightmap->top[ scale * (scale-1)] + heightmap->left[scale * (scale-1)]) / 3;
+    heightmap->faces[1][0] = average;
+    heightmap->top[ scale * (scale-1)] = average;
+    heightmap->left[ (scale-1) * scale] = average;
+
+    // Sommet supérieur droit
+    average = (heightmap->faces[1][scale-1] + heightmap->top[ scale - 1 + scale * (scale-1)] + heightmap->right[scale - 1 + scale * (scale-1)]) / 3;
+    heightmap->faces[1][scale-1] = average;
+    heightmap->top[ scale - 1 + scale * (scale-1)] = average;
+    heightmap->right[ scale - 1 + (scale-1) * scale] = average;
+
+    // Sommet inférieur droit
+    average = (heightmap->faces[1][scale-1 + scale * (scale-1)] + heightmap->bottom[scale-1] + heightmap->right[scale-1]) / 3;
+    heightmap->faces[1][scale-1 + scale * (scale-1)] = average;
+    heightmap->bottom[scale-1] = average;
+    heightmap->right[scale-1] = average;
+
+    // Sommet inférieur gauche
+    average = (heightmap->faces[1][scale * (scale-1)] + heightmap->bottom[0] + heightmap->left[0]) / 3;
+    heightmap->faces[1][scale * (scale-1)] = average;
+    heightmap->bottom[0] = average;
+    heightmap->left[0] = average;
   }
 }
 
@@ -366,13 +464,33 @@ int main(int argc, char ** argv) {
   // Cela étant fait il faut racorder chacune des faces. En effet, en l'état, 
   // si les heighmaps sont appliqué à la sphére projeté il y aura des défauts
   // de jointures entre chacunes des faces du cube.
+  heightmap.top = heightmap.faces[0];
+  heightmap.bottom = heightmap.faces[1];
+  heightmap.left = heightmap.faces[5];
+  heightmap.right = heightmap.faces[4];
+  MERGE_EDGES(&heightmap, heightmap.scale, 3);
+
+  heightmap.top = heightmap.faces[1];
+  heightmap.bottom = heightmap.faces[0];
+  heightmap.left = heightmap.faces[5];
+  heightmap.right = heightmap.faces[4];
+  MERGE_EDGES(&heightmap, heightmap.scale, 2);
   
+  heightmap.top = heightmap.faces[3];
+  heightmap.bottom = heightmap.faces[2];
+  heightmap.left = heightmap.faces[5];
+  heightmap.right = heightmap.faces[4];
+  MERGE_EDGES(&heightmap, heightmap.scale, 1);
+
   heightmap.top = heightmap.faces[2];
   heightmap.bottom = heightmap.faces[3];
   heightmap.left = heightmap.faces[5];
   heightmap.right = heightmap.faces[4];
   MERGE_EDGES(&heightmap, heightmap.scale, 0);
+
   
+  // Maintenant que nous avons calculé deux faces opposées, tous les sommets sont bon.
+  // Huits segments sur douze sont également calculés.
 
   int scale4 = heightmap.scale * 4;
   int scale3 = heightmap.scale * 3;
