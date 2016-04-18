@@ -7,14 +7,14 @@
 
 class RenderSphere {
   public:
-    RenderSphere(int indexSize, short int * index[2], int vertexSize, glm::vec3 * vertex[6]);
+    RenderSphere(int indexSize, short int * index, int vertexSize, glm::vec3 * vertex[6]);
     void Render(int window_width, int window_height);
 
   private:
     int indexSize;
     int vertexSize;
 
-    short int ** index;
+    short int * index;
 
     glm::vec3 ** vertex;
 
@@ -22,7 +22,7 @@ class RenderSphere {
     glm::mat4 view;
     glm::mat4 projection;
 
-    GLuint  elementBuffer[2];
+    GLuint  elementBuffer;
     GLuint  VBO[6];
     GLuint  VAO[6];
     GLuint  vertexShaderID;

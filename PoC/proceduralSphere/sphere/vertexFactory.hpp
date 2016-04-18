@@ -11,7 +11,7 @@ class VertexFactory {
     int vertexSize;
     int indexSize;
 
-    short int * index[2];
+    short int * index;
     
     glm::vec3 * vertex[6];
 };

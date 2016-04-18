@@ -12,7 +12,7 @@ VertexFactory::VertexFactory(int LOD) {
   // on évite donc de répéter chaque calcules ou déréférencement.
   float v1,v2,v3;
   
-  std::cout << "Initiate Cube with " << this->vertexSize << " vertices.\n";
+  std::cout << "Initiate Cube with " << this->vertexSize * 6 << " vertices.\n";
   std::cout << "Initiate Cube with " << this->indexSize << " indices.\n";
 	
   this->vertex[0] = new glm::vec3[this->vertexSize];
@@ -21,8 +21,7 @@ VertexFactory::VertexFactory(int LOD) {
   this->vertex[3] = new glm::vec3[this->vertexSize];
   this->vertex[4] = new glm::vec3[this->vertexSize];
   this->vertex[5] = new glm::vec3[this->vertexSize];
-  this->index[0]  = new short int[this->indexSize];
-  this->index[1]  = new short int[this->indexSize];
+  this->index     = new short int[this->indexSize];
 
   // On peut substantiellement réduire le nombre de calcule en précalculant les rayons de chaques vertex pour une face donnée.
   // On fait ensuite la correspondance entre le rayon du vertex et sa position dans la matrice qui est indépendante de la face
@@ -78,8 +77,8 @@ VertexFactory::VertexFactory(int LOD) {
   int y = 0;
   int i = 0;
   while (true) {
-    this->index[0][ i ]     = this->cubeScale * y     + x; 
-    this->index[0][ i + 1]  = this->cubeScale * (y+1) + x;
+    this->index[ i ]     = this->cubeScale * y     + x; 
+    this->index[ i + 1]  = this->cubeScale * (y+1) + x;
     i+=2;
     if (x == this->cubeScale -1 || (x == 0 && i > 2)) {
       if(y == this->cubeScale -2) {
@@ -87,9 +86,9 @@ VertexFactory::VertexFactory(int LOD) {
       }
       reverse = !reverse;
       y++;
-      this->index[0][ i ]     = this->cubeScale * y + x; 
-      this->index[0][ i + 1]  = this->cubeScale * y + x;
-      this->index[0][ i + 2]  = this->cubeScale * (y+1)+x;
+      this->index[ i ]     = this->cubeScale * y + x; 
+      this->index[ i + 1]  = this->cubeScale * y + x;
+      this->index[ i + 2]  = this->cubeScale * (y+1)+x;
       i+=3;
     }
     if (reverse) {
@@ -98,8 +97,5 @@ VertexFactory::VertexFactory(int LOD) {
     else {
       x++;
     }
-  }
-  for(int i=0; i < this->indexSize; i++) {
-    this->index[1][i] = this->index[0][this->indexSize-1-i];
   }
 }

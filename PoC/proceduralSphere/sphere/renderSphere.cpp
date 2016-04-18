@@ -2,22 +2,20 @@
 #include "../shaders/loadAndCompileShaders.hpp"
 #include "renderSphere.hpp"
 
-RenderSphere::RenderSphere(int indexSize, short int * index[2], int vertexSize, glm::vec3 * vertex[6]) {
+RenderSphere::RenderSphere(int indexSize, short int * index, int vertexSize, glm::vec3 * vertex[6]) {
   this->indexSize = indexSize;
   this->index = index;
   this->vertexSize = vertexSize;
   this->vertex = vertex;
 
   // Création de deux index
-  for (int i = 0; i < 2; i++) {
-    if(glIsBuffer(this->elementBuffer[i]) == GL_TRUE) {
-      glDeleteBuffers(1, &this->elementBuffer[i]);
-    }
-    glGenBuffers(1, &elementBuffer[i]);
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->elementBuffer[i]);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indexSize * sizeof(short int), this->index[i], GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  if(glIsBuffer(this->elementBuffer) == GL_TRUE) {
+    glDeleteBuffers(1, &this->elementBuffer);
   }
+  glGenBuffers(1, &elementBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->elementBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indexSize * sizeof(short int), this->index, GL_STATIC_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
   //Création de six VBOs auquels on attache à chacun un index.
   for(int i=0; i<6; i++) {
@@ -26,7 +24,6 @@ RenderSphere::RenderSphere(int indexSize, short int * index[2], int vertexSize, 
     }
 
     glGenBuffers(1, &this->VBO[i]);
-    glBindBuffer(GL_ARRAY_BUFFER, this->elementBuffer[i%2]);
   }
 
   //Création de six VAOs
@@ -93,11 +90,19 @@ void RenderSphere::Render(int window_width, int window_height) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     for(int i=0; i<6;i++) {
+
+    if (i%2 == 0) {
+      glFrontFace(GL_CCW);
+    }
+    else {
+      glFrontFace(GL_CW);
+    }
+
     glBindVertexArray(this->VAO[i]);
       glUniformMatrix4fv(glGetUniformLocation(this->programID, "model"), 1, GL_FALSE, glm::value_ptr(this->model));
       glUniformMatrix4fv(glGetUniformLocation(this->programID, "view"), 1, GL_FALSE, glm::value_ptr(this->view));
       glUniformMatrix4fv(glGetUniformLocation(this->programID, "projection"), 1, GL_FALSE, glm::value_ptr(this->projection));
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->elementBuffer[i%2]);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->elementBuffer);
         glDrawElements(GL_TRIANGLE_STRIP, this->indexSize, GL_UNSIGNED_SHORT, (GLvoid *) 0);
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
