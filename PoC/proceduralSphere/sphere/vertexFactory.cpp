@@ -2,9 +2,10 @@
 #include "vertexFactory.hpp"
 
 VertexFactory::VertexFactory(int LOD) {
-  this->cubeScale = (2 << (LOD - 1)) + 1;
+  //this->cubeScale = (2 << (LOD - 1)) + 1;
+  this->cubeScale = (2 << (LOD - 1)); // produce segFault
   this->vertexSize = pow(this->cubeScale, 2);
-  this->indexSize = this->vertexSize * 2 - (this->cubeScale + 2);
+  this->indexSize = this->vertexSize * 2 - ( this->cubeScale + 2);
 
   float step = 1.0 / (this->cubeScale-1);
         
