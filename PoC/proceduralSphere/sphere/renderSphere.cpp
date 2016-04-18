@@ -8,17 +8,17 @@ RenderSphere::RenderSphere(int indexSize, short int * index, int vertexSize, glm
   this->vertexSize = vertexSize;
   this->vertex = vertex;
 
-  // Création de deux index
+  // Création de l'IBO
   if(glIsBuffer(this->elementBuffer) == GL_TRUE) {
     glDeleteBuffers(1, &this->elementBuffer);
   }
   glGenBuffers(1, &elementBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->elementBuffer);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->elementBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indexSize * sizeof(short int), this->index, GL_STATIC_DRAW);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
   //Création de six VBOs auquels on attache à chacun un index.
-  for(int i=0; i<6; i++) {
+  for(int i=0; i<ACTIVE_FACES; i++) {
     if(glIsBuffer(this->VBO[i]) == GL_TRUE) {
       glDeleteBuffers(1, &this->VBO[i]);
     }
@@ -27,7 +27,7 @@ RenderSphere::RenderSphere(int indexSize, short int * index, int vertexSize, glm
   }
 
   //Création de six VAOs
-  for(int i=0; i<6; i++) {
+  for(int i=0; i<ACTIVE_FACES; i++) {
     if(glIsVertexArray(this->VAO[i]) == GL_TRUE) {
       glDeleteVertexArrays(1, &this->VAO[i]);
     }
@@ -36,7 +36,7 @@ RenderSphere::RenderSphere(int indexSize, short int * index, int vertexSize, glm
   }
 
   // On Charge les vertex dans chaque VAOs et on y attache le VBO qui correspond
-  for(int i=0; i<6; i++) {
+  for(int i=0; i<ACTIVE_FACES; i++) {
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO[i]);
       glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * this->vertexSize, 0, GL_STATIC_DRAW);
       glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * this->vertexSize, this->vertex[i]);
@@ -89,7 +89,7 @@ void RenderSphere::Render(int window_width, int window_height) {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    for(int i=0; i<6;i++) {
+    for(int i=0; i< ACTIVE_FACES;i++) {
 
     if (i%2 == 0) {
       glFrontFace(GL_CCW);

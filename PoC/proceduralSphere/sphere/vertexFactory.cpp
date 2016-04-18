@@ -15,13 +15,10 @@ VertexFactory::VertexFactory(int LOD) {
   
   std::cout << "Initiate Cube with " << this->vertexSize * 6 << " vertices.\n";
   std::cout << "Initiate Cube with " << this->indexSize << " indices.\n";
-	
-  this->vertex[0] = new glm::vec3[this->vertexSize];
-  this->vertex[1] = new glm::vec3[this->vertexSize];
-  this->vertex[2] = new glm::vec3[this->vertexSize];
-  this->vertex[3] = new glm::vec3[this->vertexSize];
-  this->vertex[4] = new glm::vec3[this->vertexSize];
-  this->vertex[5] = new glm::vec3[this->vertexSize];
+
+  for (int i = 0; i < ACTIVE_FACES; i++) {
+    this->vertex[i] = new glm::vec3[this->vertexSize];
+  }
   this->index     = new short int[this->indexSize];
 
   // On peut substantiellement réduire le nombre de calcule en précalculant les rayons de chaques vertex pour une face donnée.
@@ -56,7 +53,6 @@ VertexFactory::VertexFactory(int LOD) {
       this->vertex[2][this->cubeScale*y + x].x = v1 * v3;
       this->vertex[2][this->cubeScale*y + x].y = -0.5 * v3;
       this->vertex[2][this->cubeScale*y + x].z = v2 * v3;
-
       this->vertex[3][this->cubeScale*y + x].x = v1 * v3;
       this->vertex[3][this->cubeScale*y + x].y = 0.5 * v3;
       this->vertex[3][this->cubeScale*y + x].z = v2 * v3;
