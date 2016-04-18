@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdio>
+#include <unistd.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -39,7 +40,7 @@ void Planet::CREATE_ELEMENT_BUFFER() {
 	}
 	glGenBuffers(1, &this->elementBuffer[i]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->elementBuffer[i]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indice_number * sizeof(unsigned short), this->indice_array[i], GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indice_number * sizeof(unsigned short), this->indice_array[0], GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 }
@@ -157,7 +158,7 @@ glEnable(GL_CULL_FACE);
                 glUniformMatrix4fv(glGetUniformLocation(this->programID, "view"), 1, GL_FALSE, glm::value_ptr(this->view));
                 glUniformMatrix4fv(glGetUniformLocation(this->programID, "projection"), 1, GL_FALSE, glm::value_ptr(this->projection));
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->elementBuffer[i%2]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->elementBuffer[0]);
   	  	glDrawElements(GL_TRIANGLE_STRIP, this->indice_number, GL_UNSIGNED_SHORT, (GLvoid*)0);
           glBindVertexArray(0);
         }

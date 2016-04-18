@@ -196,7 +196,7 @@ void Planet::CREATE_VERTICES(int LOD) {
 	this->vertex_array[5] = new glm::vec3[this->vertex_number];
 	this->indice_array = new short int[this->indice_number*2];
 
-        // Pour peut substantiellement réduire le nombre de calcule en précalculant les rayons de chaques vertex pour une face donnée.
+        // On peut substantiellement réduire le nombre de calcule en précalculant les rayons de chaques vertex pour une face donnée.
         // On fait ensuite la correspondance entre le rayon du vertex et sa position dans la matrice qui est indépendante de la face
         // sur laquelle on travaille.
         float * radiusPerVertex = new float[this->vertex_number];

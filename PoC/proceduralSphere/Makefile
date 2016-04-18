@@ -1,10 +1,21 @@
-proceduralSphere: planet.o gl3w.o
-	g++ main.cpp planet.o gl3w.o -o proceduralSphere -lglfw -lGL -ldl -lm -O02
-gl3w.o: gl3w.c
-	gcc -o gl3w.o -c gl3w.c -lGL
-planet.o: planet.cpp
-	g++ -c planet.cpp -o planet.o -Wno-int-to-pointer-cast
+proceduralSphere: gl3w sphere
+	g++ -o proceduralSphere main.cpp *.o -ldl -lglfw -lGL -O02
+	make clean
+
+sphere: vertexFactory renderSphere
+	g++ -o sphere.o -c sphere/sphere.cpp
+vertexFactory:
+	g++ -o vertexFactory.o -c sphere/vertexFactory.cpp
+
+renderSphere: loadAndCompileShader
+	g++ -o renderSphere.o -c sphere/renderSphere.cpp
+	
+loadAndCompileShader:
+	g++ -o loadShader.o -c shaders/loadShader.cpp
+	g++ -o compileShader.o -c shaders/compileShader.cpp
+
+gl3w: gl3w.c
+	gcc -o gl3w.o -c gl3w.c
+
 clean:
-	rm planet.o
-	rm gl3w.o
-	rm proceduralSphere
+	rm *.o
