@@ -100,6 +100,6 @@ VertexFactory::VertexFactory(int LOD) {
     }
   }
   for(int i=0; i < this->indexSize; i++) {
-    this->index[1][this->indexSize + i] = this->index[0][this->indexSize-1-i];
+    this->index[1][i] = this->index[0][this->indexSize-1-i];
   }
 }
