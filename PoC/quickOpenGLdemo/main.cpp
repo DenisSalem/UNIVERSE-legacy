@@ -117,11 +117,8 @@ int main(int argc, char ** argv) {
   // ELEMENT BUFFER
   GLuint elementBuffer[2];
   for (int i = 0; i < 2; i++) {
-    if(glIsBuffer(elementBuffer[i]) == GL_TRUE) {
-      glDeleteBuffers(1, &elementBuffer[i]);
-    }
     glGenBuffers(1, &elementBuffer[i]);
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer[i]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer[i]);
       glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(short int), indices[i], GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   }
@@ -129,24 +126,14 @@ int main(int argc, char ** argv) {
   // CREATE VBO
   GLuint VBO[2];
   for (int i = 0; i < 2; i++) {
-    if(glIsBuffer(VBO[i]) == GL_TRUE) {
-      glDeleteBuffers(1, &VBO[i]);
-    }
-
     glGenBuffers(1, &VBO[i]);
-    glBindBuffer(GL_ARRAY_BUFFER, elementBuffer[i]);
   }     
 
 
   // CREATE VAO
   GLuint VAO[2];
   for (int i = 0; i < 2; i++) {
-    if(glIsVertexArray(VAO[i]) == GL_TRUE) {
-      glDeleteVertexArrays(1, &VAO[i]);
-    }
-
     glGenVertexArrays(1, &VAO[i]);
-    glBindVertexArray(0);
   }
 
   // LOAD VERTEX

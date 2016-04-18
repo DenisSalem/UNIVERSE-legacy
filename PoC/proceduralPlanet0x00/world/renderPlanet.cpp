@@ -9,9 +9,6 @@ RenderPlanet::RenderPlanet(int indexSize, short int * index, int vertexSize, glm
   this->vertexSize = vertexSize;
   this->vertex = vertex;
 
-  if(glIsBuffer(this->elementBuffer) == GL_TRUE) {
-    glDeleteBuffers(1, &this->elementBuffer);
-  }
   glGenBuffers(1, &elementBuffer);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->elementBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indexSize * sizeof(short int), this->index, GL_STATIC_DRAW);
@@ -19,19 +16,11 @@ RenderPlanet::RenderPlanet(int indexSize, short int * index, int vertexSize, glm
   
 
   for(int i=0; i<6; i++) {
-    if(glIsBuffer(this->VBO[i]) == GL_TRUE) {
-      glDeleteBuffers(1, &this->VBO[i]);
-    }
-
     glGenBuffers(1, &this->VBO[i]);
   }
 
   for(int i=0; i<6; i++) {
-    if(glIsVertexArray(this->VAO[i]) == GL_TRUE) {
-      glDeleteVertexArrays(1, &this->VAO[i]);
-    }
     glGenVertexArrays(1, &this->VAO[i]);
-    glBindVertexArray(0);
   }
 
   for(int i=0; i<6; i++) {
