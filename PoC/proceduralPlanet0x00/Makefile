@@ -1,9 +1,11 @@
 proceduralPlanet: gl3w world common
 	g++ -o proceduralPlanet main.cpp *.o -ldl -lglfw -lGL
-	make clean
+	rm -rf *.o
+	rm -rf gl3w/
 
 world: planetFactory renderPlanet
 	g++ -o planet.o -c world/world.cpp
+
 planetFactory: CubeMap
 	g++ -o planetFactory.o -c world/planetFactory.cpp
 
@@ -19,8 +21,16 @@ loadAndCompileShader:
 
 common:
 	g++ -o common.o -c common.cpp
-gl3w:
+
+gl3w: gl3w.c
 	gcc -o gl3w.o -c gl3w.c
 
+getGl3w:
+	rm -rf gl3w/
+	./gl3wInstaller.sh
+
 clean:
-	rm *.o
+	rm -rfv *.o
+	rm -rfv gl3w.c
+	rm -rfv gl3w/
+	rm -rfv proceduralSphere

@@ -1,9 +1,11 @@
 proceduralSphere: gl3w sphere
 	g++ -o proceduralSphere main.cpp *.o -ldl -lglfw -lGL -O02
-	make clean
+	rm -rf *.o
+	rm -rf gl3w/
 
 sphere: vertexFactory renderSphere
 	g++ -o sphere.o -c sphere/sphere.cpp
+
 vertexFactory:
 	g++ -o vertexFactory.o -c sphere/vertexFactory.cpp
 
@@ -17,5 +19,12 @@ loadAndCompileShader:
 gl3w: gl3w.c
 	gcc -o gl3w.o -c gl3w.c
 
+getGl3w:
+	rm -rf gl3w/
+	./gl3wInstaller.sh
+
 clean:
-	rm *.o
+	rm -rfv *.o
+	rm -rfv gl3w.c
+	rm -rfv gl3w/
+	rm -rfv proceduralSphere
