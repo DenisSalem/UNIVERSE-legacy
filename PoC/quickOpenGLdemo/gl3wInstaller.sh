@@ -11,6 +11,8 @@ if type "git" &> /dev/null; then
     cp -v include/GL/* /usr/include/GL
   fi
   cp -v src/gl3w.c ..
+  cd ..
+  rm -rf gl3w/
 else
   echo "git not found..."
   echo "Aborting..."
