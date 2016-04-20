@@ -12,8 +12,8 @@ VertexFactory::VertexFactory(int LOD) {
   // on évite donc de répéter chaque calcules ou déréférencement.
   float v1,v2,v3;
   
-  std::cout << "Initiate Cube with " << this->vertexSize * 6 << " vertices.\n";
-  std::cout << "Initiate Cube with " << this->indexSize << " indices.\n";
+  std::cout << "Initiate cube with " << this->vertexSize * 6 << " vertices.\n";
+  std::cout << "Initiate index buffer with " << this->indexSize << " indices.\n";
 
   for (int i = 0; i < ACTIVE_FACES; i++) {
     this->vertex[i] = new glm::vec3[this->vertexSize];

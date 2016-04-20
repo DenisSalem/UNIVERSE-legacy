@@ -140,13 +140,14 @@ void UNIVERSE_NOISE_1( HEIGHTMAP * heightmap, int scale, int offsetX, int offset
 	      faceIndex = -(x+randX+offsetX + 1) * heightmap->scale +(y+randY+offsetY);
 	    }
 	    else if (faceId == 3) {
-	      faceIndex = ( heightmap->scale + x+randX+offsetX + 1) * heightmap->scale + heightmap->scale - (y+randY+offsetY);
+	      faceIndex = ( heightmap->scale + x+randX+offsetX - 1) * heightmap->scale + heightmap->scale - 1 - (y+randY+offsetY);
+              std::cout << faceIndex << "\n";
 	    }
 	    else if (faceId == 4) {
 	      faceIndex = (y+randY+offsetY) * heightmap->scale + heightmap->scale + (x+randX+offsetX);
 	    }
 	    else if (faceId == 5) {
-	      faceIndex = ( heightmap->scale - (y+randY+offsetY)) * heightmap->scale - (x+randX+offsetX) - 1;
+	      faceIndex = ( heightmap->scale - (y+randY+offsetY) - 1) * heightmap->scale - (x+randX+offsetX)-1;
 	    }
 	    else {
 	      faceIndex = (y+randY+offsetY) * heightmap->scale + heightmap->scale + (x+randX+offsetX);
@@ -464,6 +465,7 @@ int main(int argc, char ** argv) {
   // Cela étant fait il faut racorder chacune des faces. En effet, en l'état, 
   // si les heighmaps sont appliqué à la sphére projeté il y aura des défauts
   // de jointures entre chacunes des faces du cube.
+
   heightmap.top = heightmap.faces[0];
   heightmap.bottom = heightmap.faces[1];
   heightmap.left = heightmap.faces[5];
@@ -475,6 +477,9 @@ int main(int argc, char ** argv) {
   heightmap.left = heightmap.faces[5];
   heightmap.right = heightmap.faces[4];
   MERGE_EDGES(&heightmap, heightmap.scale, 2);
+
+  // Maintenant que nous avons calculé deux faces opposées, tous les sommets sont bon.
+  // Huits segments sur douze sont également calculés.
   
   heightmap.top = heightmap.faces[3];
   heightmap.bottom = heightmap.faces[2];
@@ -488,9 +493,6 @@ int main(int argc, char ** argv) {
   heightmap.right = heightmap.faces[4];
   MERGE_EDGES(&heightmap, heightmap.scale, 0);
 
-  
-  // Maintenant que nous avons calculé deux faces opposées, tous les sommets sont bon.
-  // Huits segments sur douze sont également calculés.
 
   int scale4 = heightmap.scale * 4;
   int scale3 = heightmap.scale * 3;

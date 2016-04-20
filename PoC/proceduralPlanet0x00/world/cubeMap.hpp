@@ -1,3 +1,6 @@
+#ifndef _CUBEMAP_
+#define _CUBEMAP_
+
 class CubeMap {
 
   public:
@@ -26,7 +29,9 @@ class CubeMap {
     float * right;
     float * bottom;
 
-    void Stamp(float * matrix, int scale);
-    void Noise( HEIGHTMAP * heightmap, int scale, int offsetX, int offsetY, int faceId);
-    void MergeEdges(HEIGHTMAP * heightmap, int scale, int faceId);
-}
+    void Stamp();
+    void Noise(int scale, int offsetX, int offsetY, int faceId);
+    void MergeEdges(int faceId);
+};
+
+#endif

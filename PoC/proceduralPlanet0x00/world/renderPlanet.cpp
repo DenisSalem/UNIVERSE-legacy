@@ -67,12 +67,13 @@ RenderPlanet::RenderPlanet(int indexSize, short int * index, int vertexSize, glm
 void RenderPlanet::Render(int window_width, int window_height) {
   glUseProgram(this->programID);
 
-    this->model = glm::rotate(this->model, (glm::mediump_float) 0.01, glm::vec3(1.0,1.0,1.0));
+    this->model = glm::rotate(this->model, (glm::mediump_float) -0.01, glm::vec3(1.0,1.0,1.0));
     this->view = glm::translate(glm::mat4(1.0), glm::vec3(0.f, 0.0f, -2.00f));
     this->projection = glm::perspective(45.0, (double) window_width/window_height, 0.1, 10000.0);
           
     glEnable(GL_CULL_FACE);  
     glPolygonMode(GL_FRONT, GL_LINE);
+    //glPolygonMode(GL_BACK, GL_LINE);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
