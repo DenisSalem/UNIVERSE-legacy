@@ -12,5 +12,4 @@ getGl3w:
 clean:
 	rm -rfv *.o
 	rm -rfv gl3w/
-	rm -rfv gl3w.c
 	rm -rfv quickOpenGLdemo
