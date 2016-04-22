@@ -1,3 +1,9 @@
+              PROCEDURAL TERRAIN 0x00
+
+Ce PoC génére procéduralement une planète nue sous la forme d'un
+rendu animé type wireframe. Vous pouvez également choisir le
+niveau de détail du rendu.
+
                   .-------------.
                 -=|  Prérequis  |=-
                   '-------------'
@@ -68,9 +74,7 @@ enlever gl3w supprimez manuellement les deux fichiers
                       -=|   Usage   |=-
                         '-----------'
 
-Ce PoC génére procéduralement une planète nue sous la forme d'un
-rendu animé type wireframe. Vous pouvez également choisir le niveau de
-détail du rendu. Dans un terminal tapez
+Dans un terminal tapez
 
 $ ./proceduralPlanet <LoD>
 
