@@ -32,4 +32,5 @@ getGl3w:
 clean:
 	rm -rfv *.o
 	rm -rfv gl3w/
-	rm -rfv proceduralSphere
+	rm -rfv gl3w.c
+	rm -rfv proceduralPlanet

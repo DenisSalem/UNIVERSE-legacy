@@ -8,7 +8,7 @@ int main(int argc, char ** argv) {
   GLFWwindow* window;
 
   if (!glfwInit()) {
-    std::cout << "glfw failed\n";
+    std::cout << "glfw failed, aborting...\n";
     exit(-1);
   }
 
@@ -17,6 +17,7 @@ int main(int argc, char ** argv) {
   window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Procedural Sphere", NULL, NULL);
 
   if (!window){
+    std::cout << "No window available, aborting...";
     glfwTerminate();
     exit(-1);
   }
@@ -24,7 +25,7 @@ int main(int argc, char ** argv) {
   glfwMakeContextCurrent(window); 
 
   if(gl3wInit() != 0) {
-    std::cout << "gl3w failed\n";
+    std::cout << "gl3w failed, aborting...\n";
     exit(-1);
   };
 

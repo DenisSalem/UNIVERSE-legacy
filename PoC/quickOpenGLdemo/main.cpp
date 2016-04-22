@@ -43,6 +43,7 @@ int main(int argc, char ** argv) {
   GLFWwindow* window;
 
   if (!glfwInit())
+    std::cout << "glfw failed, aborting...\n";
     exit(-1);
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -50,6 +51,7 @@ int main(int argc, char ** argv) {
   window = glfwCreateWindow(640, 480, "Simple OpenGL Demo", NULL, NULL);
 
   if (!window){
+    std::cout << "No window available, aborting...";
     glfwTerminate();
     exit(-1);
   }
@@ -57,7 +59,7 @@ int main(int argc, char ** argv) {
   glfwMakeContextCurrent(window); 
 
   if(gl3wInit() != 0) {
-    std::cout << "gl3w fail\n";
+    std::cout << "gl3w failed, aborting...\n";
     return 0;
   };
 
