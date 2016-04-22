@@ -23,10 +23,6 @@ soient à jour.
                .-----------------.
              -=|   Compilation   |=--
                '-----------------'
-                  \  oOoOoOo  /
-                   `---------'
-                       \°/
-                        '
 
 Avant de compiler il faut télécharger et installer gl3w,
 un chargeur d'extentions OpenGL.
@@ -46,8 +42,8 @@ Les en-tête de gl3w seront installés dans votre système
 /usr/include/GL/gl3w.h
 /usr/include/GL/glcorearb.h
 
-Un fichier source gl3w.c est également ajouté au source
-du PoC Pour compiler le PoC, enfin, tapez dans un terminal
+Un fichier source gl3w.c est également ajouté aux sources
+du PoC. Pour compiler le PoC, enfin, tapez dans un terminal
 en étant un utilisateur normal.
 
 $ make
