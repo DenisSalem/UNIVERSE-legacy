@@ -14,24 +14,15 @@ RenderSphere::RenderSphere(int indexSize, short int * index, int vertexSize, glm
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indexSize * sizeof(short int), this->index, GL_STATIC_DRAW);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-  //Création de six VBOs auquels on attache à chacun un index.
+  // On Charge les vertex dans chaque VBOs et on y attache le VAO qui correspond
   for(int i=0; i<ACTIVE_FACES; i++) {
     glGenBuffers(1, &this->VBO[i]);
-  }
-
-  //Création de six VAOs
-  for(int i=0; i<ACTIVE_FACES; i++) {
-    glGenVertexArrays(1, &this->VAO[i]);
-    glBindVertexArray(0);
-  }
-
-  // On Charge les vertex dans chaque VAOs et on y attache le VBO qui correspond
-  for(int i=0; i<ACTIVE_FACES; i++) {
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO[i]);
       glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * this->vertexSize, 0, GL_STATIC_DRAW);
       glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * this->vertexSize, this->vertex[i]);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+    glGenVertexArrays(1, &this->VAO[i]);
     glBindVertexArray(this->VAO[i]);
       glBindBuffer(GL_ARRAY_BUFFER, this->VBO[i]);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));

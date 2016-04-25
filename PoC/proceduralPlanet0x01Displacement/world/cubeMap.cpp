@@ -23,9 +23,6 @@ CubeMap::CubeMap(int LOD) {
     }
   }
   
-  int X=0,Y=0;
-  float hyp = (this->scale * 0.5) / RADIUS ;
-
   // On crée un tampon
   this->Stamp();
 

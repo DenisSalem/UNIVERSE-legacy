@@ -1,6 +1,18 @@
 #include <iostream>
 #include "planetFactory.hpp"
 
+int PlanetFactory::getCubeScale() {
+  return this->cubeScale;
+}
+
+int PlanetFactory::getVertexSize() {
+  return this->vertexSize;
+}
+
+int PlanetFactory::getIndexSize() {
+  return this->indexSize;
+}
+
 PlanetFactory::PlanetFactory(int LOD, CubeMap * cubeMap) {
   this->cubeMap = cubeMap;
   this->cubeScale = (2 << (LOD - 1));
@@ -60,15 +72,15 @@ PlanetFactory::PlanetFactory(int LOD, CubeMap * cubeMap) {
       this->vertex[1][this->cubeScale*y + x].y = v2 * v3 * h1;
       this->vertex[1][this->cubeScale*y + x].z = -0.5 * v3 * h1;
 
-      //MinusY
-      this->vertex[2][this->cubeScale*y + x].x = v1 * v3 * h3;
-      this->vertex[2][this->cubeScale*y + x].y = -0.5 * v3 * h3;
-      this->vertex[2][this->cubeScale*y + x].z = v2 * v3 * h3;
-
       //PlusY
-      this->vertex[3][this->cubeScale*y + x].x = v1 * v3 * h2;
-      this->vertex[3][this->cubeScale*y + x].y = 0.5 * v3 * h2;
-      this->vertex[3][this->cubeScale*y + x].z = v2 * v3 * h2;
+      this->vertex[2][this->cubeScale*y + x].x = v1 * v3 * h2;
+      this->vertex[2][this->cubeScale*y + x].y = 0.5 * v3 * h2;
+      this->vertex[2][this->cubeScale*y + x].z = v2 * v3 * h2;
+
+      //MinusY
+      this->vertex[3][this->cubeScale*y + x].x = v1 * v3 * h3;
+      this->vertex[3][this->cubeScale*y + x].y = -0.5 * v3 * h3;
+      this->vertex[3][this->cubeScale*y + x].z = v2 * v3 * h3;
       
       //PlusX
       this->vertex[4][this->cubeScale*y + x].x = 0.5 * v3 * h4;

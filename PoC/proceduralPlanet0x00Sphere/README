@@ -1,8 +1,8 @@
               PROCEDURAL TERRAIN 0x00
 
-Ce PoC génére procéduralement une planète nue sous la forme d'un
-rendu animé type wireframe. Vous pouvez également choisir le
-niveau de détail du rendu.
+Ce PoC génére procéduralement une sphére animé avec un rendu type wireframe.
+Vous pouvez également choisir le
+niveau de détail de la sphére.
 
                   .-------------.
                 -=|  Prérequis  |=-
@@ -22,6 +22,10 @@ OpenGL 3.0 au minimum. Pour vous en assurer rien de plus
 simple! Dans un terminal tapez
 
 $ glxinfo | grep "core profile"
+
+Normalement ce devrait être le cas, mais assurez vous d'avoir
+la suite d'utilitaires Mesa installé. Cette suite contient
+notamment les commandes glxinfo et glxgears.
 
 Inutile de préciser qu'il faut idéalement que vos pilotes
 soient à jour.
@@ -54,7 +58,7 @@ en étant un utilisateur normal.
 
 $ make
 
-le fichier exécutable proceduralPlanet est maintenant crée :)
+le fichier exécutable proceduralSphere est maintenant crée :)
 
                         .-------------.
                       -=|  Nettoyage  |=-
@@ -76,6 +80,6 @@ enlever gl3w supprimez manuellement les deux fichiers
 
 Dans un terminal tapez
 
-$ ./proceduralPlanet <LoD>
+$ ./proceduralSphere <LoD>
 
-où LoD désigne le "Level of Detail" compris entre 2 et 7.
+où LoD désigne le "Level of Detail" compris entre 1 et 7.

@@ -1,4 +1,5 @@
 #include "../common.hpp"
+#include "planetFactory.hpp"
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -7,17 +8,11 @@
 
 class RenderPlanet {
   public:
-    RenderPlanet(int indexSize, short int * index, int vertexSize, glm::vec3 * vertex[6]);
+    RenderPlanet(PlanetFactory * planet);
     void Render(int window_width, int window_height);
 
   private:
-    int indexSize;
-    int vertexSize;
-
-    short int * index;
-
-    glm::vec3 ** vertex;
-
+    PlanetFactory * planet;
     glm::mat4 model;
     glm::mat4 view;
     glm::mat4 projection;
