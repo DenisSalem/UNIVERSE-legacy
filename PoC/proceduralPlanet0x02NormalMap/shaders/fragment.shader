@@ -7,7 +7,7 @@ uniform sampler2D heightmap;
 
 void main() {
         float step = 0.001953125;
-        float scale = 12.5;
+        float scale = 20.0;
 
         float Z1 = scale * ( texture(heightmap, vec2(outTexcoord.x+step, outTexcoord.y)).r - texture(heightmap, vec2(outTexcoord.x-step, outTexcoord.y)).r );
         float Z2 = scale * ( texture(heightmap, vec2(outTexcoord.x, outTexcoord.y+step)).r - texture(heightmap, vec2(outTexcoord.x, outTexcoord.y-step)).r );
@@ -21,5 +21,6 @@ void main() {
           A.x * B.y - A.y * B.x
         );
 
-	color = vec4((Normal+1.0)/2.0, 1.0);
+	//color = vec4(1.0) * texture(heightmap, outTexcoord).r;
+       color = vec4((Normal+1.0)/2.0, 1.0);
 }
