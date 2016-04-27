@@ -13,7 +13,7 @@ int main(int argc, char ** argv) {
   }
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Procedural Sphere", NULL, NULL);
 
   if (!window){

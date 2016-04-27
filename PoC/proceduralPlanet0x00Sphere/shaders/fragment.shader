@@ -1,6 +1,7 @@
-#version 130
+#version 330
+in vec4 inColor;
+out vec4 outColor;
 
-out vec4 color;
 void main() {
-	color = gl_Color;
+	outColor = inColor;
 }

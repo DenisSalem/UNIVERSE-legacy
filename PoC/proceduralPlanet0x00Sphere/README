@@ -18,8 +18,8 @@ Le mieux est d'installer ces librairies depuis les dépots
 officiels de votre distribution.
 
 Votre carte graphique doit également pouvoir supporter
-OpenGL 3.0 au minimum. Pour vous en assurer rien de plus
-simple! Dans un terminal tapez
+OpenGL 3.3 et GLSL 3.3 au minimum. Pour vous en assurer 
+rien de plus simple! Dans un terminal tapez
 
 $ glxinfo | grep "core profile"
 
