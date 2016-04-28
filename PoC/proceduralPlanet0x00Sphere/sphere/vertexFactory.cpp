@@ -52,6 +52,7 @@ VertexFactory::VertexFactory(int LOD) {
       this->vertex[2][this->cubeScale*y + x].x = v1 * v3;
       this->vertex[2][this->cubeScale*y + x].y = -0.5 * v3;
       this->vertex[2][this->cubeScale*y + x].z = v2 * v3;
+
       this->vertex[3][this->cubeScale*y + x].x = v1 * v3;
       this->vertex[3][this->cubeScale*y + x].y = 0.5 * v3;
       this->vertex[3][this->cubeScale*y + x].z = v2 * v3;
@@ -66,27 +67,50 @@ VertexFactory::VertexFactory(int LOD) {
     }	
   }
 
-  // create indices
+  // Création des indices
+  
+  // Permet de déterminer la direction du placement des vertex.
   bool reverse = false;
 
+  
+  // Coordonnées initiales 
   int x = 0;
   int y = 0;
+
+  // Indice
   int i = 0;
+
+  // On travaille dans une boucle while, ça me semblait plus commode:
+  // On peut controler conditionnellement l'incrémentation de i.
   while (true) {
+
+    // Les vertex sont placés par deux, verticalement.
     this->index[ i ]     = this->cubeScale * y     + x; 
     this->index[ i + 1]  = this->cubeScale * (y+1) + x;
+
     i+=2;
+
+    // Quand on arrive au bout d'une ligne on change de direction
     if (x == this->cubeScale -1 || (x == 0 && i > 2)) {
+      // Si en plus on arrive au bout de la dernière ligne, on arrête tout.
       if(y == this->cubeScale -2) {
         break;
       }
+
+      // On change de direction
       reverse = !reverse;
       y++;
+
+      // On Double le vertex courant
       this->index[ i ]     = this->cubeScale * y + x; 
       this->index[ i + 1]  = this->cubeScale * y + x;
+
+      // On place le vertex qui formera le premier segment de la ligne
       this->index[ i + 2]  = this->cubeScale * (y+1)+x;
       i+=3;
     }
+
+    // On se déplace le long de la ligne selon la direction
     if (reverse) {
       x--;
     }
