@@ -1,5 +1,5 @@
 main:
-	g++ -o cubeMapper main.cpp -lpng -lm -O02
+	g++ -o cubeMapper *.cpp -O02
 
 clean:
 	rm cubeMapper
