@@ -15,8 +15,8 @@ class Realm {
     );
 
     void SetReferenceToExtremum(float * min, float * max);
-    float * getRealm(int layer, int chunkCoordX, int chunkCoordY);
-    void AddMask(float * mask);
+    float * GetRealm(int layer, int chunkCoordX, int chunkCoordY);
+    void AddStamp(float * stamp);
     void AllocateChunk(int layer, int chunk);
     void Noise(int layer, int chunkCoordX, int chunkCoordY);
 
@@ -28,7 +28,7 @@ class Realm {
     virtual int getCoordsToNeighbourLeft(int x, int y) = 0; 
     virtual int getCoordsToNeighbourRight(int x, int y) = 0; 
 
-    int stampCounter;
+    int stampCount;
     int scale;
     int area;
     int LoD;
