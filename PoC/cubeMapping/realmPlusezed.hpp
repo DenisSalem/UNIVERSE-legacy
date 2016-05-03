@@ -2,7 +2,8 @@
 
 class RealmPlusezed : public Realm {
   public:
-    RealmPlusezed(int LoD);
+    RealmPlusezed(int LoD, float * min, float * max);
+
   private:
     int getCoordsToNeighbourTop(int x, int y);
     int getCoordsToNeighbourBottom(int x, int y);

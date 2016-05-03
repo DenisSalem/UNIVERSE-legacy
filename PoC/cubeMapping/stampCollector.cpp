@@ -1,4 +1,5 @@
 #include "stampCollector.hpp"
+#include <iostream>
 #include <math.h>
 StampCollector::StampCollector(int LoD) {
   this->scale = 2 << LoD;

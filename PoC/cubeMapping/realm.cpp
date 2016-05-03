@@ -2,8 +2,10 @@
 #include "common.hpp"
 #include "realm.hpp"
 
-Realm::Realm(int Lod) {
+Realm::Realm(int LoD, float * min, float * max) {
   this->LoD = LoD;
+  this->min = min;
+  this->max= max;
   this->scale = 2 << LoD;
   this->area = 2 << (LoD+LoD+1);
   this->stampCount = 0;
@@ -13,8 +15,8 @@ Realm::Realm(int Lod) {
     this->realm[i+1] = new float*[ 2 << (i * 2 + 1) ]();
   }
 
-  this->AllocateChunk(0,0);
-
+  this->AllocateChunk(0,0,0);
+  
 }
 
 void Realm::AddStamp(float * stamp) {
@@ -22,8 +24,15 @@ void Realm::AddStamp(float * stamp) {
   this->stampCount++;
 }
 
-void Realm::AllocateChunk(int layer, int chunk) {
-  this->realm[layer][chunk] = new float[this->area]; 
+void Realm::AllocateChunk(int layer, int chunkCoordX, int chunkCoordY) {
+  this->realm[layer][chunkCoordX + chunkCoordY * (2 << layer)] = new float[this->area]; 
+}
+
+void Realm::DeallocateChunk(int layer, int chunkCoordX, int chunkCoordY) {
+  delete [] this->realm[layer][chunkCoordX + chunkCoordY * (2 << layer)];
+}
+float * Realm::GetRealm(int layer, int chunkCoordX, int chunkCoordY) {
+  return this->realm[layer][chunkCoordX + chunkCoordY * (2 << layer)];
 }
 
 void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY) {
@@ -31,17 +40,17 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY) {
 }
 
 void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, int sectorStartU, int sectorStartV) {
-  if (scale == 1) {
+  if (sectorScale == 1) {
     return;
   }
 
   float sign = getRandom() & 1 ? 1.0 : -1.0;
 
-  int halfScale = scale >> 1;
-  int randX = - halfScale + getRandom() % (scale);
-  int randY = - halfScale + getRandom() % (scale);
+  int halfScale = sectorScale >> 1;
+  int randX = - halfScale + getRandom() % (sectorScale);
+  int randY = - halfScale + getRandom() % (sectorScale);
   int stampId =  getRandom() % this->stampCount;
-  int inc = this->scale / scale;
+  int inc = this->scale / sectorScale;
   int stampIndex;
   int faceIndex;
   int offsetY = randY + sectorStartV;
@@ -52,9 +61,9 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
   float * stamp = this->stamps[stampId];
 
   if ( offsetY >= 0 && offsetY+sectorScale-1 < this->scale && offsetX >= 0 && offsetX+sectorScale-1< this->scale) {
-    for(int y=0; y<sectorScale;y++) {
+    for(int y=0; y<sectorScale; y++) {
       stampX = 0;
-      for(int x=0; x<sectorScale;x++) {
+      for(int x=0; x<sectorScale; x++) {
         stampIndex = stampX + sectorScale * stampY;
 	if( stamp[ stampIndex ] != 0) {
 	  faceIndex = (y+offsetY) * this->scale + x+offsetX;
@@ -71,9 +80,8 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
       stampY += inc * inc;
     }
   } 
-  
-  //this->Noise(layer, chunkCoordX, chunkCoordY, halfScale, sectorStartU,		  sectorStartV);
-  //this->Noise(layer, chunkCoordX, chunkCoordY, halfScale, sectorStartU, 	  sectorStartV+halfScale);
-  //this->Noise(layer, chunkCoordX, chunkCoordY, halfScale, sectorStartU+halfScale, sectorStartV+halfScale);
-  //this->Noise(layer, chunkCoordX, chunkCoordY, halfScale, sectorStartU+halfScale, sectorStartV);
+  this->Noise(layer, chunkCoordX, chunkCoordY, halfScale, sectorStartU,		  sectorStartV);
+  this->Noise(layer, chunkCoordX, chunkCoordY, halfScale, sectorStartU, 	  sectorStartV+halfScale);
+  this->Noise(layer, chunkCoordX, chunkCoordY, halfScale, sectorStartU+halfScale, sectorStartV+halfScale);
+  this->Noise(layer, chunkCoordX, chunkCoordY, halfScale, sectorStartU+halfScale, sectorStartV);
 };

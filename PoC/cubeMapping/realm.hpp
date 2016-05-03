@@ -5,7 +5,7 @@
 
 class Realm {
   public:
-    Realm(int LoD);
+    Realm(int LoD, float * min, float * max);
 
     void SetNeighbours(
       float ** neighbourTop[MAXIMUM_NUMBER_OF_LAYERS],
@@ -14,10 +14,10 @@ class Realm {
       float ** neightbourRight[MAXIMUM_NUMBER_OF_LAYERS]
     );
 
-    void SetReferenceToExtremum(float * min, float * max);
     float * GetRealm(int layer, int chunkCoordX, int chunkCoordY);
     void AddStamp(float * stamp);
-    void AllocateChunk(int layer, int chunk);
+    void AllocateChunk(int layer, int chunkCoordX, int chunkCoordY);
+    void DeallocateChunk(int layer, int chunkCoordX, int chunkCoordY);
     void Noise(int layer, int chunkCoordX, int chunkCoordY);
 
   private:
