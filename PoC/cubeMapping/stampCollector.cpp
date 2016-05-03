@@ -2,6 +2,7 @@
 #include <math.h>
 StampCollector::StampCollector(int LoD) {
   this->scale = 2 << LoD;
+  this->area = 2 << (LoD+LoD+1);
   this->cone = 0;
 }
 
@@ -17,6 +18,7 @@ void StampCollector::SetCone() {
   int x,y,X=0;
   double halfScale = this->scale / 2 ;
   double radius;
+  this->cone = new float[this->area]();
 
   int * powersOfTwo = new int[this->scale];
 

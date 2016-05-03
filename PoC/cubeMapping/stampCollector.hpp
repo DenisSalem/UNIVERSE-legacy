@@ -6,5 +6,6 @@ class StampCollector {
   private:
     void SetCone();
     int scale;
+    int area;
     float * cone;
 };
