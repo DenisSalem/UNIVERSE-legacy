@@ -1,4 +1,4 @@
-              PROCEDURAL TERRAIN 0x00
+              PROCEDURAL TERRAIN 0x01
 
 Ce PoC génére procéduralement une planète nue sous la forme d'un
 rendu animé type wireframe. Vous pouvez également choisir le
