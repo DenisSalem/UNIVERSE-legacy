@@ -4,8 +4,8 @@
 #include <math.h>
 #include "png.hpp"
 
-// Comme nous allons travailler simultanément sur cinq heightmap en même,
-// nous stockons tout ce dont nous avons besoins dans une structure.
+// Comme nous allons travailler simultanément sur cinq heightmaps en même temps,
+// nous stockons tout ce dont nous avons besoin dans une structure.
 //
 typedef struct heighmap {
   // Le tableau simulant une matrice contenant le tampon de base que l'on avait
@@ -15,7 +15,7 @@ typedef struct heighmap {
   // La taille de chaque faces.
   int scale;
 
-  // max et min correspondent à la hauteur minimal et maximal sur tout le cube.
+  // max et min correspondent à la hauteur minimale et maximale sur tout le cube.
   float max;
   float min;
 
@@ -24,7 +24,7 @@ typedef struct heighmap {
   float * faces[6];
 
   // Pour une face donnée il faut lui associer des faces voisines.
-  // Chacun des quatres pointeur contient donc une références vers une face voisine.
+  // Chacun des quatres pointeur contient donc une référence vers une face voisine.
   float * top;
   float * left;
   float * right;
@@ -46,7 +46,7 @@ void UNIVERSE_STAMP_1(float * matrix, int scale) {
   int * powersOfTwo = (int *) malloc( sizeof(int) * scale);
 
   // On crée deux tables contenants les valeurs élevées à la puissance de deux.
-  // On calcul ainsi n fois ces valeurs au lieu de n².
+  // On calcule ainsi n fois ces valeurs au lieu de n².
   for(x=0; x<scale;x++) {
     powersOfTwo[x] = (x-halfScale) * (x-halfScale);
   }
@@ -245,7 +245,7 @@ void UNIVERSE_NOISE_1( HEIGHTMAP * heightmap, int scale, int offsetX, int offset
 }
 
 void MERGE_EDGES(HEIGHTMAP * heightmap, int scale, int faceId) {
-  // On parcours les quatres segments composants la face courante en une seule itération
+  // On parcoure les quatres segments composants la face courante en une seule itération
   // On ne touche pas aux sommet du carré pour le moment, ils seront traités séparément.
   // En fait les sommets de la face courrante seront le résultat de la moyenne des sommets voisins
   // en un point donné.
@@ -321,9 +321,9 @@ void MERGE_EDGES(HEIGHTMAP * heightmap, int scale, int faceId) {
     }
   }
 
-  // On calcul maintenant la moyenne des sommets
+  // On calcule maintenant la moyenne des sommets
   // Le traitement de deux faces suffit pour faire huit fois la moyenne de trois sommets.
-  // En l'occurence il faut que ces faces soit opposé
+  // En l'occurence il faut que ces faces soient opposées
 
   if (faceId == 0) { // plusZ
     // Sommet supérieur gauche
@@ -403,7 +403,7 @@ int main(int argc, char ** argv) {
     png[x] = (PIXEL *) malloc(sizeof(PIXEL) * heightmap.scale * 4);
   }
 
-  // On fait en sorte que chaque faces soient vierge
+  // On fait en sorte que chaque face soit vierge
   for(int y = 0; y<heightmap.scale; y++) {
     for(int x = 0; x<heightmap.scale; x++) {
       heightmap.faces[0][x + heightmap.scale*y]	= 0;
@@ -461,8 +461,8 @@ int main(int argc, char ** argv) {
   UNIVERSE_NOISE_1(&heightmap, heightmap.scale, 0, 0, 5);
 
   // Cela étant fait il faut racorder chacune des faces. En effet, en l'état, 
-  // si les heighmaps sont appliqué à la sphére projeté il y aura des défauts
-  // de jointures entre chacunes des faces du cube.
+  // si les heighmaps sont appliquées à la sphére projetée il y aura des défauts
+  // de jointures entre chacune des faces du cube.
 
   heightmap.top = heightmap.faces[0];
   heightmap.bottom = heightmap.faces[1];
