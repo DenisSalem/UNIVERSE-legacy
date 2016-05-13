@@ -8,8 +8,8 @@ VertexFactory::VertexFactory(int LOD) {
 
   float step = 1.0 / (this->cubeScale-1);
         
-  // Certaines valeurs serons réutilisés plusieurs fois de suite,
-  // on évite donc de répéter chaque calcules ou déréférencement.
+  // Certaines valeurs serons réutilisées plusieurs fois de suite,
+  // on évite donc de répéter chaque calcul ou déréférencement.
   float v1,v2,v3;
   
   std::cout << "Initiate cube with " << this->vertexSize * 6 << " vertices.\n";
@@ -20,7 +20,7 @@ VertexFactory::VertexFactory(int LOD) {
   }
   this->index     = new short int[this->indexSize];
 
-  // On peut substantiellement réduire le nombre de calcule en précalculant les rayons de chaques vertex pour une face donnée.
+  // On peut substantiellement réduire le nombre de calculs en précalculant les rayons de chaque vertex pour une face donnée.
   // On fait ensuite la correspondance entre le rayon du vertex et sa position dans la matrice qui est indépendante de la face
   // sur laquelle on travaille.
   float * radiusPerVertex = new float[this->vertexSize];
@@ -38,7 +38,7 @@ VertexFactory::VertexFactory(int LOD) {
       v1 = -0.5 + x * step;
       v2 =  0.5 - y * step;
 
-      // Pour éviter de déréférencer 500 milles fois on stock le rayon courant une bonne fois pour toute.
+      // Pour éviter de déréférencer 500 mille fois on stocke le rayon courant une bonne fois pour toute.
       v3 = radiusPerVertex[this->cubeScale*y + x];  
 
       this->vertex[0][this->cubeScale*y + x].x = v1 * v3;
@@ -80,8 +80,8 @@ VertexFactory::VertexFactory(int LOD) {
   // Indice
   int i = 0;
 
-  // On travaille dans une boucle while, ça me semblait plus commode:
-  // On peut controler conditionnellement l'incrémentation de i.
+  // On travaille dans une boucle while, ça me semblait plus commode :
+  // On peut contrôler conditionnellement l'incrémentation de i.
   while (true) {
 
     // Les vertex sont placés par deux, verticalement.
