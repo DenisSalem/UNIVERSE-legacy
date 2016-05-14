@@ -24,7 +24,7 @@ void StampCollector::SetCone() {
   int * powersOfTwo = new int[this->scale];
 
   // On crée deux tables contenants les valeurs élevées à la puissance de deux.
-  // On calcul ainsi n fois ces valeurs au lieu de n².
+  // On calcule ainsi n fois ces valeurs au lieu de n².
   for(x=0; x<this->scale;x++) {
     powersOfTwo[x] = (x-halfScale) * (x-halfScale);
   }
@@ -51,7 +51,7 @@ void StampCollector::SetCone() {
 	this->cone[x+y] = (halfScale - radius) / (halfScale);
       }
       else {
-        // Si on est en dehors du cercle, on se casse pas la tête et on affecte un zero.
+        // Si on est en dehors du cercle, on se casse pas la tête et on affecte un zéro.
 	this->cone[x+y] = 0;
       }
     }
