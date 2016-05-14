@@ -1,8 +1,8 @@
               PROCEDURAL TERRAIN 0x00
 
-Ce PoC génére procéduralement une sphére animé avec un rendu type wireframe.
+Ce PoC génére procéduralement une sphére animée avec un rendu type wireframe.
 Vous pouvez également choisir le
-niveau de détail de la sphére.
+niveau de détail de la sphère.
 
                   .-------------.
                 -=|  Prérequis  |=-
