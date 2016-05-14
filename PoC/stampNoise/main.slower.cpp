@@ -4,7 +4,7 @@
 #include <math.h>
 #include "png.cpp"
 
-// Le contexte de notre bruit. Pour ne pas être empilé à chaque appel recursif on stock les informations
+// Le contexte de notre bruit. Pour ne pas être empilé à chaque appel recursif on stocke les informations
 // utiles à notre fonction de bruit dans une structure.
 // Sauf que c'est une mauvaise idée en fait...
 // Chaque accès au membre de la structure nécessite un déréférencement
@@ -165,10 +165,10 @@ void UNIVERSE_STAMP_NOISE(NOISE_CONTEXT * context, int scale, int offsetX, int o
                 //
                 // (X * hauteur) + Y
                 // Avec X valant la somme du 
-                //  décalage du secteur courant en abcisse, 
-                //  du décalage du tampon courant en abcisse,
+                //  décalage du secteur courant en abscisse, 
+                //  du décalage du tampon courant en abscisse,
                 //  la coordonnée x courante,
-                //  le décalage aléatoire en abcisse
+                //  le décalage aléatoire en abscisse
                 //
                 // Avec Y valant la somme du 
                 //  décalage du secteur courant en ordonnée, 
