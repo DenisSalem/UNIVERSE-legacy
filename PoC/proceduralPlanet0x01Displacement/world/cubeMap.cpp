@@ -14,7 +14,7 @@ CubeMap::CubeMap(int LOD) {
     this->faces[i]	= new float[area];
   }
 
-  // On fait en sorte que chaque faces soient vierge
+  // On fait en sorte que chaque face soit vierge
   for(int y = 0; y<area; y+= this->scale) {
     for(int x = 0; x<this->scale; x++) {
       for (int i = 0; i<6; i++) {
@@ -66,7 +66,7 @@ CubeMap::CubeMap(int LOD) {
   this->Noise(this->scale, 0, 0, 5);
 
   // Cela étant fait il faut racorder chacune des faces. En effet, en l'état, 
-  // si les heighmaps sont appliqué à la sphére projeté il y aura des défauts
+  // si les heighmaps sont appliquées à la sphére projeté il y aura des défauts
   // de jointures entre chacunes des faces du cube.
 
   this->top    = this->faces[2];
@@ -105,7 +105,7 @@ void CubeMap::Stamp() {
   //int * powersOfTwo = (int *) malloc( sizeof(int) * this->scale);
   int * powersOfTwo = new int[this->scale];
   // On crée deux tables contenants les valeurs élevées à la puissance de deux.
-  // On calcul ainsi n fois ces valeurs au lieu de n².
+  // On calcule ainsi n fois ces valeurs au lieu de n².
   for(x=0; x<this->scale;x++) {
     powersOfTwo[x] = (x-halfScale) * (x-halfScale);
   }
@@ -125,14 +125,14 @@ void CubeMap::Stamp() {
   for(x=0;x<limit;x+=this->scale) {
     for(y=0;y<this->scale;y++) {
       // On calcule le rayon du cercle sur lequel se trouve le point courant.
-      // Opération très TRÈS gourmante en temps CPU
+      // Opération très TRÈS gourmande en temps CPU
       radius = sqrtl( powersOfTwo[y] + powersOfTwo[X]);
       if ( radius < halfScale ) {
         // y a plus qu'à dessiner le cône.
 	this->stamp[x+y] = (halfScale - radius) / (halfScale);
       }
       else {
-        // Si on est en dehors du cercle, on se casse pas la tête et on affecte un zero.
+        // Si on est en dehors du cercle, on se casse pas la tête et on affecte un zéro.
 	this->stamp[x+y] = 0;
       }
     }
@@ -304,7 +304,7 @@ void CubeMap::Noise( int scale, int offsetX, int offsetY, int faceId) {
 }
 
 void CubeMap::MergeEdges(int faceId) {
-  // On parcours les quatres segments composants la face courante en une seule itération
+  // On parcoure les quatres segments composants la face courante en une seule itération
   // On ne touche pas aux sommet du carré pour le moment, ils seront traités séparément.
   // En fait les sommets de la face courrante seront le résultat de la moyenne des sommets voisins
   // en un point donné.
@@ -380,9 +380,9 @@ void CubeMap::MergeEdges(int faceId) {
     }
   }
 
-  // On calcul maintenant la moyenne des sommets
+  // On calcule maintenant la moyenne des sommets
   // Le traitement de deux faces suffit pour faire huit fois la moyenne de trois sommets.
-  // En l'occurence il faut que ces faces soit opposé
+  // En l'occurence il faut que ces faces soit opposées
 
   if (faceId == 0) { // plusZ
     // Sommet supérieur gauche
