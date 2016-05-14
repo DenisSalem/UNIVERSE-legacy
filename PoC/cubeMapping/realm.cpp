@@ -56,16 +56,23 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
   int offsetY = randY + sectorStartV;
   int offsetX = randX + sectorStartU;
   int stampX=0,stampY=0;
+  double distanceFromStampCenterToCurrentCorner; // Whoaw, what a long name, whoaw.
 
   float * dest = this->realm[layer][chunkCoordX + chunkCoordY * (2 << layer)];
   float * stamp = this->stamps[stampId];
 
+  // Selon le cas de figure, le dépassement du tampon peut déborder sur au plus trois chunk:
+  float * verticalNeightbourChunk;
+  float * horizontalNeightbourChunk;
+  float * diagonalNeightbourChunk;
+
+  // Quand le tampon est exactement contenu à l'intérieur d'une face
   if ( offsetY >= 0 && offsetY+sectorScale-1 < this->scale && offsetX >= 0 && offsetX+sectorScale-1< this->scale) {
-    for(int y=0; y<sectorScale; y++) {
+    for (int y=0; y<sectorScale; y++) {
       stampX = 0;
-      for(int x=0; x<sectorScale; x++) {
+      for (int x=0; x<sectorScale; x++) {
         stampIndex = stampX + sectorScale * stampY;
-	if( stamp[ stampIndex ] != 0) {
+	if ( stamp[ stampIndex ] != 0) {
 	  faceIndex = (y+offsetY) * this->scale + x+offsetX;
 	  dest[ faceIndex ] += sign * stamp[ stampIndex ] / inc;
 	  if (*this->max < dest[ faceIndex ]) {
@@ -79,7 +86,13 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
       }
       stampY += inc * inc;
     }
-  } 
+  }
+  
+  // Quand le tampon dépasse, là plusieurs cas de figures se profiles...
+  else {
+    
+  }
+
   this->Noise(layer, chunkCoordX, chunkCoordY, halfScale, sectorStartU,		  sectorStartV);
   this->Noise(layer, chunkCoordX, chunkCoordY, halfScale, sectorStartU, 	  sectorStartV+halfScale);
   this->Noise(layer, chunkCoordX, chunkCoordY, halfScale, sectorStartU+halfScale, sectorStartV+halfScale);
