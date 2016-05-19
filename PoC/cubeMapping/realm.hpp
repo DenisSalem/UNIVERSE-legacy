@@ -23,10 +23,10 @@ class Realm {
   private:
     void Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, int sectorStartU, int sectorStartV);
 
-    virtual int getCoordsToNeighbourTop(int x, int y) = 0;
-    virtual int getCoordsToNeighbourBottom(int x, int y) = 0; 
-    virtual int getCoordsToNeighbourLeft(int x, int y) = 0; 
-    virtual int getCoordsToNeighbourRight(int x, int y) = 0; 
+    virtual int getCoordsToNeighbourTop(int x, int y, int scale) = 0;
+    virtual int getCoordsToNeighbourBottom(int x, int y, int scale) = 0; 
+    virtual int getCoordsToNeighbourLeft(int x, int y, int scale) = 0; 
+    virtual int getCoordsToNeighbourRight(int x, int y, int scale) = 0; 
 
     int stampCount;
     int scale;
