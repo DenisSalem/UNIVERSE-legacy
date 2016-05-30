@@ -9,6 +9,11 @@ Realm::Realm(int LoD, float * min, float * max) {
   this->scale = 2 << LoD;
   this->area = 2 << (LoD+LoD+1);
   this->stampCount = 0;
+  this->neighbourTop;
+  this->neighbourBottom;
+  this->neighbourLeft;
+  this->neighbourRight;
+  this->realm = new float ** [MAXIMUM_NUMBER_OF_LAYERS];
   this->realm[0] = new float*[1]();
 
   for (int i = 0; i < MAXIMUM_NUMBER_OF_LAYERS-1; i++) {
@@ -18,20 +23,38 @@ Realm::Realm(int LoD, float * min, float * max) {
   this->AllocateChunk(0,0,0); 
 }
 
+void Realm::SetNeighbours(
+      float *** neighbourTop,
+      float *** neighbourBottom,
+      float *** neighbourLeft,
+      float *** neighbourRight
+  ) {
+
+  this->neighbourTop = neighbourTop;
+  this->neighbourBottom = neighbourBottom;
+  this->neighbourLeft = neighbourLeft;
+  this->neighbourRight = neighbourRight;
+};
+
 void Realm::AddStamp(float * stamp) {
   this->stamps[this->stampCount]  = stamp;
   this->stampCount++;
 }
 
 void Realm::AllocateChunk(int layer, int chunkCoordX, int chunkCoordY) {
-  this->realm[layer][chunkCoordX + chunkCoordY * (2 << layer)] = new float[this->area]; 
+  this->realm[layer][chunkCoordX + chunkCoordY * (1 << layer)] = new float[this->area]; 
 }
 
 void Realm::DeallocateChunk(int layer, int chunkCoordX, int chunkCoordY) {
-  delete [] this->realm[layer][chunkCoordX + chunkCoordY * (2 << layer)];
+  delete [] this->realm[layer][chunkCoordX + chunkCoordY * (0 << layer)];
 }
+
 float * Realm::GetRealm(int layer, int chunkCoordX, int chunkCoordY) {
-  return this->realm[layer][chunkCoordX + chunkCoordY * (2 << layer)];
+  return this->realm[layer][chunkCoordX + chunkCoordY * (0 << layer)];
+}
+
+float *** Realm::GetRealm() {
+  return this->realm;
 }
 
 void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY) {
@@ -59,7 +82,7 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
 
   // Cette curieuse formule permet de connaitre pour un calque donné la dimension
   // d'un morceau courant. Habile!
-  int chunkScale = 2 << layer;
+  int chunkScale = 1 << layer;
 
   float * dest = this->realm[layer][chunkCoordX + chunkCoordY * chunkScale];
   float * stamp = this->stamps[stampId];
@@ -104,10 +127,12 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
             // Le morceau courant est à l'extrême gauche, il faut donc se reporter sur un autre royaume.
             if(chunkCoordX==0) {
               //On regarde si le le morceau du royaume voisin est alloué, sinon on ne fait rien. Et ouais.
+              // ÇA DÉCONNE GRAVE PAR ICI...
               if (this->neighbourLeft[layer] != 0) {
-                // ERREUR DE SEGMENTATION, LA COORDONNÉE EST BIDON
                 neighbourChunkCoord = this->getCoordsToNeighbourLeft(-1, chunkCoordY, chunkScale);
+                std::cout << "1 : "<< layer << " " << neighbourChunkCoord << "\n";
                 if(this->neighbourLeft[layer][neighbourChunkCoord ] != 0) {
+                  std::cout << "2 : "<< layer << " " << neighbourChunkCoord << "\n";
                   horizontalNeightbourChunk = this->neighbourLeft[layer][neighbourChunkCoord];
 	          faceIndex =  this->getCoordsToNeighbourLeft( -x+offsetX, y+offsetY, this->scale) ;
 	          horizontalNeightbourChunk[ faceIndex ] += sign * stamp[ stampIndex ] / inc;

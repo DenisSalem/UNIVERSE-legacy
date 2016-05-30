@@ -8,13 +8,14 @@ class Realm {
     Realm(int LoD, float * min, float * max);
 
     void SetNeighbours(
-      float ** neighbourTop[MAXIMUM_NUMBER_OF_LAYERS],
-      float ** neighbourBottom[MAXIMUM_NUMBER_OF_LAYERS],
-      float ** neighbourLeft[MAXIMUM_NUMBER_OF_LAYERS],
-      float ** neightbourRight[MAXIMUM_NUMBER_OF_LAYERS]
+      float *** neighbourTop,
+      float *** neighbourBottom,
+      float *** neighbourLeft,
+      float *** neightbourRight
     );
 
     float * GetRealm(int layer, int chunkCoordX, int chunkCoordY);
+    float *** GetRealm();
     void AddStamp(float * stamp);
     void AllocateChunk(int layer, int chunkCoordX, int chunkCoordY);
     void DeallocateChunk(int layer, int chunkCoordX, int chunkCoordY);
@@ -38,10 +39,10 @@ class Realm {
 
     float * stamps[MAXIMUM_NUMBER_OF_STAMPS];
 
-    float ** realm[MAXIMUM_NUMBER_OF_LAYERS];
-    float ** neighbourTop[MAXIMUM_NUMBER_OF_LAYERS];
-    float ** neighbourBottom[MAXIMUM_NUMBER_OF_LAYERS];
-    float ** neighbourLeft[MAXIMUM_NUMBER_OF_LAYERS];
-    float ** neightbourRight[MAXIMUM_NUMBER_OF_LAYERS];
+    float *** realm;
+    float *** neighbourTop;
+    float *** neighbourBottom;
+    float *** neighbourLeft;
+    float *** neighbourRight;
 };
 #endif

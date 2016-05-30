@@ -15,6 +15,9 @@ int main(int argc, char ** argv) {
 
   RealmPlusezed realmPlusezed = RealmPlusezed(LoD, &min, &max);
   RealmMinusix realmMinusix = RealmMinusix(LoD, &min, &max);
+  
+  realmPlusezed.SetNeighbours(0,0,realmMinusix.GetRealm(),0);
+  realmMinusix.SetNeighbours(0,0,0,realmPlusezed.GetRealm());
 
   realmPlusezed.AddStamp(stampCollector.GetCone());
   realmMinusix.AddStamp(stampCollector.GetCone());
@@ -22,7 +25,8 @@ int main(int argc, char ** argv) {
   realmPlusezed.Noise(0,0,0);
   realmMinusix.Noise(0,0,0);
 
-  //A partir de là les six heightmaps de bases sont terminées, y a plus qu'a envoyer tout ça dans png pour le plaisir de vos yeux.
+  // A partir de là les six heightmaps de bases sont terminées, 
+  // y a plus qu'a envoyer tout ça dans un png pour le plaisir de vos yeux.
 
   PIXEL ** png = new PIXEL*[scale * 3];
   for (int x =0; x < scale * 3 ; x++) {

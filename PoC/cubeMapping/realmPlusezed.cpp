@@ -13,7 +13,7 @@ inline int RealmPlusezed::getCoordsToNeighbourBottom(int x, int y, int scale) {
 }
 
 inline int RealmPlusezed::getCoordsToNeighbourLeft(int x, int y, int scale) {
-  return y*scale + scale + x;
+  return y * scale + scale + x;
 }
 
 inline int RealmPlusezed::getCoordsToNeighbourRight(int x, int y, int scale) {
