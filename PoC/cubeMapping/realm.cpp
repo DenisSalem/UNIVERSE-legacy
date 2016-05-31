@@ -135,9 +135,6 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
 	          faceIndex =  this->getCoordsToNeighbourLeft( offsetX+x, y+offsetY, this->scale) ;
                 }
                 // Ou sur le côté droit
-                //else if (offsetX+x >= this->scale ) {
-                //}
-                // Ou dans le royaume courant
                 else {
                   dest = this->realm[layer][chunkCoordX + chunkCoordY * chunkScale];
 	          faceIndex = (y+offsetY) * this->scale + x+offsetX;
@@ -152,16 +149,18 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
               }
             }
           }
+          else if (chunkCoordX == chunkScale - 1 ) {
+          }
           // Sinon c'est cool, on peut calculer la coordonnée relative facilement
           else {
-            horizontalNeightbourChunk = this->realm[layer][chunkCoordX-1 + chunkCoordY * chunkScale];  
+            dest = this->realm[layer][chunkCoordX-1 + chunkCoordY * chunkScale];  
 	    faceIndex = (y+offsetY) * this->scale + this->scale - x+offsetX;
-	    horizontalNeightbourChunk[ faceIndex ] += sign * stamp[ stampIndex ] / inc;
-	    if (*this->max < horizontalNeightbourChunk[ faceIndex ]) {
-	      *this->max = horizontalNeightbourChunk[ faceIndex ];
+	    dest[ faceIndex ] += sign * stamp[ stampIndex ] / inc;
+	    if (*this->max < dest[ faceIndex ]) {
+	      *this->max = dest[ faceIndex ];
 	    }
 	    if (*this->min <= 0 && *this->min > dest[ faceIndex ]) {
-	      *this->min = horizontalNeightbourChunk[ faceIndex ];
+	      *this->min = dest[ faceIndex ];
 	    }
           }
         }
