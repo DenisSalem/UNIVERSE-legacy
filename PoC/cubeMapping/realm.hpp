@@ -22,6 +22,7 @@ class Realm {
     void Noise(int layer, int chunkCoordX, int chunkCoordY);
 
   protected:
+    void UpdateMinMax(int chunkIndex, float * chunk);
     int scale;
 
   private:
