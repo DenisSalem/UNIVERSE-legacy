@@ -62,7 +62,7 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY) {
 }
 
 void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, int sectorStartU, int sectorStartV) {
-  if (sectorScale == 1) {
+  if (sectorScale == 64) {
     return;
   }
 
@@ -84,7 +84,7 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
   // d'un morceau courant. Habile!
   int chunkScale = 1 << layer;
 
-  float * dest = this->realm[layer][chunkCoordX + chunkCoordY * chunkScale];
+  float * dest;
   float * stamp = this->stamps[stampId];
 
   // Selon le cas de figure, le dépassement du tampon peut déborder sur au plus trois chunk:
@@ -95,6 +95,7 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
 
   // Quand le tampon est exactement contenu à l'intérieur d'une face
   if ( offsetY >= 0 && offsetY+sectorScale-1 < this->scale && offsetX >= 0 && offsetX+sectorScale-1< this->scale) {
+    dest = this->realm[layer][chunkCoordX + chunkCoordY * chunkScale];
     for (int y=0; y<sectorScale; y++) {
       stampX = 0;
       for (int x=0; x<sectorScale; x++) {
@@ -115,48 +116,53 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
     }
   }
   
-  // Dépassement X
-  else if ( !(offsetX >= 0 && offsetX+scale-1 < this->scale) && ( offsetY >= 0 && offsetY+scale-1 < this->scale)) { 
+  // Dépassement en X sur la gauche
+  else if ( (offsetX < 0 || offsetX+sectorScale-1 >= this->scale) && ( offsetY >= 0 && offsetY+sectorScale-1 < this->scale)) { 
     for (int y=0; y<sectorScale; y++) {
       stampX = 0;
       for (int x=0; x<sectorScale; x++) {
         stampIndex = stampX + sectorScale * stampY;
 	if ( stamp[ stampIndex ] != 0) {
-          // On dépasse du morceau sur la gauche
-          if (offsetX + x <0) {
-            // Le morceau courant est à l'extrême gauche, il faut donc se reporter sur un autre royaume.
-            if(chunkCoordX==0) {
-              //On regarde si le le morceau du royaume voisin est alloué, sinon on ne fait rien. Et ouais.
-              // ÇA DÉCONNE GRAVE PAR ICI...
-              if (this->neighbourLeft[layer] != 0) {
-                neighbourChunkCoord = this->getCoordsToNeighbourLeft(-1, chunkCoordY, chunkScale);
-                std::cout << "1 : "<< layer << " " << neighbourChunkCoord << "\n";
-                if(this->neighbourLeft[layer][neighbourChunkCoord ] != 0) {
-                  std::cout << "2 : "<< layer << " " << neighbourChunkCoord << "\n";
-                  horizontalNeightbourChunk = this->neighbourLeft[layer][neighbourChunkCoord];
-	          faceIndex =  this->getCoordsToNeighbourLeft( -x+offsetX, y+offsetY, this->scale) ;
-	          horizontalNeightbourChunk[ faceIndex ] += sign * stamp[ stampIndex ] / inc;
-	          if (*this->max < horizontalNeightbourChunk[ faceIndex ]) {
-	            *this->max = horizontalNeightbourChunk[ faceIndex ];
-	          }
-	          if (*this->min <= 0 && *this->min > dest[ faceIndex ]) {
-	            *this->min = horizontalNeightbourChunk[ faceIndex ];
-	          }
+          // Le morceau courant est à l'extrême gauche, il faut donc se reporter sur un autre royaume.
+          if(chunkCoordX == 0) {
+            //On regarde si le le morceau du royaume voisin est alloué, sinon on ne fait rien. Et ouais.
+            if (this->neighbourLeft[layer] != 0) {
+              neighbourChunkCoord = this->getCoordsToNeighbourLeft(-1, chunkCoordY, chunkScale);
+              if(this->neighbourLeft[layer][neighbourChunkCoord ] != 0) {
+                // On prépare la destination sur le côté gauche
+                if(offsetX+x < 0) {
+                  dest = this->neighbourLeft[layer][neighbourChunkCoord ]; 
+	          faceIndex =  this->getCoordsToNeighbourLeft( offsetX+x, y+offsetY, this->scale) ;
                 }
+                // Ou sur le côté droit
+                //else if (offsetX+x >= this->scale ) {
+                //}
+                // Ou dans le royaume courant
+                else {
+                  dest = this->realm[layer][chunkCoordX + chunkCoordY * chunkScale];
+	          faceIndex = (y+offsetY) * this->scale + x+offsetX;
+                }
+	        dest[ faceIndex ] += sign * stamp[ stampIndex ] / inc;
+	        if (*this->max < dest[ faceIndex ]) {
+	          *this->max = dest[ faceIndex ];
+	        }
+	        if (*this->min <= 0 && *this->min > dest[ faceIndex ]) {
+	          *this->min = dest[ faceIndex ];
+	        }
               }
             }
-            // Sinon c'est cool, on peut calculer la coordonnée relative facilement
-            else {   
-              horizontalNeightbourChunk = this->realm[layer][chunkCoordX-1 + chunkCoordY * chunkScale];  
-	      faceIndex = (y+offsetY) * this->scale + this->scale - x+offsetX;
-	      horizontalNeightbourChunk[ faceIndex ] += sign * stamp[ stampIndex ] / inc;
-	      if (*this->max < horizontalNeightbourChunk[ faceIndex ]) {
-	        *this->max = horizontalNeightbourChunk[ faceIndex ];
-	      }
-	      if (*this->min <= 0 && *this->min > dest[ faceIndex ]) {
-	        *this->min = horizontalNeightbourChunk[ faceIndex ];
-	      }
-            }
+          }
+          // Sinon c'est cool, on peut calculer la coordonnée relative facilement
+          else {
+            horizontalNeightbourChunk = this->realm[layer][chunkCoordX-1 + chunkCoordY * chunkScale];  
+	    faceIndex = (y+offsetY) * this->scale + this->scale - x+offsetX;
+	    horizontalNeightbourChunk[ faceIndex ] += sign * stamp[ stampIndex ] / inc;
+	    if (*this->max < horizontalNeightbourChunk[ faceIndex ]) {
+	      *this->max = horizontalNeightbourChunk[ faceIndex ];
+	    }
+	    if (*this->min <= 0 && *this->min > dest[ faceIndex ]) {
+	      *this->min = horizontalNeightbourChunk[ faceIndex ];
+	    }
           }
         }
 	stampX += inc;
