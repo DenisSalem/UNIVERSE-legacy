@@ -1,14 +1,7 @@
 #include <png.h>
+#include "png.h"
 
-typedef struct _PIXEL
-{
-     unsigned char Red;      
-     unsigned char Green;    
-     unsigned char Blue;
-     unsigned char Alpha;
-} PIXEL;
-
-int writePng( PIXEL ** matrix, int size) { 
+{ 
         png_structp     png_ptr;
         png_infop       info_ptr;
         png_bytep * row_pointers;

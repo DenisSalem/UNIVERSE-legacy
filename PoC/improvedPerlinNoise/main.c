@@ -1,6 +1,6 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <stdlib.h>
-#include "png.c"
+#include "png.h"
 
 // On définit une macro d'interpolation, à priori plus rapide qu'un appel de fonction.
 // la formule est la suivante:  6t^5 - 15t^4 + 10t^3
