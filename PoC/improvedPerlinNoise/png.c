@@ -1,7 +1,7 @@
 #include <png.h>
 #include "png.h"
 
-{ 
+int writePng( PIXEL ** matrix, int size) { 
         png_structp     png_ptr;
         png_infop       info_ptr;
         png_bytep * row_pointers;

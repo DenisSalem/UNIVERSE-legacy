@@ -23,7 +23,7 @@ int main(int argc, char ** argv) {
   realmMinusix.AddStamp(stampCollector.GetCone());
 
   realmPlusezed.Noise(0,0,0);
-  realmMinusix.Noise(0,0,0);
+  //realmMinusix.Noise(0,0,0);
 
   // A partir de là les six heightmaps de bases sont terminées, 
   // y a plus qu'a envoyer tout ça dans un png pour le plaisir de vos yeux.

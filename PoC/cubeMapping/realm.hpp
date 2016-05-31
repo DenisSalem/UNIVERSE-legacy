@@ -21,6 +21,9 @@ class Realm {
     void DeallocateChunk(int layer, int chunkCoordX, int chunkCoordY);
     void Noise(int layer, int chunkCoordX, int chunkCoordY);
 
+  protected:
+    int scale;
+
   private:
     void Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, int sectorStartU, int sectorStartV);
 
@@ -30,7 +33,6 @@ class Realm {
     virtual int getCoordsToNeighbourRight(int x, int y, int scale) = 0; 
 
     int stampCount;
-    int scale;
     int area;
     int LoD;
 

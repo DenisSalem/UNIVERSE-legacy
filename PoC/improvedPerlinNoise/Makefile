@@ -1,4 +1,4 @@
 improvedPerlinNoise: 
-	gcc main.c -lpng -o improvedPerlinNoise -O02
+	gcc *.c -lpng -o improvedPerlinNoise -O02
 clean:
 	rm improvedPerlinNoise
