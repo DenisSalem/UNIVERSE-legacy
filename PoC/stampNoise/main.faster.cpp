@@ -2,7 +2,30 @@
 #include <cstdio>
 #include <cstdlib>
 #include <math.h>
-#include "png.cpp"
+#include "png.h"
+
+
+// Pour Windows
+#ifdef _WIN32
+#include <Windows.h>
+// link : http://stackoverflow.com/questions/17432502/how-can-i-measure-cpu-time-and-wall-clock-time-on-both-linux-windows
+
+unsigned long int getRandom(){
+    FILETIME a,b,c,d;
+    if (GetProcessTimes(GetCurrentProcess(),&a,&b,&c,&d) != 0){
+        //  Returns total user time.
+        //  Can be tweaked to include kernel times as well.
+        return
+            (long int)(d.dwLowDateTime |
+            ((unsigned long long)d.dwHighDateTime << 32)) * 0.0000001;
+    }else{
+        //  Handle error
+        return 0;
+    }
+}
+
+// Pour Posix/Linux
+#else
 
 // Le générateur de nombres pseudo aléatoires.
 unsigned long int getRandom() {
@@ -10,6 +33,8 @@ unsigned long int getRandom() {
         clock_gettime(CLOCK_REALTIME, &tStruct);
         return tStruct.tv_nsec;
 }
+
+#endif
 
 // Le générateur de tampon
 void UNIVERSE_STAMP_1(double * matrix, int scale) {
@@ -25,13 +50,13 @@ void UNIVERSE_STAMP_1(double * matrix, int scale) {
           powersOfTwo[x] = (x-halfScale) * (x-halfScale);
         }
 
-        // Plutôt que d'incrémenter d'une unité x et calculer la position du point courant 
+        // Plutôt que d'incrémenter d'une unité x et calculer la position du point courant
         // dans le tableau en multipliant par scale, on incrémente directement x par scale. La formule
-        // pour retrouver le point courant n'est plus 
-        // 
-        // x*scale +y 
+        // pour retrouver le point courant n'est plus
         //
-        // mais 
+        // x*scale +y
+        //
+        // mais
         //
         // x+y
         //
@@ -141,14 +166,14 @@ void UNIVERSE_STAMP_NOISE(double * matrix, double * stamp, int scale, int offset
                   // la coordoonée finale dans un tableau simulant une matrice est de la forme:
                   //
                   // (X * hauteur) + Y
-                  // Avec X valant la somme du 
-                  //  décalage du secteur courant en abcisse, 
+                  // Avec X valant la somme du
+                  //  décalage du secteur courant en abcisse,
                   //  du décalage du tampon courant en abcisse,
                   //  la coordonnée x courante,
                   //  le décalage aléatoire en abcisse
                   //
-                  // Avec Y valant la somme du 
-                  //  décalage du secteur courant en ordonnée, 
+                  // Avec Y valant la somme du
+                  //  décalage du secteur courant en ordonnée,
                   //  du décalage du tampon courant en ordonnée,
                   //  la coordonnée y courante,
                   //  le décalage aléatoire en ordonnée
@@ -182,10 +207,17 @@ void UNIVERSE_STAMP_NOISE(double * matrix, double * stamp, int scale, int offset
 }
 
 int main(int argc, char ** argv) {
+
+
+
 	if (argc == 1) {
+        getRandom();
 		std::cout << "Usage: ./heightMap <power of two>\n";
+        std::cout << getRandom();
 		return 0;
 	}
+
+
 
 	int scale = atoi(argv[1]);
 	int x,y,i,j;
