@@ -70,6 +70,15 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY) {
   this->Noise(layer, chunkCoordX, chunkCoordY, this->scale, 0, 0);
 }
 
+inline bool Realm::IsChunkAllocated(int layer, int chunkIndex) {
+  if (this->neighbourLeft[layer] != 0) {
+    if(this->neighbourLeft[layer][ chunkIndex ] != 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
 void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, int sectorStartU, int sectorStartV) {
   if (sectorScale == 1) {
     return;
@@ -98,24 +107,19 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
   float * stamp = this->stamps[stampId];
 
   // Selon le cas de figure, le dépassement du tampon peut déborder sur au plus trois chunk:
-
-
+  // Pour éviter de déréférencer 10 milles fois, on prépare les destinations en fonctions des paramétres
+  // de la récursion courante.
   int horizontalNeighbourChunkCoord = 0;
-
   float * horizontalNeighbourChunk = 0;
   float * verticalNeighbourChunk = 0;
   float * diagonalNeighbourChunk = 0;
   float * horizontalLocalNeighbourChunk = 0;
 
-  // Pour éviter de déréférencer 10 milles fois, on prépare les destinations en fonctions des paramétres
-  // de la récursion courante.
   if (offsetX < 0) {
     if (chunkCoordX == 0) {
-      if (this->neighbourLeft[layer] != 0) {
-        if(this->neighbourLeft[layer][horizontalNeighbourChunkCoord ] != 0) {
-          horizontalNeighbourChunkCoord = this->getCoordsToNeighbourLeft(-1, chunkCoordY, chunkScale);
-          horizontalNeighbourChunk = this->neighbourLeft[layer][horizontalNeighbourChunkCoord ]; 
-        }
+      horizontalNeighbourChunkCoord = this->getCoordsToNeighbourLeft(-1, chunkCoordY, chunkScale);
+      if (this->IsChunkAllocated(layer, horizontalNeighbourChunkCoord) == true) {
+        horizontalNeighbourChunk = this->neighbourLeft[layer][horizontalNeighbourChunkCoord ]; 
       }
     }
     else {

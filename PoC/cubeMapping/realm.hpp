@@ -17,6 +17,7 @@ class Realm {
     float * GetRealm(int layer, int chunkCoordX, int chunkCoordY);
     float *** GetRealm();
     void AddStamp(float * stamp);
+    bool IsChunkAllocated(int layer, int chunkIndex);
     void AllocateChunk(int layer, int chunkCoordX, int chunkCoordY);
     void DeallocateChunk(int layer, int chunkCoordX, int chunkCoordY);
     void Noise(int layer, int chunkCoordX, int chunkCoordY);
