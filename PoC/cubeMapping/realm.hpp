@@ -27,8 +27,8 @@ class Realm {
     int scale;
 
   private:
+    bool DoesStampCrossCorner(int offsetX, int offsetY, int sectorScale);
     void Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, int sectorStartU, int sectorStartV);
-
     virtual int getCoordsToNeighbourTop(int x, int y, int scale) = 0;
     virtual int getCoordsToNeighbourBottom(int x, int y, int scale) = 0; 
     virtual int getCoordsToNeighbourLeft(int x, int y, int scale) = 0; 
