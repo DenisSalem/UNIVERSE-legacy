@@ -46,8 +46,8 @@ int main(int argc, char ** argv) {
       if (x >= scale && x < scale2 && y >= scale && y < scale2) {
         color = (unsigned char) (255 * (realmPlusezedFirstLayer[ (x-scale) + scale * (y-scale)] - min) / (max - min));
 	png[x][y].Red	= color;
-	png[x][y].Green = color;
-	png[x][y].Blue = color;
+	png[x][y].Green = 0;
+	png[x][y].Blue = 0;
       }
       else if (x >= 0 && x < scale && y >= scale && y < scale2) { // minuxX
         color = (unsigned char) (255 * (realmMinusixFirstLayer[ x + scale*(y-scale)] - min) / (max - min));

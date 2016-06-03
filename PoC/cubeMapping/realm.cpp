@@ -1,6 +1,7 @@
 #include <iostream>
 #include "common.hpp"
 #include "realm.hpp"
+#include <cmath>
 
 Realm::Realm(int LoD, float * min, float * max) {
   this->LoD = LoD;
@@ -79,8 +80,58 @@ inline bool Realm::IsChunkAllocated(int layer, int chunkIndex) {
   return false;
 }
 
+
+inline bool Realm::DoesStampCrossCorner(int offsetX, int offsetY, int sectorScale) {
+  int stampRadius = sectorScale >> 1;
+  int sectorScaleMinusScale = sectorScale - this->scale;
+  int xCornerTopLeft = offsetX+stampRadius;
+  int yCornerTopLeft = offsetY+stampRadius;
+  int xCornerTopRight = offsetX + sectorScaleMinusScale;
+  int yCornerTopRight = offsetY;
+  int xCornerBottomRight = offsetX + sectorScaleMinusScale;
+  int yCornerBottomRight = offsetY + sectorScaleMinusScale;
+  int xCornerBottomLeft = offsetX+stampRadius;
+  int yCornerBottomLeft = this->scale - (offsetY + stampRadius);
+  // Coin gauche supérieur
+  if(offsetX < 0 && offsetY < 0) {
+    if( ceil(sqrt(pow(xCornerTopLeft,2) + pow(yCornerTopLeft,2))) <= stampRadius) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  else if (offsetX+sectorScale >= this->scale && offsetY < 0) {
+    if( ceil(sqrt(pow(xCornerTopRight,2) + pow(yCornerTopRight,2))) <= stampRadius) {
+      return true;
+    }
+    else {
+      std::cout << "ok1\n";
+      return false;
+    }
+  }
+  else if (offsetX+sectorScale >= this->scale >= 0 && offsetY+sectorScale >= this->scale) {
+    if( ceil(sqrt(pow(xCornerBottomRight,2) + pow(yCornerBottomRight,2))) <= stampRadius) {
+      return true;
+    }
+    else {
+      std::cout << "ok2\n";
+      return false;
+    }
+  }
+  else if (offsetX < 0 && offsetY+sectorScale >= this->scale) {
+    if( ceil(sqrt(pow(xCornerBottomLeft,2) + pow(yCornerBottomLeft,2))) <= stampRadius) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  return true;
+}
+
 void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, int sectorStartU, int sectorStartV) {
-  if (sectorScale == 1) {
+  if (sectorScale == 64) {
     return;
   }
 
@@ -96,7 +147,7 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
   int offsetY = randY + sectorStartV;
   int offsetX = randX + sectorStartU;
   int stampX=0,stampY=0;
-  double distanceFromStampCenterToCurrentCorner; // Whoaw, what a long name, whoaw.
+  double distanceFromStampCenterToCorner;
 
   // Cette curieuse formule permet de connaitre pour un calque donné la dimension
   // d'un morceau courant. Habile!
@@ -113,7 +164,6 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
   float * horizontalNeighbourChunk = 0;
   float * verticalNeighbourChunk = 0;
   float * diagonalNeighbourChunk = 0;
-  float * horizontalLocalNeighbourChunk = 0;
 
   if (offsetX < 0) {
     if (chunkCoordX == 0) {
@@ -124,7 +174,7 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
     }
     else {
       horizontalNeighbourChunkCoord = chunkCoordX - 1 + chunkCoordY * chunkScale;
-      horizontalLocalNeighbourChunk = this->realm[layer][horizontalNeighbourChunkCoord];
+      horizontalNeighbourChunk = this->realm[layer][horizontalNeighbourChunkCoord];
     }
   }
 
@@ -146,37 +196,31 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
     }
   }
 
-  // Dépassement en X
-  else if ( (offsetX < 0 || offsetX+sectorScale-1 >= this->scale) && ( offsetY >= 0 && offsetY+sectorScale-1 < this->scale)) { 
+  // Dépassement: Cas simple
+  else if ( !this->DoesStampCrossCorner(offsetX,offsetY,sectorScale) ) { 
     for (int y=0; y<sectorScale; y++) {
       stampX = 0;
       for (int x=0; x<sectorScale; x++) {
         stampIndex = stampX + sectorScale * stampY;
 	if ( stamp[ stampIndex ] != 0) {
-          // Le morceau courant est à l'extrême gauche, il faut donc se reporter sur un autre royaume.
-          if(chunkCoordX == 0) {
-            //On regarde si le le morceau du royaume voisin est alloué, sinon on ne fait rien. Et ouais.
-            if(horizontalNeighbourChunk != 0) {
-              // On prépare la destination sur le côté gauche
-              if(offsetX+x < 0) {
+          if(horizontalNeighbourChunk != 0 && offsetX+x < 0) {
+            // On déborde sur la gauche, mais à l'extérieur du royaume.
+            if (chunkCoordX == 0) {
 	        chunkIndex = this->getCoordsToNeighbourLeft( offsetX+x, y+offsetY, this->scale) ;
                 horizontalNeighbourChunk[chunkIndex] += sign * stamp[ stampIndex ] / inc;
                 this->UpdateMinMax(chunkIndex, horizontalNeighbourChunk);
-              }
-              // Ou sur le côté droit
-              else {
-	        chunkIndex = (y+offsetY) * this->scale + x+offsetX;
-	        localChunk[ chunkIndex ] += sign * stamp[ stampIndex ] / inc;
-                this->UpdateMinMax(chunkIndex, localChunk);
-              }
+            }
+            // On déborde sur la gauche, mais à l'intérieur du royaume.
+            else {
+              localChunk = this->realm[layer][chunkCoordX-1 + chunkCoordY * chunkScale];  
+	      chunkIndex = (y+offsetY) * this->scale + this->scale - x+offsetX;
+	      localChunk[ chunkIndex ] += sign * stamp[ stampIndex ] / inc;
+              this->UpdateMinMax(chunkIndex, localChunk);
             }
           }
-          else if (chunkCoordX == chunkScale - 1 ) {
-          }
-          // Sinon c'est cool, on peut calculer la coordonnée relative facilement
+          // Le cas simple où l'on ne déborde pas.
           else {
-            localChunk = this->realm[layer][chunkCoordX-1 + chunkCoordY * chunkScale];  
-	    chunkIndex = (y+offsetY) * this->scale + this->scale - x+offsetX;
+	    chunkIndex = (y+offsetY) * this->scale + x+offsetX;
 	    localChunk[ chunkIndex ] += sign * stamp[ stampIndex ] / inc;
             this->UpdateMinMax(chunkIndex, localChunk);
           }
