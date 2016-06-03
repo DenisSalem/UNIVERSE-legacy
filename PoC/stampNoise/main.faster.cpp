@@ -4,10 +4,10 @@
 #include <math.h>
 #include "png.h"
 
+// Le générateur de nombres pseudo aléatoires. Dépend de la plateforme.
+
 // Pour Windows
 #ifdef _WIN32
-#include <cstdlib>
-#include <iostream>
 #include <ctime>
 
 unsigned long int getRandom(int salt){
@@ -17,7 +17,6 @@ unsigned long int getRandom(int salt){
 
 // Pour Posix/Linux
 #else
-// Le générateur de nombres pseudo aléatoires.
 unsigned long int getRandom(int salt) {
         timespec tStruct;
         clock_gettime(CLOCK_REALTIME, &tStruct);

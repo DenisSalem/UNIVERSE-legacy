@@ -92,48 +92,34 @@ inline bool Realm::DoesStampCrossCorner(int offsetX, int offsetY, int sectorScal
   int yCornerBottomRight = offsetY + sectorScaleMinusScale;
   int xCornerBottomLeft = offsetX+stampRadius;
   int yCornerBottomLeft = this->scale - (offsetY + stampRadius);
+
   // Coin gauche supérieur
-  if(offsetX < 0 && offsetY < 0) {
-    if( ceil(sqrt(pow(xCornerTopLeft,2) + pow(yCornerTopLeft,2))) <= stampRadius) {
+  if(offsetX < 0 && offsetY < 0 && ceil(sqrt(pow(xCornerTopLeft,2) + pow(yCornerTopLeft,2))) <= stampRadius) {
       return true;
-    }
-    else {
-      return false;
-    }
   }
-  else if (offsetX+sectorScale >= this->scale && offsetY < 0) {
-    if( ceil(sqrt(pow(xCornerTopRight,2) + pow(yCornerTopRight,2))) <= stampRadius) {
-      return true;
-    }
-    else {
-      std::cout << "ok1\n";
-      return false;
-    }
+  else if (offsetX+sectorScale >= this->scale && offsetY < 0 && ceil(sqrt(pow(xCornerTopRight,2) + pow(yCornerTopRight,2))) <= stampRadius) {
+    return true;
   }
-  else if (offsetX+sectorScale >= this->scale >= 0 && offsetY+sectorScale >= this->scale) {
+  /*else if (offsetX+sectorScale >= this->scale && offsetY+sectorScale >= this->scale) {
     if( ceil(sqrt(pow(xCornerBottomRight,2) + pow(yCornerBottomRight,2))) <= stampRadius) {
       return true;
     }
     else {
-      std::cout << "ok2\n";
-      return false;
-    }
-  }
-  else if (offsetX < 0 && offsetY+sectorScale >= this->scale) {
-    if( ceil(sqrt(pow(xCornerBottomLeft,2) + pow(yCornerBottomLeft,2))) <= stampRadius) {
       return true;
     }
-    else {
-      return false;
-    }
+  }*/
+
+  else if (offsetX < 0 && offsetY+sectorScale >= this->scale && ceil(sqrt(pow(xCornerBottomLeft,2) + pow(yCornerBottomLeft,2))) <= stampRadius) {
+    return true;
   }
-  return true;
+  return false;
 }
 
 void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, int sectorStartU, int sectorStartV) {
-  if (sectorScale == 64) {
+  if (sectorScale == 256) {
     return;
   }
+
 
   float sign = getRandom() & 1 ? 1.0 : -1.0;
 
@@ -146,6 +132,7 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
   int chunkIndex;
   int offsetY = randY + sectorStartV;
   int offsetX = randX + sectorStartU;
+  std::cout << this->scale << " " << sectorScale <<  " " << offsetX << " " << offsetY << "\n";
   int stampX=0,stampY=0;
   double distanceFromStampCenterToCorner;
 
@@ -160,25 +147,37 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
   // Selon le cas de figure, le dépassement du tampon peut déborder sur au plus trois chunk:
   // Pour éviter de déréférencer 10 milles fois, on prépare les destinations en fonctions des paramétres
   // de la récursion courante.
-  int horizontalNeighbourChunkCoord = 0;
-  float * horizontalNeighbourChunk = 0;
-  float * verticalNeighbourChunk = 0;
-  float * diagonalNeighbourChunk = 0;
+  //
+  //
+  //
+  //
+  //
+    int horizontalNeighbourChunkCoord = 0;
+    float * horizontalNeighbourChunk = 0;
+    float * verticalNeighbourChunk = 0;
+    float * diagonalNeighbourChunk = 0;
 
-  if (offsetX < 0) {
-    if (chunkCoordX == 0) {
-      horizontalNeighbourChunkCoord = this->getCoordsToNeighbourLeft(-1, chunkCoordY, chunkScale);
-      if (this->IsChunkAllocated(layer, horizontalNeighbourChunkCoord) == true) {
-        horizontalNeighbourChunk = this->neighbourLeft[layer][horizontalNeighbourChunkCoord ]; 
+    if (offsetX < 0) {
+      if (chunkCoordX == 0) {
+        horizontalNeighbourChunkCoord = this->getCoordsToNeighbourLeft(-1, chunkCoordY, chunkScale);
+        if (this->IsChunkAllocated(layer, horizontalNeighbourChunkCoord) == true) {
+          horizontalNeighbourChunk = this->neighbourLeft[layer][horizontalNeighbourChunkCoord ]; 
+        }
+      }
+      else {
+        horizontalNeighbourChunkCoord = chunkCoordX - 1 + chunkCoordY * chunkScale;
+        horizontalNeighbourChunk = this->realm[layer][horizontalNeighbourChunkCoord];
       }
     }
-    else {
-      horizontalNeighbourChunkCoord = chunkCoordX - 1 + chunkCoordY * chunkScale;
-      horizontalNeighbourChunk = this->realm[layer][horizontalNeighbourChunkCoord];
-    }
-  }
+                  
+                                                                                                  //
+                                                                                                  //
+                                                                                                  //
+                                                                                                  //
+  // Fin du bloc de préparation des destinations. //////////////////////////////////////////////////
+  // Arrivé ici, les références des destinations sont préparées quelques soit le cas de figure.
 
-  // Quand le tampon est exactement contenu à l'intérieur d'une face
+  // Premier cas: Quand le tampon est exactement contenu à l'intérieur d'une face
   if ( offsetY >= 0 && offsetY+sectorScale-1 < this->scale && offsetX >= 0 && offsetX+sectorScale-1< this->scale) {
     localChunk = this->realm[layer][chunkCoordX + chunkCoordY * chunkScale];
     for (int y=0; y<sectorScale; y++) {
@@ -196,29 +195,29 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
     }
   }
 
-  // Dépassement: Cas simple
+  // Second cas: Situation relativement simple de dépassement en X et/ou Y sans que le tampon croise un coin.
+  // On distingue alors deux cas, quand le pixel dépasse du secteur, en dehor du royaume courant, ou quand
+  // il dépasse du secteur à l'intérieur du royaume.
   else if ( !this->DoesStampCrossCorner(offsetX,offsetY,sectorScale) ) { 
     for (int y=0; y<sectorScale; y++) {
       stampX = 0;
       for (int x=0; x<sectorScale; x++) {
         stampIndex = stampX + sectorScale * stampY;
 	if ( stamp[ stampIndex ] != 0) {
+          // Le pixel courant est à gauche du secteur courant.
           if(horizontalNeighbourChunk != 0 && offsetX+x < 0) {
-            // On déborde sur la gauche, mais à l'extérieur du royaume.
+            // Le pixel courant se trouve sur la gauche du secteur courant, mais à l'extérieur du royaume.
             if (chunkCoordX == 0) {
 	        chunkIndex = this->getCoordsToNeighbourLeft( offsetX+x, y+offsetY, this->scale) ;
-                horizontalNeighbourChunk[chunkIndex] += sign * stamp[ stampIndex ] / inc;
-                this->UpdateMinMax(chunkIndex, horizontalNeighbourChunk);
             }
-            // On déborde sur la gauche, mais à l'intérieur du royaume.
+            // Le pixel courant se trouve sur la gauche du secteur courant, mais à l'intérieur du royaume.
             else {
-              localChunk = this->realm[layer][chunkCoordX-1 + chunkCoordY * chunkScale];  
 	      chunkIndex = (y+offsetY) * this->scale + this->scale - x+offsetX;
-	      localChunk[ chunkIndex ] += sign * stamp[ stampIndex ] / inc;
-              this->UpdateMinMax(chunkIndex, localChunk);
             }
+            horizontalNeighbourChunk[chunkIndex] += sign * stamp[ stampIndex ] / inc;
+            this->UpdateMinMax(chunkIndex, horizontalNeighbourChunk);
           }
-          // Le cas simple où l'on ne déborde pas.
+          // Le pixel courant est à l'intérieur du secteur courant
           else {
 	    chunkIndex = (y+offsetY) * this->scale + x+offsetX;
 	    localChunk[ chunkIndex ] += sign * stamp[ stampIndex ] / inc;
