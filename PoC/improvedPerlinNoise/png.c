@@ -1,4 +1,5 @@
 #include <png.h>
+#include <stdlib.h>
 #include "png.h"
 
 int writePng( PIXEL ** matrix, int size) { 
