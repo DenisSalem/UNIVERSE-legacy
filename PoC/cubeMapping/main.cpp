@@ -2,6 +2,7 @@
 #include "stampCollector.hpp"
 #include "realmPlusezed.hpp"
 #include "realmMinusix.hpp"
+#include "realmPlusix.hpp"
 #include "png.hpp"
 
 int main(int argc, char ** argv) {
@@ -15,12 +16,14 @@ int main(int argc, char ** argv) {
 
   RealmPlusezed realmPlusezed = RealmPlusezed(LoD, &min, &max);
   RealmMinusix realmMinusix = RealmMinusix(LoD, &min, &max);
+  RealmPlusix realmPlusix = RealmPlusix(LoD, &min, &max);
   
-  realmPlusezed.SetNeighbours(0,0,realmMinusix.GetRealm(),0);
+  realmPlusezed.SetNeighbours(0,0,realmMinusix.GetRealm(),realmPlusix.GetRealm());
   realmMinusix.SetNeighbours(0,0,0,realmPlusezed.GetRealm());
 
   realmPlusezed.AddStamp(stampCollector.GetCone());
   realmMinusix.AddStamp(stampCollector.GetCone());
+  realmPlusix.AddStamp(stampCollector.GetCone());
 
   realmPlusezed.Noise(0,0,0);
   //realmMinusix.Noise(0,0,0);
@@ -40,17 +43,24 @@ int main(int argc, char ** argv) {
 
   float * realmPlusezedFirstLayer = realmPlusezed.GetRealm(0,0,0);
   float * realmMinusixFirstLayer = realmMinusix.GetRealm(0,0,0);
+  float * realmPlusixFirstLayer = realmPlusix.GetRealm(0,0,0);
 
   for(int y = 0; y<scale4; y++) {
     for(int x = 0; x<scale3; x++) {
       if (x >= scale && x < scale2 && y >= scale && y < scale2) {
         color = (unsigned char) (255 * (realmPlusezedFirstLayer[ (x-scale) + scale * (y-scale)] - min) / (max - min));
 	png[x][y].Red	= color;
-	png[x][y].Green = 0;
-	png[x][y].Blue = 0;
+	png[x][y].Green = color;
+	png[x][y].Blue = color;
       }
       else if (x >= 0 && x < scale && y >= scale && y < scale2) { // minuxX
         color = (unsigned char) (255 * (realmMinusixFirstLayer[ x + scale*(y-scale)] - min) / (max - min));
+        png[x][y].Red = color; 
+        png[x][y].Green	= color;
+        png[x][y].Blue = color;
+      }
+      else if (x >= scale2 && x < scale3 && y >= scale && y < scale2 ) {
+        color = (unsigned char) (255 * (realmPlusixFirstLayer[ x + scale*(y-scale)] - min) / (max - min));
         png[x][y].Red = color; 
         png[x][y].Green	= color;
         png[x][y].Blue = color;
