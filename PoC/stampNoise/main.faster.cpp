@@ -4,31 +4,21 @@
 #include <math.h>
 #include "png.h"
 
-
 // Pour Windows
 #ifdef _WIN32
-#include <Windows.h>
-// link : http://stackoverflow.com/questions/17432502/how-can-i-measure-cpu-time-and-wall-clock-time-on-both-linux-windows
+#include <cstdlib>
+#include <iostream>
+#include <ctime>
 
-unsigned long int getRandom(){
-    FILETIME a,b,c,d;
-    if (GetProcessTimes(GetCurrentProcess(),&a,&b,&c,&d) != 0){
-        //  Returns total user time.
-        //  Can be tweaked to include kernel times as well.
-        return
-            (long int)(d.dwLowDateTime |
-            ((unsigned long long)d.dwHighDateTime << 32)) * 0.0000001;
-    }else{
-        //  Handle error
-        return 0;
-    }
+unsigned long int getRandom(int salt){
+    std::srand(std::time(0)); // use current time as seed for random generator
+    return std::rand()+salt*3.1415;
 }
 
 // Pour Posix/Linux
 #else
-
 // Le générateur de nombres pseudo aléatoires.
-unsigned long int getRandom() {
+unsigned long int getRandom(int salt) {
         timespec tStruct;
         clock_gettime(CLOCK_REALTIME, &tStruct);
         return tStruct.tv_nsec;
@@ -83,7 +73,6 @@ void UNIVERSE_STAMP_1(double * matrix, int scale) {
 }
 
 void UNIVERSE_STAMP_NOISE(double * matrix, double * stamp, int scale, int offsetX, int offsetY, int realScale) {
-
         // La condition d'arrêt de notre bruit récursif.
         // Selon la granularité que l'on désire, on peut augmenter la valeur limite de scale.
         if (scale == 1) {
@@ -97,8 +86,8 @@ void UNIVERSE_STAMP_NOISE(double * matrix, double * stamp, int scale, int offset
 
         // Deux variables très importantes, ce sont elles qui déterminent où sera appliqué le tampon.
         // C'est le positionnement aléatoire qui fait toute la "beauté" de la heightmap.
-	int randX = - halfScale + getRandom() % scale;
-	int randY = - halfScale + getRandom() % scale;
+	int randX = - halfScale + getRandom(offsetX - offsetY) % scale;
+	int randY = - halfScale + getRandom(offsetX + offsetY) % scale;
 
         // À chaque octave il faut diminuer l'influence du bruit.
 	// On se sert également de cette variable comme pas d'incrémentation des
@@ -114,7 +103,7 @@ void UNIVERSE_STAMP_NOISE(double * matrix, double * stamp, int scale, int offset
 
         // Détermine le signe du tampon.
         // S'il est positif, le terrain se surélève, à l'inverse, il se creuse
-	float sign = getRandom() & 2 ? -1.0 : 1.0;
+	float sign = getRandom(offsetX ^ offsetY) & 2 ? -1.0 : 1.0;
 
         int tmpCoordX,tmpCoordY;
         double currentStampValue;
@@ -208,16 +197,10 @@ void UNIVERSE_STAMP_NOISE(double * matrix, double * stamp, int scale, int offset
 
 int main(int argc, char ** argv) {
 
-
-
 	if (argc == 1) {
-        getRandom();
 		std::cout << "Usage: ./heightMap <power of two>\n";
-        std::cout << getRandom();
 		return 0;
 	}
-
-
 
 	int scale = atoi(argv[1]);
 	int x,y,i,j;
