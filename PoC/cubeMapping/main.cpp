@@ -3,6 +3,8 @@
 #include "realmPlusezed.hpp"
 #include "realmMinusix.hpp"
 #include "realmPlusix.hpp"
+#include "realmPlusigrec.hpp"
+#include "realmMinusigrec.hpp"
 #include "png.hpp"
 
 int main(int argc, char ** argv) {
@@ -12,14 +14,19 @@ int main(int argc, char ** argv) {
   float min = 0;
   float max = 0;
 
+
+
   StampCollector stampCollector = StampCollector(LoD);
 
+  // On peut envisager de créer une classe qui se chargera de faire toute ces initialisations.
   RealmPlusezed realmPlusezed = RealmPlusezed(LoD, &min, &max);
   RealmMinusix realmMinusix = RealmMinusix(LoD, &min, &max);
   RealmPlusix realmPlusix = RealmPlusix(LoD, &min, &max);
+  RealmPlusigrec realmPlusigrec = RealmPlusigrec(LoD, &min, &max);
+  RealmMinusigrec realmMinusigrec = RealmMinusigrec(LoD, &min, &max);
   
-  realmPlusezed.SetNeighbours(0,0,realmMinusix.GetRealm(),realmPlusix.GetRealm());
-  realmMinusix.SetNeighbours(0,0,0,realmPlusezed.GetRealm());
+  realmPlusezed.SetNeighbours(realmMinusigrec.GetRealm(),realmPlusigrec.GetRealm(),realmMinusix.GetRealm(),realmPlusix.GetRealm());
+  //realmMinusix.SetNeighbours(0,0,0,realmPlusezed.GetRealm());
 
   realmPlusezed.AddStamp(stampCollector.GetCone());
   realmMinusix.AddStamp(stampCollector.GetCone());
@@ -44,6 +51,8 @@ int main(int argc, char ** argv) {
   float * realmPlusezedFirstLayer = realmPlusezed.GetRealm(0,0,0);
   float * realmMinusixFirstLayer = realmMinusix.GetRealm(0,0,0);
   float * realmPlusixFirstLayer = realmPlusix.GetRealm(0,0,0);
+  float * realmPlusigrecFirstLayer = realmPlusigrec.GetRealm(0,0,0);
+  float * realmMinusigrecFirstLayer = realmMinusigrec.GetRealm(0,0,0);
 
   for(int y = 0; y<scale4; y++) {
     for(int x = 0; x<scale3; x++) {
@@ -60,7 +69,19 @@ int main(int argc, char ** argv) {
         png[x][y].Blue = color;
       }
       else if (x >= scale2 && x < scale3 && y >= scale && y < scale2 ) {
-        color = (unsigned char) (255 * (realmPlusixFirstLayer[ x + scale*(y-scale)] - min) / (max - min));
+        color = (unsigned char) (255 * (realmPlusixFirstLayer[ (x - scale2) + scale*(y-scale)] - min) / (max - min));
+        png[x][y].Red = color; 
+        png[x][y].Green	= color;
+        png[x][y].Blue = color;
+      }
+      else if (x >= scale && x < scale2 && y >= scale2 && y < scale3 ) {
+        color = (unsigned char) (255 * (realmPlusigrecFirstLayer[ (x - scale) + scale*(y-scale2)] - min) / (max - min));
+        png[x][y].Red = color; 
+        png[x][y].Green	= color;
+        png[x][y].Blue = color;
+      }
+      else if (x >= scale && x < scale2 && y >= 0 && y < scale ) {
+        color = (unsigned char) (255 * (realmMinusigrecFirstLayer[ (x - scale) + scale*y] - min) / (max - min));
         png[x][y].Red = color; 
         png[x][y].Green	= color;
         png[x][y].Blue = color;
