@@ -26,18 +26,31 @@ int main(int argc, char ** argv) {
   RealmPlusix realmPlusix = RealmPlusix(LoD, &min, &max);
   RealmPlusigrec realmPlusigrec = RealmPlusigrec(LoD, &min, &max);
   RealmMinusigrec realmMinusigrec = RealmMinusigrec(LoD, &min, &max);
-  
-  realmPlusezed.SetNeighbours(realmMinusigrec.GetRealm(),realmPlusigrec.GetRealm(),realmMinusix.GetRealm(),realmPlusix.GetRealm());
-  realmMinusix.SetNeighbours(realmMinusigrec.GetRealm(),realmPlusigrec.GetRealm(),realmMinusezed.GetRealm(),realmPlusezed.GetRealm());
-  realmPlusix.SetNeighbours(realmMinusigrec.GetRealm(),realmPlusigrec.GetRealm(),realmPlusezed.GetRealm(),realmMinusezed.GetRealm());
 
+  // Ajout du tampon de base
+  // Avec ce système il est possible d'avoir des paysages très différents sur chaque royaume
   realmPlusezed.AddStamp(stampCollector.GetCone());
-  realmMinusix.AddStamp(stampCollector.GetCone());
+  realmMinusezed.AddStamp(stampCollector.GetCone());
   realmPlusix.AddStamp(stampCollector.GetCone());
-
+  realmMinusix.AddStamp(stampCollector.GetCone());
+  realmPlusigrec.AddStamp(stampCollector.GetCone());
+  realmMinusigrec.AddStamp(stampCollector.GetCone());
+  
+  // Définition des royaumes voisins
+  realmPlusezed.SetNeighbours(realmMinusigrec.GetRealm(),realmPlusigrec.GetRealm(),realmMinusix.GetRealm(),realmPlusix.GetRealm());
+  realmMinusezed.SetNeighbours(realmPlusigrec.GetRealm(),realmMinusigrec.GetRealm(),realmMinusix.GetRealm(),realmPlusix.GetRealm());
+  realmPlusix.SetNeighbours(realmMinusigrec.GetRealm(),realmPlusigrec.GetRealm(),realmPlusezed.GetRealm(),realmMinusezed.GetRealm());
+  realmMinusix.SetNeighbours(realmMinusigrec.GetRealm(),realmPlusigrec.GetRealm(),realmMinusezed.GetRealm(),realmPlusezed.GetRealm());
+  realmPlusigrec.SetNeighbours(realmPlusezed.GetRealm(),realmMinusezed.GetRealm(),realmMinusix.GetRealm(),realmPlusix.GetRealm());
+  realmMinusigrec.SetNeighbours(realmMinusezed.GetRealm(),realmPlusezed.GetRealm(),realmMinusix.GetRealm(),realmPlusix.GetRealm());
+  
+  // On lance la fonction récursive de bruit sur chaque royaume
   realmPlusezed.Noise(0,0,0);
-  realmMinusix.Noise(0,0,0);
+  realmMinusezed.Noise(0,0,0);
   realmPlusix.Noise(0,0,0);
+  realmMinusix.Noise(0,0,0);
+  realmPlusigrec.Noise(0,0,0);
+  realmMinusigrec.Noise(0,0,0);
 
   // A partir de là les six heightmaps de bases sont terminées, 
   // y a plus qu'a envoyer tout ça dans un png pour le plaisir de vos yeux.

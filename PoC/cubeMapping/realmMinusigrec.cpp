@@ -5,17 +5,17 @@ RealmMinusigrec::RealmMinusigrec(int LoD, float * min, float * max) : Realm(LoD,
 }
 
 inline int RealmMinusigrec::getCoordsToNeighbourTop(int x, int y, int scale) {
-  return 0;
+  return x + (scale + y) * scale ;
 }
 
 inline int RealmMinusigrec::getCoordsToNeighbourBottom(int x, int y, int scale) {
-  return 0;
+  return x + (y-scale) * scale;
 }
 
 inline int RealmMinusigrec::getCoordsToNeighbourLeft(int x, int y, int scale) {
-  return 0;
+  return y - (x+1) * scale;
 }
 
 inline int RealmMinusigrec::getCoordsToNeighbourRight(int x, int y, int scale) {
-  return 0;
+  return scale - 1 - y + (x - scale) * scale;
 }

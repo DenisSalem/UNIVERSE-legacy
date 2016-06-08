@@ -5,17 +5,17 @@ RealmPlusigrec::RealmPlusigrec(int LoD, float * min, float * max) : Realm(LoD, m
 }
 
 inline int RealmPlusigrec::getCoordsToNeighbourTop(int x, int y, int scale) {
-  return 0;
+  return x + (scale + y) * scale;
 }
 
 inline int RealmPlusigrec::getCoordsToNeighbourBottom(int x, int y, int scale) {
-  return 0;
+  return x + (y-scale) * scale;
 }
 
 inline int RealmPlusigrec::getCoordsToNeighbourLeft(int x, int y, int scale) {
-  return scale + x + y * scale;
+  return scale - y - 1 + (scale + x) * scale;
 }
 
 inline int RealmPlusigrec::getCoordsToNeighbourRight(int x, int y, int scale) {
-  return 0;
+  return y + (scale - x + scale - 1) * scale;
 }
