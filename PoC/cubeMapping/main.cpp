@@ -1,6 +1,7 @@
 #include <iostream>
 #include "stampCollector.hpp"
 #include "realmPlusezed.hpp"
+#include "realmMinusezed.hpp"
 #include "realmMinusix.hpp"
 #include "realmPlusix.hpp"
 #include "realmPlusigrec.hpp"
@@ -20,20 +21,23 @@ int main(int argc, char ** argv) {
 
   // On peut envisager de créer une classe qui se chargera de faire toute ces initialisations.
   RealmPlusezed realmPlusezed = RealmPlusezed(LoD, &min, &max);
+  RealmMinusezed realmMinusezed = RealmMinusezed(LoD, &min, &max);
   RealmMinusix realmMinusix = RealmMinusix(LoD, &min, &max);
   RealmPlusix realmPlusix = RealmPlusix(LoD, &min, &max);
   RealmPlusigrec realmPlusigrec = RealmPlusigrec(LoD, &min, &max);
   RealmMinusigrec realmMinusigrec = RealmMinusigrec(LoD, &min, &max);
   
   realmPlusezed.SetNeighbours(realmMinusigrec.GetRealm(),realmPlusigrec.GetRealm(),realmMinusix.GetRealm(),realmPlusix.GetRealm());
-  //realmMinusix.SetNeighbours(0,0,0,realmPlusezed.GetRealm());
+  realmMinusix.SetNeighbours(realmMinusigrec.GetRealm(),realmPlusigrec.GetRealm(),realmMinusezed.GetRealm(),realmPlusezed.GetRealm());
+  realmPlusix.SetNeighbours(realmMinusigrec.GetRealm(),realmPlusigrec.GetRealm(),realmPlusezed.GetRealm(),realmMinusezed.GetRealm());
 
   realmPlusezed.AddStamp(stampCollector.GetCone());
   realmMinusix.AddStamp(stampCollector.GetCone());
   realmPlusix.AddStamp(stampCollector.GetCone());
 
   realmPlusezed.Noise(0,0,0);
-  //realmMinusix.Noise(0,0,0);
+  realmMinusix.Noise(0,0,0);
+  realmPlusix.Noise(0,0,0);
 
   // A partir de là les six heightmaps de bases sont terminées, 
   // y a plus qu'a envoyer tout ça dans un png pour le plaisir de vos yeux.
@@ -49,6 +53,7 @@ int main(int argc, char ** argv) {
   unsigned char color;
 
   float * realmPlusezedFirstLayer = realmPlusezed.GetRealm(0,0,0);
+  float * realmMinusezedFirstLayer = realmMinusezed.GetRealm(0,0,0);
   float * realmMinusixFirstLayer = realmMinusix.GetRealm(0,0,0);
   float * realmPlusixFirstLayer = realmPlusix.GetRealm(0,0,0);
   float * realmPlusigrecFirstLayer = realmPlusigrec.GetRealm(0,0,0);
@@ -58,6 +63,12 @@ int main(int argc, char ** argv) {
     for(int x = 0; x<scale3; x++) {
       if (x >= scale && x < scale2 && y >= scale && y < scale2) {
         color = (unsigned char) (255 * (realmPlusezedFirstLayer[ (x-scale) + scale * (y-scale)] - min) / (max - min));
+	png[x][y].Red	= color;
+	png[x][y].Green = color;
+	png[x][y].Blue = color;
+      }
+      else if (x >= scale && x < scale2 && y >= scale3 && y < scale4) {
+        color = (unsigned char) (255 * (realmMinusezedFirstLayer[ (x-scale) + scale * (y-scale3)] - min) / (max - min));
 	png[x][y].Red	= color;
 	png[x][y].Green = color;
 	png[x][y].Blue = color;

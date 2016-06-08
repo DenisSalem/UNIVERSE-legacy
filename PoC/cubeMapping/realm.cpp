@@ -10,10 +10,10 @@ Realm::Realm(int LoD, float * min, float * max) {
   this->scale = 2 << LoD;
   this->area = 2 << (LoD+LoD+1);
   this->stampCount = 0;
-  this->neighbourTop;
-  this->neighbourBottom;
-  this->neighbourLeft;
-  this->neighbourRight;
+  this->neighbourTop = 0;
+  this->neighbourBottom = 0;
+  this->neighbourLeft = 0;
+  this->neighbourRight = 0;
   this->realm = new float ** [MAXIMUM_NUMBER_OF_LAYERS];
   this->realm[0] = new float*[1]();
 
@@ -113,7 +113,7 @@ inline bool Realm::DoesStampCrossCorner(int offsetX, int offsetY, int sectorScal
 }
 
 void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, int sectorStartU, int sectorStartV) {
-  if (sectorScale == 256) {
+  if (sectorScale == 1) {
     return;
   }
 
@@ -127,8 +127,8 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
   int inc = this->scale / sectorScale;
   int stampIndex;
   int chunkIndex;
-  int offsetY = -20;//randY + sectorStartV;
-  int offsetX = -20;//randX + sectorStartU;
+  int offsetX = randX + sectorStartU;
+  int offsetY = randY + sectorStartV;
   int stampX=0,stampY=0;
   double distanceFromStampCenterToCorner;
 

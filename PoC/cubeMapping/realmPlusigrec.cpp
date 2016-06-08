@@ -13,7 +13,7 @@ inline int RealmPlusigrec::getCoordsToNeighbourBottom(int x, int y, int scale) {
 }
 
 inline int RealmPlusigrec::getCoordsToNeighbourLeft(int x, int y, int scale) {
-  return 0;
+  return scale + x + y * scale;
 }
 
 inline int RealmPlusigrec::getCoordsToNeighbourRight(int x, int y, int scale) {
