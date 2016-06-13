@@ -23,12 +23,18 @@ class Realm {
     void Noise(int layer, int chunkCoordX, int chunkCoordY);
 
   protected:
+    void PrepareDestinationOnBorder(int layer, int chunkCoordX, int chunkCoordY, int offsetX, int offsetY, int sectorScale);
+    void PrepareDestinationOnCorner(int layer, int chunkCoordX, int chunkCoordY, int offsetX, int offsetY, int sectorScale);
     void UpdateMinMax(int chunkIndex, float * chunk);
+    void StampBeyondBorder(int x, int y, int chunkCoordX, int chunkCoordY, int stampIndex);
+    //void CrossCorner();
+    void StampWithinChunk(int x, int y, int stampIndex);
+    bool DoesStampCrossCorner(int offsetX, int offsetY, int sectorScale);
+    bool DoesStampCrossCornerWithinRealm(int x, int y, int limit);
+    void Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, int sectorStartU, int sectorStartV);
     int scale;
 
   private:
-    bool DoesStampCrossCorner(int offsetX, int offsetY, int sectorScale);
-    void Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, int sectorStartU, int sectorStartV);
     virtual int getCoordsToNeighbourTop(int x, int y, int scale) = 0;
     virtual int getCoordsToNeighbourBottom(int x, int y, int scale) = 0; 
     virtual int getCoordsToNeighbourLeft(int x, int y, int scale) = 0; 
@@ -48,5 +54,18 @@ class Realm {
     float *** neighbourBottom;
     float *** neighbourLeft;
     float *** neighbourRight;
+
+    // Temporary space
+    float * horizontalNeighbourChunk;
+    float * verticalNeighbourChunk;
+    float * diagonalNeighbourChunk;
+    float * localChunk;
+    float * stamp;
+    float sign;
+    int horizontalNeighbourChunkCoord;
+    int verticalNeighbourChunkCoord;
+    int chunkIndex;
+    int chunkScale;
+    int inc;
 };
 #endif
