@@ -147,6 +147,7 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
   //
   //
   //
+
     int horizontalNeighbourChunkCoord = 0;
     int verticalNeighbourChunkCoord = 0;
     float * horizontalNeighbourChunk = 0;
@@ -205,7 +206,43 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
         verticalNeighbourChunk = this->realm[layer][verticalNeighbourChunkCoord];
       }
     }
-                  
+
+    // Dépassement sur un coin
+    if ( this->DoesStampCrossCorner(offsetX,offsetY,sectorScale) ) {
+      // Dépassement sur le coin supérieur gauche
+      if (offsetX < 0 && offsetY < 0) {
+        // Une seule coordonné à tester suffit parce qu'on sait qu'on dépasse sur un coin dans tous les cas.
+        if(chunkCoordX == 0) {
+        }
+        else {
+          diagonalNeighbourChunk = this->realm[layer][chunkCoordX - 1 + (chunkCoordY-1) * chunkScale];
+        }
+      }
+      // Dépassement sur le coin supérieur droit
+      else if (offsetX+sectorScale >= this->scale && offsetY < 0) {
+        if(chunkCoordX == chunkScale - 1) {
+        }
+        else {
+          diagonalNeighbourChunk = this->realm[layer][chunkCoordX + 1 + (chunkCoordY - 1) * chunkScale];
+        }
+      }
+      // Dépassement sur le coin inférieur droit
+      else if (offsetX+sectorScale >= this->scale && offsetY+sectorScale >= this->scale) {
+        if(chunkCoordX == chunkScale - 1) {
+        }
+        else {
+          diagonalNeighbourChunk = this->realm[layer][chunkCoordX + 1 + (chunkCoordY + 1) * chunkScale];
+        }
+      }
+      // Dépassement sur le coin inférieur gauche
+      else if (offsetX < 0 && this->scale && offsetY+sectorScale >= this->scale) {
+        if(chunkCoordX == chunkScale - 1) {
+        }
+        else {
+          diagonalNeighbourChunk = this->realm[layer][chunkCoordX - 1 + (chunkCoordY + 1) * chunkScale];
+        }
+      }
+    }
                                                                                                   //
                                                                                                   //
                                                                                                   //
@@ -303,6 +340,13 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
       }
       stampY += inc * inc;
     }
+  }
+  // Troisième cas: 
+  // Le tampon dépasse sur un coin. Plus précisémeent, soit il dépasse à l'intérieur du royaume 
+  // et c'est relativement simple, soit il dépasse au delà du royaume. 
+  // Là, il faut changer de système de coordonnée.
+  else {
+    
   }
 
   this->Noise(layer, chunkCoordX, chunkCoordY, halfScale, sectorStartU,		  sectorStartV);
