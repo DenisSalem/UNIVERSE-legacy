@@ -51,15 +51,15 @@ void Realm::AddStamp(float * stamp) {
 }
 
 void Realm::AllocateChunk(int layer, int chunkCoordX, int chunkCoordY) {
-  this->realm[layer][chunkCoordX + chunkCoordY * (1 << layer)] = new float[this->area]; 
+  this->realm[layer][chunkCoordX + chunkCoordY * (1 << layer)] = new float[this->area];
 }
 
 void Realm::DeallocateChunk(int layer, int chunkCoordX, int chunkCoordY) {
-  delete [] this->realm[layer][chunkCoordX + chunkCoordY * (0 << layer)];
+  delete [] this->realm[layer][chunkCoordX + chunkCoordY * (1 << layer)];
 }
 
 float * Realm::GetRealm(int layer, int chunkCoordX, int chunkCoordY) {
-  return this->realm[layer][chunkCoordX + chunkCoordY * (0 << layer)];
+  return this->realm[layer][chunkCoordX + chunkCoordY * (1 << layer)];
 }
 
 float *** Realm::GetRealm() {
@@ -116,7 +116,6 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
   if (sectorScale == 1) {
     return;
   }
-
 
   float sign = getRandom() & 1 ? 1.0 : -1.0;
 
@@ -249,7 +248,7 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
             }
             // Le pixel courant se trouve sur la gauche du secteur courant, mais à l'intérieur du royaume.
             else {
-	      chunkIndex = (y+offsetY) * this->scale + this->scale - x+offsetX;
+	      chunkIndex = (y+offsetY) * this->scale + this->scale + x+offsetX;
             }
             horizontalNeighbourChunk[chunkIndex] += sign * stamp[ stampIndex ] / inc;
             this->UpdateMinMax(chunkIndex, horizontalNeighbourChunk);
@@ -275,7 +274,7 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
             }
             // Le pixel courant se trouve en bas du secteur courant, mais à l'intérieur du royaume.
             else {
-	      chunkIndex = (y+offsetY) * this->scale + x+offsetX - this->scale;
+	      chunkIndex = (y+offsetY-this->scale) * this->scale + x+offsetX;
             }
             verticalNeighbourChunk[ chunkIndex ] += sign * stamp[ stampIndex ] / inc;
             this->UpdateMinMax(chunkIndex, verticalNeighbourChunk);
@@ -286,9 +285,9 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
             if (chunkCoordY == 0) {
 	      chunkIndex = this->getCoordsToNeighbourTop( offsetX+x, offsetY+y, this->scale) ;
             }
-            // Le pixel courant se trouve en bas du secteur courant, mais à l'intérieur du royaume.
+            // Le pixel courant se trouve en haut du secteur courant, mais à l'intérieur du royaume.
             else {
-	      chunkIndex = (this->scale - y+offsetY) * this->scale + x+offsetX;
+	      chunkIndex = (this->scale + y+offsetY) * this->scale + x+offsetX;
             }
             verticalNeighbourChunk[ chunkIndex ] += sign * stamp[ stampIndex ] / inc;
             this->UpdateMinMax(chunkIndex, verticalNeighbourChunk);

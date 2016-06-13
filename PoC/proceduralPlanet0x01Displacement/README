@@ -21,7 +21,7 @@ Votre carte graphique doit également pouvoir supporter
 OpenGL 3.0 au minimum. Pour vous en assurer rien de plus
 simple! Dans un terminal tapez
 
-$ glxinfo | grep "core profile"
+$ glxinfo | grep "version"
 
 Normalement ce devrait être le cas, mais assurez vous d'avoir
 la suite d'utilitaires Mesa installé. Cette suite contient

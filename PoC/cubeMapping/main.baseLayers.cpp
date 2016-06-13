@@ -118,7 +118,7 @@ int main(int argc, char ** argv) {
     }
   }
 
-  writePng(png,scale);
+  writePng(png,1536,2048);
 
   return 0; 
 }
