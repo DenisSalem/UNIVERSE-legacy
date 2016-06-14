@@ -82,8 +82,7 @@ inline bool Realm::IsChunkAllocated(float *** dest, int layer, int chunkIndex) {
   return false;
 }
 
-
-inline bool Realm::DoesStampCrossCornerWithinRealm(int x, int y, int limit) {
+inline bool Realm::IsChunkACorner(int x, int y, int limit) {
   if (x == 0 && y == 0) {
     return true;
   }
@@ -94,6 +93,17 @@ inline bool Realm::DoesStampCrossCornerWithinRealm(int x, int y, int limit) {
     return true;
   }
   if (x == 0 && y == limit) {
+    return true;
+  }
+  return false;
+}
+
+inline bool Realm::DoesStampMatrixCrossCorner(int offsetX, int offsetY, int sectorScale) {
+  bool a = offsetX < 0;
+  bool b = offsetX+sectorScale >= this->scale;
+  bool c = offsetY < 0;
+  bool d = offsetY+sectorScale >= this->scale;
+  if (a || b || c || d) {
     return true;
   }
   return false;
@@ -137,7 +147,7 @@ inline void Realm::StampWithinChunk(int x, int y, int stampIndex) {
 
 inline void Realm::StampBeyondBorder(int x, int y, int chunkCoordX, int chunkCoordY, int stampIndex) {
   // Le pixel courant est à gauche du secteur courant.
-  if(this->horizontalNeighbourChunk != 0 && x < 0) {
+  if(this->horizontalNeighbourChunk != 0 && x < 0 && y >= 0 && y < this->scale) {
     // Le pixel courant se trouve sur la gauche du secteur courant, mais à l'extérieur du royaume.
     if (chunkCoordX == 0) {
       this->chunkIndex = this->getCoordsToNeighbourLeft(x, y, this->scale) ;
@@ -150,7 +160,7 @@ inline void Realm::StampBeyondBorder(int x, int y, int chunkCoordX, int chunkCoo
     this->UpdateMinMax(chunkIndex, this->horizontalNeighbourChunk);
   }
   // Le pixel courant est à droite du secteur courant.
-  else if (this->horizontalNeighbourChunk != 0 && x >= this->scale) {
+  else if (this->horizontalNeighbourChunk != 0 && x >= this->scale && y >= 0 && y < this->scale) {
     // Le pixel courant se trouve sur la droite du secteur courant, mais à l'extérieur du royaume.
     if (chunkCoordX == this->chunkScale - 1) {
       this->chunkIndex = this->getCoordsToNeighbourRight(x, y, this->scale) ;
@@ -163,7 +173,7 @@ inline void Realm::StampBeyondBorder(int x, int y, int chunkCoordX, int chunkCoo
     this->UpdateMinMax(chunkIndex, this->horizontalNeighbourChunk);
   }
   // Le pixel courant est en bas du secteur courant
-  else if (this->verticalNeighbourChunk != 0 && y >= this->scale) {
+  else if (this->verticalNeighbourChunk != 0 && y >= this->scale && x >= 0 && x < this->scale) {
   // Le pixel courant se trouve en bas du secteur courant, mais à l'extérieur du royaume.
     if (chunkCoordY == this->chunkScale - 1) {
       this->chunkIndex = this->getCoordsToNeighbourBottom( x, y, this->scale) ;
@@ -176,7 +186,7 @@ inline void Realm::StampBeyondBorder(int x, int y, int chunkCoordX, int chunkCoo
     this->UpdateMinMax(chunkIndex, this->verticalNeighbourChunk);
   }
   // Le pixel courant est en haut du secteur courant
-  else if (this->verticalNeighbourChunk != 0 && y < 0) {
+  else if (this->verticalNeighbourChunk != 0 && y < 0 && x >= 0 && x < this->scale) {
     // Le pixel courant se trouve en haut du secteur courant, mais à l'extérieur du royaume.
     if (chunkCoordY == 0) {
       this->chunkIndex = this->getCoordsToNeighbourTop(x, y, this->scale) ;
@@ -196,42 +206,38 @@ inline void Realm::StampBeyondBorder(int x, int y, int chunkCoordX, int chunkCoo
 //
 // On se propose donc deux fonctions pour préparer tout ça.
 
-
 inline void Realm::PrepareDestinationOnCorner(int layer, int chunkCoordX, int chunkCoordY, int offsetX, int offsetY, int sectorScale) {
-  // Dépassement sur un coin
-  if ( this->DoesStampCrossCorner(offsetX,offsetY,sectorScale) ) {
-    // Dépassement sur le coin supérieur gauche
-    if (offsetX < 0 && offsetY < 0) {
-      // Une seule coordonné à tester suffit parce qu'on sait qu'on dépasse sur un coin dans tous les cas.
-      if(chunkCoordX == 0) {
-      }
-      else {
-        this->diagonalNeighbourChunk = this->realm[layer][chunkCoordX - 1 + (chunkCoordY-1) * chunkScale];
-      }
+  // Dépassement sur le coin supérieur gauche
+  if (offsetX < 0 && offsetY < 0) {
+    // Une seule coordonné à tester suffit parce qu'on sait qu'on dépasse sur un coin dans tous les cas.
+    if(chunkCoordX == 0) {
     }
-    // Dépassement sur le coin supérieur droit
-    else if (offsetX+sectorScale >= this->scale && offsetY < 0) {
-      if(chunkCoordX == chunkScale - 1) {
-      }
-      else {
-        this->diagonalNeighbourChunk = this->realm[layer][chunkCoordX + 1 + (chunkCoordY - 1) * chunkScale];
-      }
+    else {
+      this->diagonalNeighbourChunk = this->realm[layer][chunkCoordX - 1 + (chunkCoordY-1) * chunkScale];
     }
-    // Dépassement sur le coin inférieur droit
-    else if (offsetX+sectorScale >= this->scale && offsetY+sectorScale >= this->scale) {
-      if(chunkCoordX == chunkScale - 1) {
-      }
-      else {
-        this->diagonalNeighbourChunk = this->realm[layer][chunkCoordX + 1 + (chunkCoordY + 1) * chunkScale];
-      }
+  }
+  // Dépassement sur le coin supérieur droit
+  else if (offsetX+sectorScale >= this->scale && offsetY < 0) {
+    if(chunkCoordX == chunkScale - 1) {
     }
-    // Dépassement sur le coin inférieur gauche
-    else if (offsetX < 0 && this->scale && offsetY+sectorScale >= this->scale) {
-      if(chunkCoordX == chunkScale - 1) {
-      }
-      else {
-        this->diagonalNeighbourChunk = this->realm[layer][chunkCoordX - 1 + (chunkCoordY + 1) * chunkScale];
-      }
+    else {
+      this->diagonalNeighbourChunk = this->realm[layer][chunkCoordX + 1 + (chunkCoordY - 1) * chunkScale];
+    }
+  }
+  // Dépassement sur le coin inférieur droit
+  else if (offsetX+sectorScale >= this->scale && offsetY+sectorScale >= this->scale) {
+    if(chunkCoordX == chunkScale - 1) {
+    }
+    else {
+      this->diagonalNeighbourChunk = this->realm[layer][chunkCoordX + 1 + (chunkCoordY + 1) * chunkScale];
+    }
+  }
+  // Dépassement sur le coin inférieur gauche
+  else if (offsetX < 0 && this->scale && offsetY+sectorScale >= this->scale) {
+    if(chunkCoordX == chunkScale - 1) {
+    }
+    else {
+      this->diagonalNeighbourChunk = this->realm[layer][chunkCoordX - 1 + (chunkCoordY + 1) * chunkScale];
     }
   }
 }
@@ -316,82 +322,39 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
   int randY = - halfScale + getRandom() % (sectorScale);
   int stampId =  getRandom() % this->stampCount;
   int stampIndex;
-  int offsetX = randX + sectorStartU;
-  int offsetY = randY + sectorStartV;
+  int offsetX = -randX + sectorStartU;
+  int offsetY = -randY + sectorStartV;
   int stampX=0,stampY=0;
   double distanceFromStampCenterToCorner;
-
+  bool stampMatrixCrossCorner = this->DoesStampMatrixCrossCorner(offsetX,offsetY,sectorScale);
+  bool stampCrossCorner = this->DoesStampCrossCorner(offsetX,offsetY,sectorScale);
   int localChunkCoord = chunkCoordX + chunkCoordY * chunkScale;
-
   this->stamp = this->stamps[stampId];
-
   this->PrepareDestinationOnCorner(layer, chunkCoordX, chunkCoordY,offsetX,offsetY,sectorScale);
   this->PrepareDestinationOnBorder(layer, chunkCoordX, chunkCoordY,offsetX,offsetY,sectorScale);
 
-  if ( offsetY >= 0 && offsetY+sectorScale-1 < this->scale && offsetX >= 0 && offsetX+sectorScale-1< this->scale) {
-    for (int y=0; y<sectorScale; y++) {
-      stampX = 0;
-      for (int x=0; x<sectorScale; x++) {
-        stampIndex = stampX + sectorScale * stampY;
-	if ( stamp[ stampIndex ] != 0) {
-          this->StampWithinChunk(x+offsetX, y+offsetY, stampIndex);
-	}
-	stampX += inc;
-      }
-      stampY += inc * inc;
-    }
+  if ( this->IsChunkACorner(chunkCoordX,chunkCoordY,chunkScale-1) && stampCrossCorner) {
   }
-  // Second cas: Situation relativement simple de dépassement en X et/ou Y sans que le tampon croise un coin.
-  // On distingue alors deux cas, quand le pixel dépasse du secteur, en dehor du royaume courant, ou quand
-  // il dépasse du secteur courant à l'intérieur du royaume.
-  else if ( !this->DoesStampCrossCorner(offsetX,offsetY,sectorScale) ) { 
+  else {
     for (int y=0; y<sectorScale; y++) {
       stampX = 0;
       for (int x=0; x<sectorScale; x++) {
         stampIndex = stampX + sectorScale * stampY;
 	if ( stamp[ stampIndex ] != 0) {
-          // Le pixel courant est à l'intérieur du secteur courant
           if (x+offsetX >= 0 && x+offsetX < this->scale && y+offsetY >= 0 && y+offsetY < this->scale) {
             this->StampWithinChunk(x+offsetX, y+offsetY, stampIndex);
           }
-          // Le pixel courant peut-être à l'extérieur du secteur courant
+          else if(stampCrossCorner) {
+          }
           else {
             StampBeyondBorder(x+offsetX, y+offsetY, chunkCoordX, chunkCoordY, stampIndex);
           }
         }
-	stampX += inc;
+        stampX += inc;
       }
       stampY += inc * inc;
     }
-  }/*
-  // Troisième cas: 
-  // Le tampon dépasse sur un coin. Plus précisément, soit il dépasse à l'intérieur du royaume 
-  // et c'est relativement simple, soit il dépasse au delà du royaume. 
-  // Là, il faut changer de système de coordonnée.
-  else {
-    //Selon que l'on dépasse sur un coin dans le royaume ou à l'extérieur les opérations ne seront pas du tout les mêmes.
-    if ( this->DoesStampCrossCornerWithinRealm(chunkCoordX,chunkCoordY,chunkScale-1)) {
-    }
-    else {
-      for (int y=0; y<sectorScale; y++) {
-        stampX = 0;
-        for (int x=0; x<sectorScale; x++) {
-          stampIndex = stampX + sectorScale * stampY;
-	  if ( stamp[ stampIndex ] != 0) {
-            if(offsetX < 0 && offsetY < 0) {
-
-            }
-            else if (x+offsetX >= 0 && x+offsetX < this->scale && y+offsetY >= 0 && y+offsetY < this->scale) {
-              this->StampWithinChunk(x+offsetX, y+offsetY, stampIndex);
-            }
-          }
-	  stampX += inc;
-        }
-        stampY += inc * inc;
-      }
-    }
   }
-*/
   
   this->Noise(layer, chunkCoordX, chunkCoordY, halfScale, sectorStartU,		  sectorStartV);
   this->Noise(layer, chunkCoordX, chunkCoordY, halfScale, sectorStartU, 	  sectorStartV+halfScale);
