@@ -19,3 +19,19 @@ inline int RealmPlusix::getCoordsToNeighbourLeft(int x, int y, int scale) {
 inline int RealmPlusix::getCoordsToNeighbourRight(int x, int y, int scale) {
   return scale - x + scale - 1 + (scale - y - 1) * scale;
 }
+
+inline int RealmPlusix::getCoordsToNeighbourTopLeft(int x, int y, int scale) {
+  return 0;
+}
+
+inline int RealmPlusix::getCoordsToNeighbourTopRight(int x, int y, int scale) {
+  return 0;
+}
+
+inline int RealmPlusix::getCoordsToNeighbourBottomLeft(int x, int y, int scale) {
+  return 0;
+}
+
+inline int RealmPlusix::getCoordsToNeighbourBottomRight(int x, int y, int scale) {
+  return 0;
+}

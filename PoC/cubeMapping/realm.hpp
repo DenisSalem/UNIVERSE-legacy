@@ -27,8 +27,8 @@ class Realm {
     void PrepareDestinationOnCorner(int layer, int chunkCoordX, int chunkCoordY, int offsetX, int offsetY, int sectorScale);
     void UpdateMinMax(int chunkIndex, float * chunk);
     void StampBeyondBorder(int x, int y, int chunkCoordX, int chunkCoordY, int stampIndex);
+    void StampBeyondCorner(int x, int y, int chunkCoorX, int chunkCoordy, int chunkLimit, int stampIndex);
     void StampWithinChunk(int x, int y, int stampIndex);
-    bool DoesStampMatrixCrossCorner(int offsetX, int offsetY, int sectorScale);
     bool DoesStampCrossCorner(int offsetX, int offsetY, int sectorScale);
     bool IsChunkACorner(int x, int y, int limit);
     void Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, int sectorStartU, int sectorStartV);
@@ -39,6 +39,11 @@ class Realm {
     virtual int getCoordsToNeighbourBottom(int x, int y, int scale) = 0; 
     virtual int getCoordsToNeighbourLeft(int x, int y, int scale) = 0; 
     virtual int getCoordsToNeighbourRight(int x, int y, int scale) = 0; 
+
+    virtual int getCoordsToNeighbourTopLeft(int x, int y, int scale) = 0;
+    virtual int getCoordsToNeighbourTopRight(int x, int y, int scale) = 0; 
+    virtual int getCoordsToNeighbourBottomLeft(int x, int y, int scale) = 0; 
+    virtual int getCoordsToNeighbourBottomRight(int x, int y, int scale) = 0; 
 
     int stampCount;
     int area;
