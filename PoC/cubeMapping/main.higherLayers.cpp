@@ -98,13 +98,13 @@ int main(int argc, char ** argv) {
         color = (unsigned char) (255 * (chunk2[ x + scale*(y-scale)] - min) / (max - min));
         png[x][y].Red = color; 
         png[x][y].Green	= color;
-        png[x][y].Blue = color;
+        png[x][y].Blue = 0;color;
       }
       else if (x >= scale && x < scale2 && y >= 0 && y < scale ) {
         color = (unsigned char) (255 * (chunk1[ (x - scale) + scale*y] - min) / (max - min));
         png[x][y].Red = color; 
         png[x][y].Green	= color;
-        png[x][y].Blue = color;
+        png[x][y].Blue = 0;color;
       }
       else {
 	png[x][y].Red	= 0;

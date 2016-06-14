@@ -98,7 +98,7 @@ inline bool Realm::IsChunkACorner(int x, int y, int limit) {
   return false;
 }
 
-inline bool Realm::DoesStampCrossCorner(int offsetX, int offsetY, int sectorScale) {
+inline bool Realm::DoesStampCrossCornerBeyondRealm(int offsetX, int offsetY, int chunkCoordX, int chunkCoordY, int sectorScale) {
   int stampRadius = sectorScale >> 1;
   int xCornerTopLeft = offsetX+stampRadius;
   int yCornerTopLeft = offsetY+stampRadius;
@@ -110,23 +110,24 @@ inline bool Realm::DoesStampCrossCorner(int offsetX, int offsetY, int sectorScal
   int yCornerBottomLeft = this->scale - (offsetY + stampRadius);
 
   // Coin gauche supérieur
-  if(offsetX < 0 && offsetY < 0 && ceil(sqrt(pow(xCornerTopLeft,2) + pow(yCornerTopLeft,2))) <= stampRadius) {
+  if(chunkCoordX == 0 && chunkCoordY == 0 && offsetX < 0 && offsetY < 0 && ceil(sqrt(pow(xCornerTopLeft,2) + pow(yCornerTopLeft,2))) <= stampRadius) {
       return true;
   }
   // Coin supérieur droit
-  else if (offsetX+sectorScale >= this->scale && offsetY < 0 && ceil(sqrt(pow(xCornerTopRight,2) + pow(yCornerTopRight,2))) <= stampRadius) {
+  else if (chunkCoordX == this->chunkScale - 1 && chunkCoordY == 0 && offsetX+sectorScale >= this->scale && offsetY < 0 && ceil(sqrt(pow(xCornerTopRight,2) + pow(yCornerTopRight,2))) <= stampRadius) {
     return true;
   }
   // Coin inférieur droit
-  else if (offsetX+sectorScale >= this->scale && offsetY+sectorScale >= this->scale && ceil(sqrt(pow(xCornerBottomRight,2) + pow(yCornerBottomRight,2))) <= stampRadius) {
+  else if (chunkCoordX == this->chunkScale - 1 && chunkCoordY == this->chunkScale - 1 && offsetX+sectorScale >= this->scale && offsetY+sectorScale >= this->scale && ceil(sqrt(pow(xCornerBottomRight,2) + pow(yCornerBottomRight,2))) <= stampRadius) {
     return true;
   }
   // Coin inférieur gauche
-  else if (offsetX < 0 && offsetY+sectorScale >= this->scale && ceil(sqrt(pow(xCornerBottomLeft,2) + pow(yCornerBottomLeft,2))) <= stampRadius) {
+  else if (chunkCoordX == 0 && chunkCoordY == this->chunkScale - 1 && offsetX < 0 && offsetY+sectorScale >= this->scale && ceil(sqrt(pow(xCornerBottomLeft,2) + pow(yCornerBottomLeft,2))) <= stampRadius) {
     return true;
   }
   return false;
 }
+
 
 inline void Realm::StampWithinChunk(int x, int y, int stampIndex) {
   this->chunkIndex = y * this->scale + x;
@@ -161,12 +162,15 @@ inline void Realm::StampBeyondCorner(int x, int y, int chunkCoordX, int chunkCoo
       }
     }
     else if(x < 0 && y >= this->scale) {
-      if (chunkCoordX == chunkLimit) {
+      if (chunkCoordX == 0) {
         this->chunkIndex = this->getCoordsToNeighbourBottomLeft(x, y, this->scale) ;
       }
       else {
         this->chunkIndex = this->scale + x + this->scale * (y - this->scale);
       }
+    }
+    else {
+      return;
     }
     this->diagonalNeighbourChunk[this->chunkIndex] += this->sign * this->stamp[ stampIndex ] / this->inc;
     this->UpdateMinMax(chunkIndex, this->diagonalNeighbourChunk);
@@ -224,9 +228,10 @@ inline void Realm::StampBeyondBorder(int x, int y, int chunkCoordX, int chunkCoo
 
 inline void Realm::PrepareDestinationOnCorner(int layer, int chunkCoordX, int chunkCoordY, int offsetX, int offsetY, int sectorScale) {
   // Dépassement sur le coin supérieur gauche
+  this->diagonalNeighbourChunk = 0;
   if (offsetX < 0 && offsetY < 0) {
     // Une seule coordonné à tester suffit parce qu'on sait qu'on dépasse sur un coin dans tous les cas.
-    if(chunkCoordX == 0) {
+    if(chunkCoordX == 0 || chunkCoordY == 0) {
       this->diagonalNeighbourChunk = this->neighbourLeft[layer][this->getCoordsToNeighbourTopLeft(-1, -1, this->chunkScale)];
     }
     else {
@@ -235,7 +240,7 @@ inline void Realm::PrepareDestinationOnCorner(int layer, int chunkCoordX, int ch
   }
   // Dépassement sur le coin supérieur droit
   else if (offsetX+sectorScale >= this->scale && offsetY < 0) {
-    if(chunkCoordX == this->chunkScale - 1) {
+    if(chunkCoordX == this->chunkScale - 1 || chunkCoordY == 0) {
       this->diagonalNeighbourChunk = this->neighbourRight[layer][this->getCoordsToNeighbourTopRight(chunkCoordX+1, -1, this->chunkScale)];
     }
     else {
@@ -244,7 +249,7 @@ inline void Realm::PrepareDestinationOnCorner(int layer, int chunkCoordX, int ch
   }
   // Dépassement sur le coin inférieur droit
   else if (offsetX+sectorScale >= this->scale && offsetY+sectorScale >= this->scale) {
-    if(chunkCoordX == this->chunkScale - 1) {
+    if(chunkCoordX == this->chunkScale - 1 || chunkCoordY == this->chunkScale - 1) {
       this->diagonalNeighbourChunk = this->neighbourRight[layer][this->getCoordsToNeighbourBottomRight(chunkCoordX+1, chunkCoordY+1, this->chunkScale)];
     }
     else {
@@ -252,8 +257,8 @@ inline void Realm::PrepareDestinationOnCorner(int layer, int chunkCoordX, int ch
     }
   }
   // Dépassement sur le coin inférieur gauche
-  else if (offsetX < 0 && this->scale && offsetY+sectorScale >= this->scale) {
-    if(chunkCoordX == this->chunkScale - 1) {
+  else if (offsetX < 0 && offsetY+sectorScale >= this->scale) {
+    if(chunkCoordX == 0 || chunkCoordY == this->chunkScale - 1) {
       this->diagonalNeighbourChunk = this->neighbourRight[layer][this->getCoordsToNeighbourBottomLeft(-1, chunkCoordY+1, this->chunkScale)];
     }
     else {
@@ -347,13 +352,13 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
   int offsetY = -randY + sectorStartV;
   int stampX=0,stampY=0;
   double distanceFromStampCenterToCorner;
-  bool stampCrossCorner = this->DoesStampCrossCorner(offsetX,offsetY,sectorScale);
+  bool stampCrossCornerBeyondRealm = this->DoesStampCrossCornerBeyondRealm(offsetX, offsetY, chunkCoordX, chunkCoordY, sectorScale);
   int localChunkCoord = chunkCoordX + chunkCoordY * chunkScale;
   this->stamp = this->stamps[stampId];
   this->PrepareDestinationOnCorner(layer, chunkCoordX, chunkCoordY,offsetX,offsetY,sectorScale);
   this->PrepareDestinationOnBorder(layer, chunkCoordX, chunkCoordY,offsetX,offsetY,sectorScale);
 
-  if ( this->IsChunkACorner(chunkCoordX,chunkCoordY,chunkScale-1) && stampCrossCorner) {
+  if ( this->IsChunkACorner(chunkCoordX,chunkCoordY,chunkScale-1) && stampCrossCornerBeyondRealm) {
   }
   else {
     chunkLimit = chunkScale - 1;
@@ -366,7 +371,7 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
             this->StampWithinChunk(x+offsetX, y+offsetY, stampIndex);
           }
           else {
-            //StampBeyondCorner(x+offsetX, y+offsetY, chunkCoordX, chunkCoordY, chunkLimit, stampIndex);
+            StampBeyondCorner(x+offsetX, y+offsetY, chunkCoordX, chunkCoordY, chunkLimit, stampIndex);
             StampBeyondBorder(x+offsetX, y+offsetY, chunkCoordX, chunkCoordY, stampIndex);
           }
         }

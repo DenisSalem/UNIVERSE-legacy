@@ -29,7 +29,7 @@ class Realm {
     void StampBeyondBorder(int x, int y, int chunkCoordX, int chunkCoordY, int stampIndex);
     void StampBeyondCorner(int x, int y, int chunkCoorX, int chunkCoordy, int chunkLimit, int stampIndex);
     void StampWithinChunk(int x, int y, int stampIndex);
-    bool DoesStampCrossCorner(int offsetX, int offsetY, int sectorScale);
+    bool DoesStampCrossCornerBeyondRealm(int offsetX, int offsetY, int chunkCoordX, int chunkCoordY, int sectorScale);
     bool IsChunkACorner(int x, int y, int limit);
     void Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, int sectorStartU, int sectorStartV);
     int scale;
