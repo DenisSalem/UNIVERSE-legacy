@@ -56,12 +56,12 @@ int main(int argc, char ** argv) {
   
   realmPlusezed.AllocateChunk(1,0,0);
   realmPlusezed.AllocateChunk(1,1,0);
-  realmPlusezed.AllocateChunk(1,0,1);
-  realmPlusezed.AllocateChunk(1,1,1);
-  realmPlusezed.Noise(1,0,0);
+  realmMinusigrec.AllocateChunk(1,0,1);
+  realmMinusigrec.AllocateChunk(1,1,1);
+  //realmPlusezed.Noise(1,0,0);
   realmPlusezed.Noise(1,1,0);
-  realmPlusezed.Noise(1,0,1);
-  realmPlusezed.Noise(1,1,1);
+  //realmMinusigrec.Noise(1,0,1);
+  //realmMinusigrec.Noise(1,1,1);
 
   // A partir de là les six heightmaps de bases sont terminées, 
   // y a plus qu'a envoyer tout ça dans un png pour le plaisir de vos yeux.
@@ -76,10 +76,12 @@ int main(int argc, char ** argv) {
   int scale2 = scale * 2;
   unsigned char color;
 
-  float * chunk3 = realmPlusezed.GetRealm(1,1,1);
-  float * chunk2 = realmPlusezed.GetRealm(1,0,1);
-  float * chunk0 = realmPlusezed.GetRealm(1,0,0);
-  float * chunk1 = realmPlusezed.GetRealm(1,1,0);
+
+  float * chunk2 = realmPlusezed.GetRealm(1,0,0);
+  float * chunk3 = realmPlusezed.GetRealm(1,1,0);
+  float * chunk0 = realmMinusigrec.GetRealm(1,0,1);
+  float * chunk1 = realmMinusigrec.GetRealm(1,1,1);
+
   for(int y = 0; y<scale4; y++) {
     for(int x = 0; x<scale3; x++) {
       if (x >= 0 & x < scale && y >= 0 && y < scale) {
@@ -98,13 +100,13 @@ int main(int argc, char ** argv) {
         color = (unsigned char) (255 * (chunk2[ x + scale*(y-scale)] - min) / (max - min));
         png[x][y].Red = color; 
         png[x][y].Green	= color;
-        png[x][y].Blue = 0;color;
+        png[x][y].Blue = color;
       }
       else if (x >= scale && x < scale2 && y >= 0 && y < scale ) {
         color = (unsigned char) (255 * (chunk1[ (x - scale) + scale*y] - min) / (max - min));
         png[x][y].Red = color; 
         png[x][y].Green	= color;
-        png[x][y].Blue = 0;color;
+        png[x][y].Blue = color;
       }
       else {
 	png[x][y].Red	= 0;

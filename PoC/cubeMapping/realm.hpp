@@ -23,6 +23,7 @@ class Realm {
     void Noise(int layer, int chunkCoordX, int chunkCoordY);
 
   protected:
+    void TryToSetDestination(int chunkIndex, int layer, float *** origin, float ** destination);
     void PrepareDestinationOnBorder(int layer, int chunkCoordX, int chunkCoordY, int offsetX, int offsetY, int sectorScale);
     void PrepareDestinationOnCorner(int layer, int chunkCoordX, int chunkCoordY, int offsetX, int offsetY, int sectorScale);
     void UpdateMinMax(int chunkIndex, float * chunk);

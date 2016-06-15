@@ -220,6 +220,13 @@ inline void Realm::StampBeyondBorder(int x, int y, int chunkCoordX, int chunkCoo
   }
 }
 
+inline void Realm::TryToSetDestination(int chunkIndex, int layer, float *** origin, float ** destination) {
+  std::cout << chunkIndex << "\n";
+  if (this->IsChunkAllocated(origin, layer, chunkIndex) == true) {
+    *destination = origin[layer][chunkIndex];
+  }
+}
+
 // Selon le cas de figure, le dépassement du tampon peut déborder sur au plus trois chunk:
 // Pour éviter de déréférencer 10 milles fois, on prépare les destinations en fonctions des paramétres
 // de la récursion courante.
@@ -227,21 +234,27 @@ inline void Realm::StampBeyondBorder(int x, int y, int chunkCoordX, int chunkCoo
 // On se propose donc deux fonctions pour préparer tout ça.
 
 inline void Realm::PrepareDestinationOnCorner(int layer, int chunkCoordX, int chunkCoordY, int offsetX, int offsetY, int sectorScale) {
-  // Dépassement sur le coin supérieur gauche
   this->diagonalNeighbourChunk = 0;
+  // Dépassement sur le coin supérieur gauche
   if (offsetX < 0 && offsetY < 0) {
-    // Une seule coordonné à tester suffit parce qu'on sait qu'on dépasse sur un coin dans tous les cas.
-    if(chunkCoordX == 0 || chunkCoordY == 0) {
-      this->diagonalNeighbourChunk = this->neighbourLeft[layer][this->getCoordsToNeighbourTopLeft(-1, -1, this->chunkScale)];
+    if(chunkCoordX == 0) {
+      this->TryToSetDestination(this->getCoordsToNeighbourLeft(-1, chunkCoordY-1, this->chunkScale), layer, this->neighbourLeft, &this->diagonalNeighbourChunk);     
+    }
+    else if(chunkCoordY == 0) {
+      std::cout << "ok\n";
+      this->TryToSetDestination(this->getCoordsToNeighbourTop(chunkCoordX-1, -1, this->chunkScale), layer, this->neighbourTop, &(this->diagonalNeighbourChunk));     
     }
     else {
-      this->diagonalNeighbourChunk = this->realm[layer][chunkCoordX - 1 + (chunkCoordY-1) * this->chunkScale];
+      this->TryToSetDestination(chunkCoordX-1 + (chunkCoordY-1 * this->chunkScale), layer, this->realm, &this->diagonalNeighbourChunk);     
     }
   }
   // Dépassement sur le coin supérieur droit
   else if (offsetX+sectorScale >= this->scale && offsetY < 0) {
-    if(chunkCoordX == this->chunkScale - 1 || chunkCoordY == 0) {
-      this->diagonalNeighbourChunk = this->neighbourRight[layer][this->getCoordsToNeighbourTopRight(chunkCoordX+1, -1, this->chunkScale)];
+    if(chunkCoordX == this->chunkScale - 1) {
+      this->diagonalNeighbourChunk = this->neighbourRight[layer][this->getCoordsToNeighbourRight(chunkCoordX+1, -1, this->chunkScale)];
+    }
+    else if(chunkCoordY == 0) {
+      this->diagonalNeighbourChunk = this->neighbourTop[layer][this->getCoordsToNeighbourTop(chunkCoordX+1, -1, this->chunkScale)];
     }
     else {
       this->diagonalNeighbourChunk = this->realm[layer][chunkCoordX + 1 + (chunkCoordY - 1) * this->chunkScale];
@@ -249,8 +262,11 @@ inline void Realm::PrepareDestinationOnCorner(int layer, int chunkCoordX, int ch
   }
   // Dépassement sur le coin inférieur droit
   else if (offsetX+sectorScale >= this->scale && offsetY+sectorScale >= this->scale) {
-    if(chunkCoordX == this->chunkScale - 1 || chunkCoordY == this->chunkScale - 1) {
-      this->diagonalNeighbourChunk = this->neighbourRight[layer][this->getCoordsToNeighbourBottomRight(chunkCoordX+1, chunkCoordY+1, this->chunkScale)];
+    if(chunkCoordX == this->chunkScale - 1) {
+      this->diagonalNeighbourChunk = this->neighbourRight[layer][this->getCoordsToNeighbourRight(chunkCoordX+1, chunkCoordY, this->chunkScale)];
+    }
+    else if (chunkCoordY == this->chunkScale - 1) {
+      this->diagonalNeighbourChunk = this->neighbourBottom[layer][this->getCoordsToNeighbourBottom(chunkCoordX+1, chunkCoordY+1, this->chunkScale)];
     }
     else {
       this->diagonalNeighbourChunk = this->realm[layer][chunkCoordX + 1 + (chunkCoordY + 1) * this->chunkScale];
@@ -258,8 +274,11 @@ inline void Realm::PrepareDestinationOnCorner(int layer, int chunkCoordX, int ch
   }
   // Dépassement sur le coin inférieur gauche
   else if (offsetX < 0 && offsetY+sectorScale >= this->scale) {
-    if(chunkCoordX == 0 || chunkCoordY == this->chunkScale - 1) {
-      this->diagonalNeighbourChunk = this->neighbourRight[layer][this->getCoordsToNeighbourBottomLeft(-1, chunkCoordY+1, this->chunkScale)];
+    if(chunkCoordX == 0) {
+      this->diagonalNeighbourChunk = this->neighbourLeft[layer][this->getCoordsToNeighbourLeft(-1, chunkCoordY+1, this->chunkScale)];
+    }
+    else if(chunkCoordY == this->chunkScale - 1) {
+      this->diagonalNeighbourChunk = this->neighbourBottom[layer][this->getCoordsToNeighbourBottom(chunkCoordX-1, chunkCoordY+1, this->chunkScale)];
     }
     else {
       this->diagonalNeighbourChunk = this->realm[layer][chunkCoordX - 1 + (chunkCoordY + 1) * this->chunkScale];
@@ -276,13 +295,13 @@ inline void Realm::PrepareDestinationOnBorder(int layer, int chunkCoordX, int ch
   if (offsetX < 0) {
     if (chunkCoordX == 0) {
       this->horizontalNeighbourChunkCoord = this->getCoordsToNeighbourLeft(-1, chunkCoordY, this->chunkScale);
-      if (this->IsChunkAllocated(this->neighbourLeft, layer, horizontalNeighbourChunkCoord) == true) {
-        this->horizontalNeighbourChunk = this->neighbourLeft[layer][horizontalNeighbourChunkCoord ]; 
+      if (this->IsChunkAllocated(this->neighbourLeft, layer, this->horizontalNeighbourChunkCoord) == true) {
+        this->horizontalNeighbourChunk = this->neighbourLeft[layer][this->horizontalNeighbourChunkCoord ]; 
       }
     }
     else {
       this->horizontalNeighbourChunkCoord = chunkCoordX - 1 + chunkCoordY * this->chunkScale;
-      this->horizontalNeighbourChunk = this->realm[layer][horizontalNeighbourChunkCoord];
+      this->horizontalNeighbourChunk = this->realm[layer][ this->horizontalNeighbourChunkCoord];
     }
   }
 
@@ -290,45 +309,45 @@ inline void Realm::PrepareDestinationOnBorder(int layer, int chunkCoordX, int ch
   else if (offsetX+sectorScale >= this->scale) {
     if (chunkCoordX == this->chunkScale - 1) {
       this->horizontalNeighbourChunkCoord = this->getCoordsToNeighbourRight(chunkCoordX+1, chunkCoordY, this->chunkScale);
-      if (this->IsChunkAllocated(this->neighbourRight, layer, horizontalNeighbourChunkCoord) == true) {
-        this->horizontalNeighbourChunk = this->neighbourRight[layer][horizontalNeighbourChunkCoord ]; 
+      if (this->IsChunkAllocated(this->neighbourRight, layer, this->horizontalNeighbourChunkCoord) == true) {
+        this->horizontalNeighbourChunk = this->neighbourRight[layer][this->horizontalNeighbourChunkCoord ]; 
       }
     }
     else {
       this->horizontalNeighbourChunkCoord = chunkCoordX + 1 + chunkCoordY * this->chunkScale;
-      this->horizontalNeighbourChunk = this->realm[layer][horizontalNeighbourChunkCoord];
+      this->horizontalNeighbourChunk = this->realm[layer][this->horizontalNeighbourChunkCoord];
     }
   }
   //Dépassement vers le bas
   if (offsetY+sectorScale >= this->scale) {
     if (chunkCoordY == this->chunkScale - 1) {
       this->verticalNeighbourChunkCoord = this->getCoordsToNeighbourBottom(chunkCoordX, chunkCoordY+1, this->chunkScale);
-      if (this->IsChunkAllocated(this->neighbourBottom, layer, verticalNeighbourChunkCoord) == true) {
-        this->verticalNeighbourChunk = this->neighbourBottom[layer][verticalNeighbourChunkCoord ]; 
+      if (this->IsChunkAllocated(this->neighbourBottom, layer, this->verticalNeighbourChunkCoord) == true) {
+        this->verticalNeighbourChunk = this->neighbourBottom[layer][this->verticalNeighbourChunkCoord ]; 
       }
     }
     else {
       this->verticalNeighbourChunkCoord = chunkCoordX + (chunkCoordY+1) * this->chunkScale;
-      this->verticalNeighbourChunk = this->realm[layer][verticalNeighbourChunkCoord];
+      this->verticalNeighbourChunk = this->realm[layer][this->verticalNeighbourChunkCoord];
     }
   }
   //Dépassement vers le haut
   else if (offsetY < 0 ) {
     if (chunkCoordY == 0) {
-      verticalNeighbourChunkCoord = this->getCoordsToNeighbourTop(chunkCoordX, -1, this->chunkScale);
-      if (this->IsChunkAllocated(this->neighbourTop, layer, verticalNeighbourChunkCoord) == true) {
-        this->verticalNeighbourChunk = this->neighbourTop[layer][ verticalNeighbourChunkCoord ]; 
+      this->verticalNeighbourChunkCoord = this->getCoordsToNeighbourTop(chunkCoordX, -1, this->chunkScale);
+      if (this->IsChunkAllocated(this->neighbourTop, layer, this->verticalNeighbourChunkCoord) == true) {
+        this->verticalNeighbourChunk = this->neighbourTop[layer][ this->verticalNeighbourChunkCoord ]; 
       }
     }
     else {
-      verticalNeighbourChunkCoord = chunkCoordX + (chunkCoordY-1) * this->chunkScale;
-      this->verticalNeighbourChunk = this->realm[layer][verticalNeighbourChunkCoord];
+      this->verticalNeighbourChunkCoord = chunkCoordX + (chunkCoordY-1) * this->chunkScale;
+      this->verticalNeighbourChunk = this->realm[layer][this->verticalNeighbourChunkCoord];
     }
   }
 }
 
 void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, int sectorStartU, int sectorStartV) {
-  if (sectorScale == 1) {
+  if (sectorScale == 256) {
     return;
   }
 
@@ -348,8 +367,8 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
   int stampId =  getRandom() % this->stampCount;
   int stampIndex;
   int chunkLimit;
-  int offsetX = -randX + sectorStartU;
-  int offsetY = -randY + sectorStartV;
+  int offsetX = -200;-randX + sectorStartU;
+  int offsetY = -200;-randY + sectorStartV;
   int stampX=0,stampY=0;
   double distanceFromStampCenterToCorner;
   bool stampCrossCornerBeyondRealm = this->DoesStampCrossCornerBeyondRealm(offsetX, offsetY, chunkCoordX, chunkCoordY, sectorScale);
