@@ -58,10 +58,10 @@ int main(int argc, char ** argv) {
   realmPlusezed.AllocateChunk(1,1,0);
   realmMinusigrec.AllocateChunk(1,0,1);
   realmMinusigrec.AllocateChunk(1,1,1);
-  //realmPlusezed.Noise(1,0,0);
+  realmPlusezed.Noise(1,0,0);
   realmPlusezed.Noise(1,1,0);
-  //realmMinusigrec.Noise(1,0,1);
-  //realmMinusigrec.Noise(1,1,1);
+  realmMinusigrec.Noise(1,0,1);
+  realmMinusigrec.Noise(1,1,1);
 
   // A partir de là les six heightmaps de bases sont terminées, 
   // y a plus qu'a envoyer tout ça dans un png pour le plaisir de vos yeux.

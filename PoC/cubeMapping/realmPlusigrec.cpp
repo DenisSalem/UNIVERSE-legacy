@@ -4,34 +4,50 @@
 RealmPlusigrec::RealmPlusigrec(int LoD, float * min, float * max) : Realm(LoD, min, max) {
 }
 
-inline int RealmPlusigrec::getCoordsToNeighbourTop(int x, int y, int scale) {
+inline int RealmPlusigrec::GetCoordsToNeighbourTop(int x, int y, int scale) {
   return x + (scale + y) * scale;
 }
 
-inline int RealmPlusigrec::getCoordsToNeighbourBottom(int x, int y, int scale) {
+inline int RealmPlusigrec::GetCoordsToNeighbourBottom(int x, int y, int scale) {
   return x + (y-scale) * scale;
 }
 
-inline int RealmPlusigrec::getCoordsToNeighbourLeft(int x, int y, int scale) {
+inline int RealmPlusigrec::GetCoordsToNeighbourLeft(int x, int y, int scale) {
   return scale - y - 1 + (scale + x) * scale;
 }
 
-inline int RealmPlusigrec::getCoordsToNeighbourRight(int x, int y, int scale) {
+inline int RealmPlusigrec::GetCoordsToNeighbourRight(int x, int y, int scale) {
   return y + (scale - x + scale - 1) * scale;
 }
 
-inline int RealmPlusigrec::getCoordsToNeighbourTopLeft(int x, int y, int scale) {
+inline int RealmPlusigrec::GetCoordsToNeighbourTopTopLeft(int x, int y, int scale) {
   return 0;
 }
 
-inline int RealmPlusigrec::getCoordsToNeighbourTopRight(int x, int y, int scale) {
+inline int RealmPlusigrec::GetCoordsToNeighbourLeftTopLeft(int x, int y, int scale) {
   return 0;
 }
 
-inline int RealmPlusigrec::getCoordsToNeighbourBottomLeft(int x, int y, int scale) {
+inline int RealmPlusigrec::GetCoordsToNeighbourTopTopRight(int x, int y, int scale) {
   return 0;
 }
 
-inline int RealmPlusigrec::getCoordsToNeighbourBottomRight(int x, int y, int scale) {
+inline int RealmPlusigrec::GetCoordsToNeighbourRightTopRight(int x, int y, int scale) {
+  return 0;
+}
+
+inline int RealmPlusigrec::GetCoordsToNeighbourBottomBottomLeft(int x, int y, int scale) {
+  return 0;
+}
+
+inline int RealmPlusigrec::GetCoordsToNeighbourLeftBottomLeft(int x, int y, int scale) {
+  return 0;
+}
+
+inline int RealmPlusigrec::GetCoordsToNeighbourBottomBottomRight(int x, int y, int scale) {
+  return 0;
+}
+
+inline int RealmPlusigrec::GetCoordsToNeighbourRightBottomRight(int x, int y, int scale) {
   return 0;
 }

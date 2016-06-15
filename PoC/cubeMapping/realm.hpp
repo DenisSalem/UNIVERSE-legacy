@@ -36,15 +36,22 @@ class Realm {
     int scale;
 
   private:
-    virtual int getCoordsToNeighbourTop(int x, int y, int scale) = 0;
-    virtual int getCoordsToNeighbourBottom(int x, int y, int scale) = 0; 
-    virtual int getCoordsToNeighbourLeft(int x, int y, int scale) = 0; 
-    virtual int getCoordsToNeighbourRight(int x, int y, int scale) = 0; 
+    virtual int GetCoordsToNeighbourTop(int x, int y, int scale) = 0;
+    virtual int GetCoordsToNeighbourBottom(int x, int y, int scale) = 0; 
+    virtual int GetCoordsToNeighbourLeft(int x, int y, int scale) = 0; 
+    virtual int GetCoordsToNeighbourRight(int x, int y, int scale) = 0; 
 
-    virtual int getCoordsToNeighbourTopLeft(int x, int y, int scale) = 0;
-    virtual int getCoordsToNeighbourTopRight(int x, int y, int scale) = 0; 
-    virtual int getCoordsToNeighbourBottomLeft(int x, int y, int scale) = 0; 
-    virtual int getCoordsToNeighbourBottomRight(int x, int y, int scale) = 0; 
+    virtual int GetCoordsToNeighbourTopTopLeft(int x, int y, int scale) = 0;
+    virtual int GetCoordsToNeighbourLeftTopLeft(int x, int y, int scale) = 0;
+
+    virtual int GetCoordsToNeighbourTopTopRight(int x, int y, int scale) = 0;
+    virtual int GetCoordsToNeighbourRightTopRight(int x, int y, int scale) = 0;
+
+    virtual int GetCoordsToNeighbourBottomBottomRight(int x, int y, int scale) = 0; 
+    virtual int GetCoordsToNeighbourRightBottomRight(int x, int y, int scale) = 0; 
+
+    virtual int GetCoordsToNeighbourBottomBottomLeft(int x, int y, int scale) = 0; 
+    virtual int GetCoordsToNeighbourLeftBottomLeft(int x, int y, int scale) = 0;
 
     int stampCount;
     int area;
