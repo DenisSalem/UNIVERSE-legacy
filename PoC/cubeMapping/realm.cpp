@@ -141,6 +141,9 @@ inline void Realm::StampBeyondCorner(int x, int y, int chunkCoordX, int chunkCoo
       if (chunkCoordX == 0) {
         this->chunkIndex = this->GetCoordsToNeighbourLeftTopLeft(x, y, this->scale) ;
       }
+      else if (chunkCoordY == 0) {
+        this->chunkIndex = this->GetCoordsToNeighbourTopTopLeft(x, y, this->scale) ;
+      }
       else {
         this->chunkIndex = this->scale + x + this->scale * (this->scale + y);
       }
@@ -148,6 +151,9 @@ inline void Realm::StampBeyondCorner(int x, int y, int chunkCoordX, int chunkCoo
     else if(x >= this->scale &&  y < 0) {
       if (chunkCoordX == chunkLimit) {
         this->chunkIndex = this->GetCoordsToNeighbourRightTopRight(x, y, this->scale) ;
+      }
+      else if (chunkCoordY == 0) {
+        this->chunkIndex = this->GetCoordsToNeighbourTopTopRight(x, y, this->scale) ;
       }
       else {
         this->chunkIndex = x - this->scale + this->scale * (this->scale + y);
@@ -334,7 +340,7 @@ inline void Realm::PrepareDestinationOnBorder(int layer, int chunkCoordX, int ch
 }
 
 void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, int sectorStartU, int sectorStartV) {
-  if (sectorScale == 1) {
+  if (sectorScale == 256) {
     return;
   }
 

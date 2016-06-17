@@ -21,7 +21,7 @@ inline int RealmPlusezed::GetCoordsToNeighbourRight(int x, int y, int scale) {
 }
 
 inline int RealmPlusezed::GetCoordsToNeighbourTopTopLeft(int x, int y, int scale) {
-  return 0;
+  return scale + x + scale * (scale + y);
 }
 
 inline int RealmPlusezed::GetCoordsToNeighbourLeftTopLeft(int x, int y, int scale) {
@@ -29,7 +29,7 @@ inline int RealmPlusezed::GetCoordsToNeighbourLeftTopLeft(int x, int y, int scal
 }
 
 inline int RealmPlusezed::GetCoordsToNeighbourTopTopRight(int x, int y, int scale) {
-  return 0;
+  return x - scale + scale * (scale + y);
 }
 
 inline int RealmPlusezed::GetCoordsToNeighbourRightTopRight(int x, int y, int scale) {
