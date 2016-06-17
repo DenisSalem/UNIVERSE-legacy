@@ -255,7 +255,7 @@ inline void Realm::PrepareDestinationOnCorner(int layer, int chunkCoordX, int ch
   // Dépassement sur le coin supérieur droit
   else if (offsetX+sectorScale >= this->scale && offsetY < 0) {
     if(chunkCoordX == this->chunkScale - 1) {
-      this->TryToSetDestination(this->GetCoordsToNeighbourRight(chunkCoordX+1, -1, this->chunkScale), layer, this->neighbourRight, &(this->diagonalNeighbourChunk));     
+      this->TryToSetDestination(this->GetCoordsToNeighbourRight(chunkCoordX+1, chunkCoordY-1, this->chunkScale), layer, this->neighbourRight, &(this->diagonalNeighbourChunk));     
     }
     else if(chunkCoordY == 0) {
       this->TryToSetDestination(this->GetCoordsToNeighbourTop(chunkCoordX+1, -1, this->chunkScale), layer, this->neighbourTop, &(this->diagonalNeighbourChunk));     
@@ -279,7 +279,7 @@ inline void Realm::PrepareDestinationOnCorner(int layer, int chunkCoordX, int ch
   // Dépassement sur le coin inférieur gauche
   else if (offsetX < 0 && offsetY+sectorScale >= this->scale) {
     if(chunkCoordX == 0) {
-      this->TryToSetDestination(this->GetCoordsToNeighbourLeft(chunkCoordX-1, chunkCoordY+1, this->chunkScale), layer, this->neighbourRight, &(this->diagonalNeighbourChunk));     
+      this->TryToSetDestination(this->GetCoordsToNeighbourLeft(chunkCoordX-1, chunkCoordY+1, this->chunkScale), layer, this->neighbourLeft, &(this->diagonalNeighbourChunk));     
     }
     else if(chunkCoordY == this->chunkScale - 1) {
       this->TryToSetDestination(this->GetCoordsToNeighbourBottom(chunkCoordX-1, chunkCoordY+1, this->chunkScale), layer, this->neighbourBottom, &(this->diagonalNeighbourChunk));     
@@ -307,7 +307,7 @@ inline void Realm::PrepareDestinationOnBorder(int layer, int chunkCoordX, int ch
   //Dépassement sur la droite
   else if (offsetX+sectorScale >= this->scale) {
     if (chunkCoordX == this->chunkScale - 1) {
-      this->TryToSetDestination(this->GetCoordsToNeighbourRight(chunkCoordX-1, chunkCoordY, this->chunkScale), layer, this->neighbourRight, &(this->horizontalNeighbourChunk));     
+      this->TryToSetDestination(this->GetCoordsToNeighbourRight(chunkCoordX+1, chunkCoordY, this->chunkScale), layer, this->neighbourRight, &(this->horizontalNeighbourChunk));     
     }
     else {
       this->TryToSetDestination(chunkCoordX + 1 + chunkCoordY * this->chunkScale, layer, this->realm, &(this->horizontalNeighbourChunk));     

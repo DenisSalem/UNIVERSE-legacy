@@ -54,14 +54,14 @@ int main(int argc, char ** argv) {
 
   // On test sur des layers supérieurs
   
-  realmPlusezed.AllocateChunk(1,0,0);
+  realmPlusix.AllocateChunk(1,0,0);
   realmPlusezed.AllocateChunk(1,1,0);
-  realmMinusigrec.AllocateChunk(1,0,1);
-  realmMinusigrec.AllocateChunk(1,1,1);
-  realmPlusezed.Noise(1,0,0);
+  realmPlusix.AllocateChunk(1,0,1);
+  realmPlusezed.AllocateChunk(1,1,1);
+  realmPlusix.Noise(1,0,0);
   realmPlusezed.Noise(1,1,0);
-  realmMinusigrec.Noise(1,0,1);
-  realmMinusigrec.Noise(1,1,1);
+  realmPlusix.Noise(1,0,1);
+  realmPlusezed.Noise(1,1,1);
 
   // A partir de là les six heightmaps de bases sont terminées, 
   // y a plus qu'a envoyer tout ça dans un png pour le plaisir de vos yeux.
@@ -77,10 +77,10 @@ int main(int argc, char ** argv) {
   unsigned char color;
 
 
-  float * chunk2 = realmPlusezed.GetRealm(1,0,0);
-  float * chunk3 = realmPlusezed.GetRealm(1,1,0);
-  float * chunk0 = realmMinusigrec.GetRealm(1,0,1);
-  float * chunk1 = realmMinusigrec.GetRealm(1,1,1);
+  float * chunk0 = realmPlusezed.GetRealm(1,1,0);
+  float * chunk1 = realmPlusix.GetRealm(1,0,0);
+  float * chunk2 = realmPlusezed.GetRealm(1,1,1);
+  float * chunk3 = realmPlusix.GetRealm(1,0,1);
 
   for(int y = 0; y<scale4; y++) {
     for(int x = 0; x<scale3; x++) {
