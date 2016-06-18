@@ -8,6 +8,13 @@
 #include "realmMinusigrec.hpp"
 #include "png.hpp"
 
+inline void setPixel(int index, float * chunk, PIXEL ** png, float min, float max, int x, int y) {
+  unsigned char color = (unsigned char) (255 * (chunk[ index ] - min) / (max - min));
+  png[x][y].Red	= color;
+  png[x][y].Green = color;
+  png[x][y].Blue = color;
+}
+
 int main(int argc, char ** argv) {
   int LoD = 7;
   int scale = 2 << (LoD+1);
@@ -110,35 +117,44 @@ int main(int argc, char ** argv) {
   float * chunk02 = realmPlusezed.GetRealm(1,0,1);
   float * chunk03 = realmPlusezed.GetRealm(1,1,1);
 
+  float * chunk10 = realmMinusigrec.GetRealm(1,0,0);
+  float * chunk11 = realmMinusigrec.GetRealm(1,1,0);
+  float * chunk12 = realmMinusigrec.GetRealm(1,0,1);
+  float * chunk13 = realmMinusigrec.GetRealm(1,1,1);
+
   for(int y = 0; y<scale4; y++) {
     for(int x = 0; x<scale3; x++) {
+      // Minusigrec top left
+      if (x >= scale && x < scale + halfScale && y >=  0 && y < halfScale) {
+        setPixel((x-scale) + halfScale * y, chunk10, png, min, max, x, y);
+      }
+      // Minusigrec top right
+      else if (x >= scale+halfScale && x < scale2 && y >=  0 && y < halfScale) {
+        setPixel((x-scale-halfScale) + halfScale * y, chunk11, png, min, max, x, y);
+      }
+      // Minusigrec bottom right
+      else if (x >= scale+halfScale && x < scale2 && y >=  halfScale && y < scale) {
+        setPixel((x-scale-halfScale) + halfScale * (y-halfScale), chunk13, png, min, max, x, y);
+      }
+      // Minusigrec bottom left
+      else if (x >= scale && x < scale+halfScale && y >=  halfScale && y < scale) {
+        setPixel((x-scale) + halfScale * (y-halfScale), chunk12, png, min, max, x, y);
+      }
       // Plusezed top left
-      if (x >= scale && x < scale + halfScale && y >= scale && y < scale + halfScale) {
-        color = (unsigned char) (255 * (chunk00[ (x-scale) + halfScale * (y-scale)] - min) / (max - min));
-	png[x][y].Red	= color;
-	png[x][y].Green = color;
-        png[x][y].Blue = color;
+      else if (x >= scale && x < scale + halfScale && y >= scale && y < scale + halfScale) {
+        setPixel((x-scale) + halfScale * (y-scale), chunk00, png, min, max, x, y);
       }
       // Plusezed top right
       else if (x >= scale+halfScale && x < scale2 && y >= scale && y < scale + halfScale) {
-        color = (unsigned char) (255 * (chunk01[ (x-scale-halfScale) + halfScale * (y-scale)] - min) / (max - min));
-	png[x][y].Red	= color;
-	png[x][y].Green = color;
-        png[x][y].Blue = color;
+        setPixel((x-scale-halfScale) + halfScale * (y-scale), chunk01, png, min, max, x, y);
       }
       // Plusezed bottom right
       else if (x >= scale+halfScale && x < scale2 && y >= scale+halfScale && y < scale2) {
-        color = (unsigned char) (255 * (chunk03[ x -scale-halfScale + halfScale * (y - scale-halfScale)] - min) / (max - min));
-	png[x][y].Red	= color;
-	png[x][y].Green = color;
-        png[x][y].Blue = color;
+        setPixel(x -scale-halfScale + halfScale * (y - scale-halfScale), chunk03, png, min, max, x, y);
       }
       // Plusezed bottom left
       else if (x >= scale && x < scale+halfScale && y >= scale+halfScale && y < scale2) {
-        color = (unsigned char) (255 * (chunk02[ (x-scale) + halfScale * (y-scale-halfScale)] - min) / (max - min));
-	png[x][y].Red	= color;
-	png[x][y].Green = color;
-        png[x][y].Blue = color;
+        setPixel((x-scale) + halfScale * (y-scale-halfScale), chunk02, png, min, max, x, y);
       }
       else {
 	png[x][y].Red	= 0;
