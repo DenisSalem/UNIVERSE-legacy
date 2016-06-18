@@ -340,7 +340,7 @@ inline void Realm::PrepareDestinationOnBorder(int layer, int chunkCoordX, int ch
 }
 
 void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, int sectorStartU, int sectorStartV) {
-  if (sectorScale == 256) {
+  if (sectorScale == 1) {
     return;
   }
 
