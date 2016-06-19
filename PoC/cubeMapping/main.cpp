@@ -97,6 +97,15 @@ int main(int argc, char ** argv) {
   realmPlusezed.Noise(1,0,1);
   realmPlusezed.Noise(1,1,1);
 
+  //realmMinusigrec.Noise(1,0,0);
+  //realmMinusigrec.Noise(1,1,0);
+  //realmMinusigrec.Noise(1,0,1);
+  //realmMinusigrec.Noise(1,1,1);
+
+  //realmMinusix.Noise(1,0,0);
+  //realmMinusix.Noise(1,1,0);
+  //realmMinusix.Noise(1,0,1);
+  //realmMinusix.Noise(1,1,1);
   // A partir de là les six heightmaps de bases sont terminées, 
   // y a plus qu'a envoyer tout ça dans un png pour le plaisir de vos yeux.
 
@@ -111,21 +120,104 @@ int main(int argc, char ** argv) {
   int halfScale = scale >> 1;
   unsigned char color;
 
-
   float * chunk00 = realmPlusezed.GetRealm(1,0,0);
   float * chunk01 = realmPlusezed.GetRealm(1,1,0);
   float * chunk02 = realmPlusezed.GetRealm(1,0,1);
   float * chunk03 = realmPlusezed.GetRealm(1,1,1);
+
+  float * chunk40 = realmMinusezed.GetRealm(1,0,0);
+  float * chunk41 = realmMinusezed.GetRealm(1,1,0);
+  float * chunk42 = realmMinusezed.GetRealm(1,0,1);
+  float * chunk43 = realmMinusezed.GetRealm(1,1,1);
 
   float * chunk10 = realmMinusigrec.GetRealm(1,0,0);
   float * chunk11 = realmMinusigrec.GetRealm(1,1,0);
   float * chunk12 = realmMinusigrec.GetRealm(1,0,1);
   float * chunk13 = realmMinusigrec.GetRealm(1,1,1);
 
+  float * chunk30 = realmPlusigrec.GetRealm(1,0,0);
+  float * chunk31 = realmPlusigrec.GetRealm(1,1,0);
+  float * chunk32 = realmPlusigrec.GetRealm(1,0,1);
+  float * chunk33 = realmPlusigrec.GetRealm(1,1,1);
+
+  float * chunk20 = realmMinusix.GetRealm(1,0,0);
+  float * chunk21 = realmMinusix.GetRealm(1,1,0);
+  float * chunk22 = realmMinusix.GetRealm(1,0,1);
+  float * chunk23 = realmMinusix.GetRealm(1,1,1);
+
+  float * chunk50 = realmPlusix.GetRealm(1,0,0);
+  float * chunk51 = realmPlusix.GetRealm(1,1,0);
+  float * chunk52 = realmPlusix.GetRealm(1,0,1);
+  float * chunk53 = realmPlusix.GetRealm(1,1,1);
+
   for(int y = 0; y<scale4; y++) {
     for(int x = 0; x<scale3; x++) {
+      // Plusix top left
+      if (x >= scale2 && x < scale2 + halfScale && y >= scale && y < scale + halfScale) {
+        setPixel(x - scale2 + halfScale * (y-scale), chunk50, png, min, max, x, y);
+      }
+      // Plusix top right
+      else if (x >= scale2 + halfScale && x < scale3 + halfScale && y >= scale && y < scale + halfScale) {
+        setPixel(x - scale2 - halfScale + halfScale * (y-scale), chunk51, png, min, max, x, y);
+      }
+      // Plusix bottom right
+      else if (x >= scale2 + halfScale && x < scale3 + halfScale && y >= scale + halfScale && y < scale2) {
+        setPixel(x - scale2 - halfScale + halfScale * (y-scale-halfScale), chunk53, png, min, max, x, y);
+      }
+      // Plusix bottom left
+      else if (x >= scale2 && x < scale3 + halfScale && y >= scale + halfScale && y < scale2) {
+        setPixel(x - scale2 + halfScale * (y-scale-halfScale), chunk52, png, min, max, x, y);
+      }
+      // Minusezed top left
+      else if (x >= scale && x < scale + halfScale && y >= scale3 && y < scale3 + halfScale) {
+        setPixel(x - scale + halfScale * (y-scale3), chunk40, png, min, max, x, y);
+      }
+      // Minusezed top right
+      else if (x >= scale + halfScale && x < scale2 && y >= scale3 && y < scale3 + halfScale) {
+        setPixel(x - scale - halfScale + halfScale * (y-scale3), chunk41, png, min, max, x, y);
+      }
+      // Minusezed bottom right
+      else if (x >= scale + halfScale && x < scale2 && y >= scale3 + halfScale && y < scale4) {
+        setPixel(x - scale - halfScale + halfScale * (y-scale3-halfScale), chunk43, png, min, max, x, y);
+      }
+      // Minusezed bottom left
+      else if (x >= scale && x < scale2 && y >= scale3 + halfScale && y < scale4) {
+        setPixel(x - scale + halfScale * (y-scale3-halfScale), chunk42, png, min, max, x, y);
+      }
+      // Plusigrec top left
+      else if (x >= scale && x < scale + halfScale && y >= scale2 && y < scale2 + halfScale) {
+        setPixel(x - scale + halfScale * (y-scale2), chunk30, png, min, max, x, y);
+      }
+      // Plusigrec top right
+      else if (x >= scale + halfScale && x < scale2 && y >= scale2 && y < scale2 + halfScale) {
+        setPixel(x - scale - halfScale + halfScale * (y-scale2), chunk31, png, min, max, x, y);
+      }
+      // Plusigrec bottom right
+      else if (x >= scale + halfScale && x < scale2 && y >= scale2 + halfScale && y < scale3) {
+        setPixel(x - scale - halfScale + halfScale * (y-scale2 - halfScale), chunk33, png, min, max, x, y);
+      }
+      // Plusigrec bottom left
+      else if (x >= scale && x < scale + halfScale && y >= scale2 + halfScale && y < scale3) {
+        setPixel(x - scale * (y - scale2 - halfScale), chunk32, png, min, max, x, y);
+      }
+      // Minusix top left
+      else if (x >= 0 && x < halfScale && y >= scale && y < scale + halfScale) {
+        setPixel(x + halfScale * (y-scale), chunk20, png, min, max, x, y);
+      }
+      // Minusix top right
+      else if (x >= halfScale && x < scale && y >= scale && y < scale + halfScale) {
+        setPixel(x - halfScale + halfScale * (y-scale), chunk21, png, min, max, x, y);
+       }
+      // Minusix bottom right
+      else if (x >= halfScale && x < scale && y >= scale + halfScale && y < scale2) {
+        setPixel(x - halfScale + halfScale * (y-scale-halfScale), chunk23, png, min, max, x, y);
+      }
+      // Minusix bottom left
+      else if (x >= 0 && x < halfScale && y >= scale + halfScale && y < scale2) {
+        setPixel(x + halfScale * (y-scale-halfScale), chunk22, png, min, max, x, y);
+      }
       // Minusigrec top left
-      if (x >= scale && x < scale + halfScale && y >=  0 && y < halfScale) {
+      else if (x >= scale && x < scale + halfScale && y >=  0 && y < halfScale) {
         setPixel((x-scale) + halfScale * y, chunk10, png, min, max, x, y);
       }
       // Minusigrec top right

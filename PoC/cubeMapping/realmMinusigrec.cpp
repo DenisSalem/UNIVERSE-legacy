@@ -25,7 +25,7 @@ inline int RealmMinusigrec::GetCoordsToNeighbourTopTopLeft(int x, int y, int sca
 }
 
 inline int RealmMinusigrec::GetCoordsToNeighbourLeftTopLeft(int x, int y, int scale) {
-  return 0;
+  return scale + x + scale * (- y - 1);
 }
 
 inline int RealmMinusigrec::GetCoordsToNeighbourTopTopRight(int x, int y, int scale) {
@@ -41,7 +41,7 @@ inline int RealmMinusigrec::GetCoordsToNeighbourBottomBottomLeft(int x, int y, i
 }
 
 inline int RealmMinusigrec::GetCoordsToNeighbourLeftBottomLeft(int x, int y, int scale) {
-  return scale + x + scale * (y - scale);
+  return -x - 1 + scale * (y - scale);
 }
 
 inline int RealmMinusigrec::GetCoordsToNeighbourBottomBottomRight(int x, int y, int scale) {
