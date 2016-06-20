@@ -1,3 +1,6 @@
+#ifndef __PNG__
+#define __PNG__
+
 #include <png.h>
 
 typedef struct _PIXEL
@@ -8,4 +11,6 @@ typedef struct _PIXEL
      unsigned char Alpha;
 } PIXEL;
 
-int writePng( PIXEL ** matrix, int size); 
+int writePng( PIXEL ** matrix, int width, int height); 
+
+#endif

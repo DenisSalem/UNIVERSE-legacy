@@ -1,18 +1,10 @@
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
-#include "png.h"
+#include "png.hpp"
 #include <png.h>
 
-typedef struct _PIXEL
-{
-     unsigned char Red;      
-     unsigned char Green;    
-     unsigned char Blue;
-     unsigned char Alpha;
-} PIXEL;
-
-int writePng( PIXEL ** matrix, int size) { 
+int writePng( PIXEL ** matrix, int width, int height) { 
         png_structp     png_ptr;
         png_infop       info_ptr;
         png_bytep * row_pointers;
@@ -48,15 +40,15 @@ int writePng( PIXEL ** matrix, int size) {
                 //abort_("[write_png_file] Error during writing header");
 		return -1;
 
-        png_set_IHDR(png_ptr, info_ptr, size*3, size*4, 8, PNG_COLOR_TYPE_RGB_ALPHA, PNG_INTERLACE_NONE,
+        png_set_IHDR(png_ptr, info_ptr, width, height, 8, PNG_COLOR_TYPE_RGB_ALPHA, PNG_INTERLACE_NONE,
                      PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 
         png_write_info(png_ptr, info_ptr);
 
     
         /* init buffer */
-        row_pointers = (png_bytep*) malloc(sizeof(png_bytep) * size * 4 );
-        for (y=0; y<size*4; y++)
+        row_pointers = (png_bytep*) malloc(sizeof(png_bytep) * height );
+        for (y=0; y<height; y++)
                 row_pointers[y] = (png_byte*) malloc(png_get_rowbytes(png_ptr,info_ptr));
 
         /* COPY BUFFER */
@@ -70,9 +62,9 @@ int writePng( PIXEL ** matrix, int size) {
                   //     PNG_COLOR_TYPE_RGBA, png_get_color_type(png_ptr, info_ptr));
 		return -1;
 
-        for (y=0; y<size*4; y++) {
+        for (y=0; y<height; y++) {
                 png_byte* row = row_pointers[y];
-                for (x=0; x<size*3; x++) {
+                for (x=0; x<width; x++) {
 			//std::cout << x << " " << y <<"\n";
                         png_byte* ptr = &(row[x*4]);
 
@@ -99,10 +91,9 @@ int writePng( PIXEL ** matrix, int size) {
         png_write_end(png_ptr, NULL);
 
         /* cleanup heap allocation */
-        for (y=0; y<size*4; y++)
+        for (y=0; y<height; y++)
                 free(row_pointers[y]);
         free(row_pointers);
 
         fclose(fp);
-
 }

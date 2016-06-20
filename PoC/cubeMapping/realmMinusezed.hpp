@@ -1,8 +1,8 @@
 #include "realm.hpp"
 
-class RealmMinusix : public Realm {
+class RealmMinusezed : public Realm {
   public:
-    RealmMinusix(int LoD, float * min, float * max);
+    RealmMinusezed(int LoD, float * min, float * max);
 
   private:
     int GetCoordsToNeighbourTop(int x, int y, int scale);
