@@ -92,11 +92,11 @@ int main(int argc, char ** argv) {
   realmPlusix.AllocateChunk(1,0,1);
   realmPlusix.AllocateChunk(1,1,1);
 
-  /*realmPlusezed.Noise(1,0,0);
+  realmPlusezed.Noise(1,0,0);
   realmPlusezed.Noise(1,1,0);
   realmPlusezed.Noise(1,0,1);
   realmPlusezed.Noise(1,1,1);
-*/
+
   //realmMinusigrec.Noise(1,0,0);
   //realmMinusigrec.Noise(1,1,0);
   //realmMinusigrec.Noise(1,0,1);
@@ -107,9 +107,9 @@ int main(int argc, char ** argv) {
   //realmPlusigrec.Noise(1,0,1);
   //realmPlusigrec.Noise(1,1,1);
 
-  //realmMinusix.Noise(1,0,0);
-  //realmMinusix.Noise(1,1,0);
-  //realmMinusix.Noise(1,0,1);
+  realmMinusix.Noise(1,0,0);
+  realmMinusix.Noise(1,1,0);
+  realmMinusix.Noise(1,0,1);
   realmMinusix.Noise(1,1,1);
   // A partir de là les six heightmaps de bases sont terminées, 
   // y a plus qu'a envoyer tout ça dans un png pour le plaisir de vos yeux.
