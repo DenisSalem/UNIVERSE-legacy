@@ -340,7 +340,7 @@ inline void Realm::PrepareDestinationOnBorder(int layer, int chunkCoordX, int ch
 }
 
 void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, int sectorStartU, int sectorStartV) {
-  if (sectorScale == 1) {
+  if (sectorScale == 128) {
     return;
   }
 
@@ -360,8 +360,8 @@ void Realm::Noise(int layer, int chunkCoordX, int chunkCoordY, int sectorScale, 
   int stampId =  getRandom() % this->stampCount;
   int stampIndex;
   int chunkLimit;
-  int offsetX = randX + sectorStartU;
-  int offsetY = randY + sectorStartV;
+  int offsetX = -150;randX + sectorStartU;
+  int offsetY = 150;randY + sectorStartV;
   int stampX=0,stampY=0;
   double distanceFromStampCenterToCorner;
   bool stampCrossCornerBeyondRealm = this->DoesStampCrossCornerBeyondRealm(offsetX, offsetY, chunkCoordX, chunkCoordY, sectorScale);
