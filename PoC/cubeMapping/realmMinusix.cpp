@@ -25,7 +25,7 @@ inline int RealmMinusix::GetCoordsToNeighbourTopTopLeft(int x, int y, int scale)
 }
 
 inline int RealmMinusix::GetCoordsToNeighbourLeftTopLeft(int x, int y, int scale) {
-  return 0;
+  return - x -1 + scale * ( - y -1);
 }
 
 inline int RealmMinusix::GetCoordsToNeighbourTopTopRight(int x, int y, int scale) {
@@ -37,15 +37,15 @@ inline int RealmMinusix::GetCoordsToNeighbourRightTopRight(int x, int y, int sca
 }
 
 inline int RealmMinusix::GetCoordsToNeighbourBottomBottomLeft(int x, int y, int scale) {
-  return 0;
+  return - x - 1 + scale * (y - scale);
 }
-
+ 
 inline int RealmMinusix::GetCoordsToNeighbourLeftBottomLeft(int x, int y, int scale) {
-  return 0;
+  return - x - 1 + scale * (  scale - y + scale );
 }
 
 inline int RealmMinusix::GetCoordsToNeighbourBottomBottomRight(int x, int y, int scale) {
-  return 0;
+  return y - scale + scale * (scale - x + scale);
 }
 
 inline int RealmMinusix::GetCoordsToNeighbourRightBottomRight(int x, int y, int scale) {

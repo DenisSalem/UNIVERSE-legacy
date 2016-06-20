@@ -102,10 +102,15 @@ int main(int argc, char ** argv) {
   //realmMinusigrec.Noise(1,0,1);
   //realmMinusigrec.Noise(1,1,1);
 
-  //realmMinusix.Noise(1,0,0);
-  //realmMinusix.Noise(1,1,0);
-  //realmMinusix.Noise(1,0,1);
-  //realmMinusix.Noise(1,1,1);
+  //realmPlusigrec.Noise(1,0,0);
+  //realmPlusigrec.Noise(1,1,0);
+  //realmPlusigrec.Noise(1,0,1);
+  //realmPlusigrec.Noise(1,1,1);
+
+  realmMinusix.Noise(1,0,0);
+  realmMinusix.Noise(1,1,0);
+  realmMinusix.Noise(1,0,1);
+  realmMinusix.Noise(1,1,1);
   // A partir de là les six heightmaps de bases sont terminées, 
   // y a plus qu'a envoyer tout ça dans un png pour le plaisir de vos yeux.
 
@@ -198,7 +203,7 @@ int main(int argc, char ** argv) {
       }
       // Plusigrec bottom left
       else if (x >= scale && x < scale + halfScale && y >= scale2 + halfScale && y < scale3) {
-        setPixel(x - scale * (y - scale2 - halfScale), chunk32, png, min, max, x, y);
+        setPixel(x - scale + halfScale * (y - scale2 - halfScale), chunk32, png, min, max, x, y);
       }
       // Minusix top left
       else if (x >= 0 && x < halfScale && y >= scale && y < scale + halfScale) {
