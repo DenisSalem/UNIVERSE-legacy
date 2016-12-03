@@ -1,0 +1,77 @@
+# PROCEDURAL TERRAIN 0x00
+
+Ce PoC génére procéduralement une sphére animée avec un rendu type wireframe.
+Vous pouvez également choisir le
+niveau de détail de la sphère.
+
+## Prérequis
+
+Pour compiler et lancer ce PoC vous devez installer
+les librairies suivantes:
+
+glfw:   http://www.glfw.org/
+glm:    http://glm.g-truc.net
+
+Le mieux est d'installer ces librairies depuis les dépots
+officiels de votre distribution.
+
+Votre carte graphique doit également pouvoir supporter
+OpenGL 3.3 et GLSL 3.3 au minimum. Pour vous en assurer 
+rien de plus simple! Dans un terminal tapez
+
+	$ glxinfo | grep "version"
+
+Normalement ce devrait être le cas, mais assurez vous d'avoir
+la suite d'utilitaires Mesa installé. Cette suite contient
+notamment les commandes glxinfo et glxgears.
+
+Inutile de préciser qu'il faut idéalement que vos pilotes
+soient à jour.
+
+## Compilation
+
+Avant de compiler il faut télécharger et installer gl3w,
+un chargeur d'extentions OpenGL.
+
+Plus d'info ici: http://github.com/skaslev/gl3w
+
+Le PoC est fournit avec un installateur qui va cloner le
+dépot et créer et installer les fichiers nécessaires. Pour
+ça vous aurez besoin de python version 2.6 au minimum.
+
+Avec les priviléges root, dans un terminal
+
+	$ make getGl3w
+
+Les en-tête de gl3w seront installés dans votre système
+
+	/usr/include/GL/gl3w.h
+	/usr/include/GL/glcorearb.h
+
+Un fichier source gl3w.c est également ajouté aux sources
+du PoC. Pour compiler le PoC, enfin, tapez dans un terminal
+en étant un utilisateur normal.
+
+	$ make
+
+le fichier exécutable proceduralSphere est maintenant crée :)
+
+## Nettoyage
+
+Pour restaurer l'état de la racine du PoC tapez dans un terminal
+
+	$ make clean
+
+Attention ça ne désintallera pas gl3w de votre système. Pour
+enlever gl3w supprimez manuellement les deux fichiers
+
+	/usr/include/GL/gl3w.h
+	/usr/include/GL/glcorearb.h
+
+## Usage
+
+Dans un terminal tapez
+
+	$ ./proceduralSphere <LoD>
+
+où LoD désigne le "Level of Detail" compris entre 1 et 7.
