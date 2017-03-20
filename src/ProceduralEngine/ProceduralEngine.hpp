@@ -4,11 +4,6 @@
 
 #define HEIGHTMAP_AREA 262144
 #define HEIGHTMAP_SCALE 512
-
-#include "dataType.hpp"
-#include "HeightmapBrushes.hpp"
-#include "Planet.hpp"
-#include "Observatory.hpp"
-#include "ProceduralConductor.hpp"
+#define HEIGHTMAP_BRUSHES_COUNT 8
 
 #endif
