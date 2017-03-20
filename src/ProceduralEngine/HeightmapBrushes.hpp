@@ -1,5 +1,13 @@
+#ifndef INC_PROCEDURAL_ENGINE_HEIGHTMAP_BRUSHES
+
+#define INC_PROCEDURAL_ENGINE_DATA_HEIGHTMAP_BRUSHES
+
 #include <cstring>
-#include "dataType.hpp"
+
+#include "dataTypes.hpp"
+
+#define HEIGHTMAP_SCALE 512
+#define HEIGHTMAP_BRUSHES_COUNT 8
 
 namespace ProceduralEngine {
   class HeightmapBrushes {
@@ -24,7 +32,9 @@ namespace ProceduralEngine {
       Heightmap m_PerlinBrush[HEIGHTMAP_BRUSHES_COUNT];
       Heightmap m_WarpBrush[HEIGHTMAP_BRUSHES_COUNT];
       Heightmap m_TurbulenceBrush[HEIGHTMAP_BRUSHES_COUNT];
-      int * m_seed;
-      int m_scale;
+      int * m_Seed;
+      int m_Scale;
   };
 }
+
+#endif

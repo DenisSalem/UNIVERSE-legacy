@@ -2,6 +2,8 @@
 
 #define INC_PROCEDURAL_ENGINE_DATA_TYPE
 
+#define HEIGHTMAP_AREA 262144
+
 namespace ProceduralEngine {
   typedef float Heightmap[HEIGHTMAP_AREA];
   
