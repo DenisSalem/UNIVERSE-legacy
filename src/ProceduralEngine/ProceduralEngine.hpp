@@ -2,4 +2,6 @@
 
 #define INC_PROCEDURAL_ENGIN
 
+#define SEED_SIZE 4096
+
 #endif
