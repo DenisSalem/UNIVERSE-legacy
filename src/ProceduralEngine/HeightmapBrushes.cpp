@@ -4,8 +4,20 @@ namespace ProceduralEngine {
   HeightmapBrushes::HeightmapBrushes(int * seed) {
     m_Seed = seed;
     m_Scale = HEIGHTMAP_SCALE;
-    memset( m_VoronoiBrush0, 0, sizeof(float) * HEIGHTMAP_BRUSHES_COUNT * HEIGHTMAP_AREA);
-    memset( m_VoronoiBrush1, 0, sizeof(float) * HEIGHTMAP_BRUSHES_COUNT * HEIGHTMAP_AREA);
-    memset( m_VoronoiBrush2, 0, sizeof(float) * HEIGHTMAP_BRUSHES_COUNT * HEIGHTMAP_AREA);
+    m_VoronoiBrushes0 = new Heightmap[HEIGHTMAP_BRUSHES_COUNT]();
+    m_VoronoiBrushes1 = new Heightmap[HEIGHTMAP_BRUSHES_COUNT]();
+    m_VoronoiBrushes2 = new Heightmap[HEIGHTMAP_BRUSHES_COUNT]();
+    m_PerlinBrushes = new Heightmap[HEIGHTMAP_BRUSHES_COUNT]();
+    m_WarpBrushes = new Heightmap[HEIGHTMAP_BRUSHES_COUNT]();
+    m_TurbulenceBrushes = new Heightmap[HEIGHTMAP_BRUSHES_COUNT]();
+  }
+
+  HeightmapBrushes::~HeightmapBrushes() {
+    delete[] m_VoronoiBrushes0;
+    delete[] m_VoronoiBrushes1;
+    delete[] m_VoronoiBrushes2;
+    delete[] m_PerlinBrushes;
+    delete[] m_WarpBrushes;
+    delete[] m_TurbulenceBrushes;
   }
 }

@@ -15,23 +15,24 @@ namespace ProceduralEngine {
       HeightmapBrushes(int * seed);
       ~HeightmapBrushes();
       
-      Heightmap * GetNonOrientableBrush(int id);
-      Heightmap * GetVoronoiBrush0(int id);
-      Heightmap * GetVoronoiBrush1(int id);
-      Heightmap * GetVoronoiBrush2(int id);
-      Heightmap * GetPerlinBrush(int id);
-      Heightmap * GetWarpBrush(int id);
-      Heightmap * GetTurbulenceBrush(int id);
+      Heightmap * GetNonOrientableBrushes(int id);
+      Heightmap * GetVoronoiBrushes0(int id);
+      Heightmap * GetVoronoiBrushes1(int id);
+      Heightmap * GetVoronoiBrushes2(int id);
+      Heightmap * GetPerlinBrushes(int id);
+      Heightmap * GetWarpBrushes(int id);
+      Heightmap * GetTurbulenceBrushes(int id);
+      
       int GetScale();
 
     private:
-      Heightmap m_NonOrientableBrush[HEIGHTMAP_BRUSHES_COUNT];
-      Heightmap m_VoronoiBrush0[HEIGHTMAP_BRUSHES_COUNT];
-      Heightmap m_VoronoiBrush1[HEIGHTMAP_BRUSHES_COUNT];
-      Heightmap m_VoronoiBrush2[HEIGHTMAP_BRUSHES_COUNT];
-      Heightmap m_PerlinBrush[HEIGHTMAP_BRUSHES_COUNT];
-      Heightmap m_WarpBrush[HEIGHTMAP_BRUSHES_COUNT];
-      Heightmap m_TurbulenceBrush[HEIGHTMAP_BRUSHES_COUNT];
+      Heightmap * m_NonOrientableBrushes;
+      Heightmap * m_VoronoiBrushes0;
+      Heightmap * m_VoronoiBrushes1;
+      Heightmap * m_VoronoiBrushes2;
+      Heightmap * m_PerlinBrushes;
+      Heightmap * m_WarpBrushes;
+      Heightmap * m_TurbulenceBrushes;
       int * m_Seed;
       int m_Scale;
   };

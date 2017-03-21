@@ -6,9 +6,9 @@
 
 namespace ProceduralEngine {
   typedef float Heightmap[HEIGHTMAP_AREA];
-  
+
   typedef struct Chunk {
-    Heightmap heightmap;
+    float heightmap[HEIGHTMAP_AREA];
     Chunk * ne;
     Chunk * nw;
     Chunk * se;

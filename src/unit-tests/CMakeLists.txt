@@ -8,5 +8,5 @@ include_directories("${PROJECT_SOURCE_DIR}/gl3w")
 set(EXTERNAL_DEPENDENCIES "-lGL -ldl -lglfw")
 
 add_executable(unit-tests main.cpp)
-target_link_libraries (unit-tests gl3w ${EXTERNAL_DEPENDENCIES})
+target_link_libraries (unit-tests gl3w ProceduralEngine ${EXTERNAL_DEPENDENCIES})
 
